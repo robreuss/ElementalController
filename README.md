@@ -54,7 +54,7 @@ Each individual element has a prototype property, either TCP and UDP. You can mi
 
 ## Installation 
 ### CocoaPods
-Coming soon.  For now use Carthage for iOS/macOS/tvOS, or just close the project and add the files.
+Coming soon.  For now use Carthage for iOS/macOS/tvOS, or just clone the repo and add the files to your project directly.
 ### Carthage
 Learn about [Carthage](https://github.com/Carthage/Carthage).
 
@@ -62,14 +62,14 @@ Using a Cartfile, you can get the ElementalController framework for iOS, tvOS, a
 
 `github "robreuss/ElementalController" ~> 0.0.4`
 
-One you run the command `carthage update` you'll fine the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+Once you run the command `carthage update` you'll fine the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
 
 ### Swift Package Manager
 A Package.swift file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  
 
 ## Usage
 ### Client-Side 
-Here's an example of setting up the framework with a few elements on the client side.  This is not a complete representation of available functionality.  Note that Linux hosts cannot at this point act as a client (browsing for services), only servers (publishing services).  This is a temporary limitation of the zero config package used and should be solved shortly.
+Here's an example of setting up the framework with a few elements on the client side.  This is not a complete representation of available functionality.  
 
 Counter-intuitively, elements and their handlers are defined first, and the command to connect follows that.
 
