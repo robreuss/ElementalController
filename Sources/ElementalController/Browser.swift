@@ -94,13 +94,7 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     
     func startBrowsing() {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browsing for service of type: \(ElementalController.serviceType(serviceName: serviceName, proto: proto)) in domain: \(ElementalController.serviceDomain)")
-        
-        #if os(Linux)
-        withExtendedLifetime((browser, self)) {
-            RunLoop.main.run()
-        }
-        #endif
-        
+
         browser.searchForServices(ofType: ElementalController.serviceType(serviceName: serviceName, proto: proto), inDomain: ElementalController.serviceDomain)
     }
     
