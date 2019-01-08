@@ -53,8 +53,19 @@ Each individual element has a prototype property, either TCP and UDP. You can mi
 
 
 ## Installation 
+### CocoaPods
+Coming soon.  For now use Carthage for iOS/macOS/tvOS, or just close the project and add the files.
 ### Carthage
+Learn about [Carthage](https://github.com/Carthage/Carthage).
+
+Using a Cartfile, you can get the ElementalController framework for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile:
+
+`github "robreuss/ElementalController" ~> 0.0.4`
+
+One you run the command `carthage update` you'll fine the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+
 ### Swift Package Manager
+A Package.swift file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  
 
 ## Usage
 ### Client-Side 
