@@ -33,14 +33,13 @@ public enum Proto {
 }
 
 public class ElementalController {
-
     // User confirmation options
-    public static var serviceDomain = "local."              // Currently framework is only tested for private LAN use so this shouldn't be changed
-    public static var TCPBufferSize = 4096                  // Amount of data fetched from the socket per cycle.  Make larger or smaller based on typical message size
-    public static var UDPBufferSize = 512                   // Same.
-    public static var loggerPrefix = "EC"                   // What if anything precedes log lines to it's clear the lines are coming from the framework
-    public static var transferAnalysisFrequency: Float = 10.0  // Frequency transfer analysis stats should be calculated and displayed
-    public static var enableTransferAnalysis = false        // Transfer analysis logs information about the performance of network and message processing
+    public static var serviceDomain = "local." // Currently framework is only tested for private LAN use so this shouldn't be changed
+    public static var TCPBufferSize = 4096 // Amount of data fetched from the socket per cycle.  Make larger or smaller based on typical message size
+    public static var UDPBufferSize = 512 // Same.
+    public static var loggerPrefix = "EC" // What if anything precedes log lines to it's clear the lines are coming from the framework
+    public static var transferAnalysisFrequency: Float = 10.0 // Frequency transfer analysis stats should be calculated and displayed
+    public static var enableTransferAnalysis = false // Transfer analysis logs information about the performance of network and message processing
     
     // An arbitrary number used to identify the start of an element message.
     // Not required, just a mechanism to keep messages aligned.
@@ -57,12 +56,12 @@ public class ElementalController {
     // Service provides the basis of server functionality
     public var browser = Browser()
     public var service = Service()
-
+    
     // TODO: Not sure implemented, not sure should be
     public static var useRandomServiceName = false
     
     public init() {}
-
+    
     // First method called for setting up a service, provides a Service
     // instance to which the user can add handlers.  Service isn't published
     // until the "publish" method on Service is called.
@@ -71,15 +70,15 @@ public class ElementalController {
     }
     
     public func stopService() {
-         service.shutdown()
-     }
+        service.shutdown()
+    }
     
     // Initialize the browser, and then next would call the "browse" method
     // on Browser.
     public func setupForBrowsingAs(deviceNamed: String) {
         browser.setup(named: deviceNamed)
     }
-
+    
     // Skip browsing directly connect on a specific port
     public func connectToService(named: String, atHost: String, onPort: Int) {
         logDebug("\(prefixForLogging(serviceName: named, proto: .tcp)) Connecting to host \(atHost) on port \(onPort)")
@@ -93,27 +92,26 @@ public class ElementalController {
     
     // TODO: Fix the Linux side of this
     public static var machineName: String {
+        #if os(iOS)
+        return UIDevice.current.name
+        #endif
         
-            #if os(iOS)
-            return UIDevice.current.name
-            #endif
-            
-            #if os(macOS)
-            return Host.current().localizedName!
-            #endif
-            
-            #if os(Linux)
-            
-            // TODO: Fix handling of failed access
-            do {
-                return "Undefined service name"
-            } catch {}
+        #if os(macOS)
+        return Host.current().localizedName!
+        #endif
+        
+        #if os(Linux)
+        
+        // TODO: Fix handling of failed access
+        do {
+            return "Undefined service name"
+        } catch {}
         
         return ""
-            
-            #endif
+        
+        #endif
     }
-
+    
     /// Log Level "Debug" is a standard level of logging for debugging - set to "Error" for release
     public static var loggerLogLevel: LogLevel = LogLevel.Debug {
         didSet {
@@ -131,5 +129,4 @@ public class ElementalController {
     deinit {
         logDebug("ElementController deinit")
     }
-    
 }

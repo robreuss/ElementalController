@@ -10,16 +10,15 @@ import Foundation
 import Socket
 
 public class DeviceEvent {
-    
     var type: DeviceEventTypes.EventType
-
+    
     public typealias DeviceHandler = ((Device) -> Void)?
     public var handler: DeviceHandler?
     
     init(type: DeviceEventTypes.EventType) {
         self.type = type
     }
-
+    
     func executeHandler(device: Device) {
         guard let h = handler else { return }
         if Thread.isMainThread {
@@ -36,9 +35,7 @@ public class DeviceEvent {
     }
 }
 
-
 public class DeviceEventTypes {
-    
     public enum EventType {
         case onDeviceDisconnected
         case onConnectFailed
@@ -60,18 +57,15 @@ public class DeviceEventTypes {
     deinit {
         logDebug("DeviceEventTypes deinitialized")
     }
-
 }
 
-
 public class Device {
-
     // Uniquely identifies a UDP client for the server so we know who are the
     // message is coming from, and supplies a client with the ID they need to
     // send to the UDP server to identify themselves.
     var udpIdentifier: UInt8 = 0
     
-   // Both server and client implementions have a TCPClient that
+    // Both server and client implementions have a TCPClient that
     // provides TCP connectivity...
     var tcpClient: TCPClient?
     
@@ -83,7 +77,7 @@ public class Device {
     // the object that provides processing of messages into elements
     lazy var tcpMessage = Message()
     lazy var udpMessage = Message()
-
+    
     public var remoteServerAddress: String = ""
     public var remoteServerPort: Int = 0
     var address: String = ""
@@ -93,18 +87,18 @@ public class Device {
     var deviceName: String = "Unknown Device Name"
     public var displayName: String = ""
     public var serviceName: String = ""
-
+    
     public var connected: Bool = false
     public var supportsMotion: Bool = false
     
     private var elements: [Int8: Element] = [:]
-
+    
     init(serviceName: String, displayName: String) {
         self.serviceName = serviceName
         self.displayName = displayName
-        self.deviceName = "Got service device name"
+        deviceName = "Got service device name"
     }
-
+    
     public func send(element: Element) -> Bool {
         switch element.proto {
         case .tcp:
@@ -112,7 +106,7 @@ public class Device {
             return c.send(element: element)
             
         case .udp:
-            if ElementalController.allowUDPService && self is ServerDevice {
+            if ElementalController.allowUDPService, self is ServerDevice {
                 return (self as! ServerDevice).sendUDPElement(element: element)
             } else {
                 preconditionFailure("Attempt to send UDP element when UDP disallowed in ElementalController")
@@ -123,15 +117,15 @@ public class Device {
     }
     
     public func attachElement(_ element: Element) -> Element {
-        if !ElementalController.allowUDPService && element.proto == .udp {
+        if !ElementalController.allowUDPService, element.proto == .udp {
             preconditionFailure("Attempt to add UDP element but UDP service disallowed in ElementalController")
         } else {
             elements[element.identifier] = element
-            logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: element.proto)) Element added: \(element.displayName) (\(element.dataType))")
+            logDebug("\(prefixForLogging(serviceName: serviceName, proto: element.proto)) Element added: \(element.displayName) (\(element.dataType))")
             return element
         }
     }
-
+    
     // Public function that enables a user to obtain a reference
     // to a device specific element based on the element ID.
     public func getElementWith(identifier: Int8) -> Element? {
@@ -146,10 +140,10 @@ public class Device {
     func connectSuccess(proto: Proto) {
         connected = true
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) [\(proto)] Device received connect success")
-
+        
         // Send device name
         let deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (system)", proto: .tcp, dataType: .String))
-        deviceNameElement.value = self.deviceName
+        deviceNameElement.value = deviceName
         _ = send(element: deviceNameElement)
     }
     
@@ -157,46 +151,46 @@ public class Device {
         // Clear other connection here
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) connection failed")
         connected = false
-        self.events.onConnectFailed.executeHandler(device: self)
+        events.onConnectFailed.executeHandler(device: self)
     }
-
+    
     func lostConnection(proto: Proto) {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) lost connection")
         // Clear other connection here
         connected = false
-        self.events.onDeviceDisconnected.executeHandler(device: self)
+        events.onDeviceDisconnected.executeHandler(device: self)
     }
- 
+    
     func processMessageIntoElement(identifier: Int8, valueData: Data) {
         guard let element = getElementWith(identifier: identifier) else { return }
         element.valueAsData = valueData
         logVerbose("Received element \(element.displayName) with value \(element.value)")
         // Below zero element identifiers refer to system elements
         if element.identifier >= 0 {
-           // DispatchQueue.main.sync {
+            // DispatchQueue.main.sync {
             element.executeHandlers(element: element, device: self) // User defined
-           // }
+            // }
         } else {
             switch element.identifier {
             case SystemElements.udpIdentifier.rawValue:
                 
                 // This is received by the client and subsequently included in their
                 // UDP messages to uniquely identify their messages as coming from them.
-                if element.value is UInt8 { self.udpIdentifier = element.value as! UInt8 }
-                logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Received UDP identififer from \(self.remoteServerAddress): \(self.udpIdentifier)")
+                if element.value is UInt8 { udpIdentifier = element.value as! UInt8 }
+                logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Received UDP identififer from \(remoteServerAddress): \(udpIdentifier)")
                 
                 // Getting the UDP is when we consider things ready to rock and roll
                 // from a data transmission standpoint
                 
                 logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Notifying client that they are connected.")
                 
-                self.events.onConnect.executeHandler(device: self)
- 
-                // The client sends the server a device name, which will typically be their
+                events.onConnect.executeHandler(device: self)
+                
+            // The client sends the server a device name, which will typically be their
             // hostname.
             case SystemElements.deviceName.rawValue:
-                self.displayName = element.value as! String
-                logDebug("\(prefixForLogging(device: self, proto: .tcp)) \(formatDeviceNameForLogging(deviceName: self.displayName)) Device connected from \(address)")
+                displayName = element.value as! String
+                logDebug("\(prefixForLogging(device: self, proto: .tcp)) \(formatDeviceNameForLogging(deviceName: displayName)) Device connected from \(address)")
                 
             case SystemElements.shutdownMessage.rawValue:
                 logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Received shutdown message")
@@ -212,14 +206,11 @@ public class Device {
     deinit {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Deinitializing Device")
     }
-    
 }
-
 
 // Service has a collection of these to which it assigns
 // UDP IDs
 public class ClientDevice: Device {
-    
     var service: Service?
     
     // System elements
@@ -235,13 +226,10 @@ public class ClientDevice: Device {
         deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (system)", proto: .tcp, dataType: .String))
         shutdownMessageElement = attachElement(Element(identifier: SystemElements.shutdownMessage.rawValue, displayName: "Shutdown Message (system)", proto: .tcp, dataType: .String))
     }
-    
-    
 }
 
 // Service has two of these, one for TCP and one for UDP
 public class ServiceDevice: Device {
-    
     var service: Service?
     
     init(service: Service, serviceName: String, displayName: String) {
@@ -249,14 +237,11 @@ public class ServiceDevice: Device {
         self.service = service
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Initializing Service Device")
     }
-    
-    
 }
 
 // Client (Browser) has one of these representing the server
 // it is connected to
 public class ServerDevice: Device {
-    
     // But only the client side has a UDP client (data flows in one
     // direction with UDP)
     var udpClient: UDPClient?
@@ -276,23 +261,18 @@ public class ServerDevice: Device {
     
     // Used when a client has found a service and wants to connect to it
     public func connect() {
-        
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Connecting to service")
-        udpClient = UDPClient(device: self, port: self.remoteServerPort)
+        udpClient = UDPClient(device: self, port: remoteServerPort)
         tcpClientConnector = TCPClientConnector(device: self)
         tcpClientConnector?.connectTo(address: remoteServerAddress, port: remoteServerPort)
-        
     }
     
     // When the service goes offline
     public func disconnected() {
-
-        self.events.onDeviceDisconnected.executeHandler(device: self)
-        
+        events.onDeviceDisconnected.executeHandler(device: self)
     }
     
     func sendUDPElement(element: Element) -> Bool {
         return (udpClient?.sendElement(element: element))!
     }
-
 }

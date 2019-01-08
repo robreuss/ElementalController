@@ -94,26 +94,24 @@ class Message {
                 let headerID = data.subdata(in: dataPointer..<HEADER_ID_LENGTH)
                 dataPointer += HEADER_ID_LENGTH
                 if headerID != Message.headerIdentifierAsData {
-
-                    return malformedMessageResponse(details: "Non-matching header ID", proto: proto, device: device)
+                    return self.malformedMessageResponse(details: "Non-matching header ID", proto: proto, device: device)
                 }
             } else {
-                
                 logDebug("\(formatProtoForLogging(proto: proto)) Data too short to have header ID (\(data.count)), fetching more data")
                 
                 // In this case, we don't reset the data stream in the hopes that we'll
                 // get more data that restores the integrity of the current message.
                 return (MORE_COMING_IDENTIFIER, udpIdentifier, Data(), data)
                 
-                //return malformedMessageResponse(details: "Message processor found no header identifier. ", proto: proto, device: device)
+                // return malformedMessageResponse(details: "Message processor found no header identifier. ", proto: proto, device: device)
             }
         }
         
         // Test for a enough data for a header (plus one byte for at least a byte of data)
-        if data.count < expectedHeaderLength(proto: proto)  {
-           performanceVars.incompleteMessages += 1
+        if data.count < self.expectedHeaderLength(proto: proto) {
+            self.performanceVars.incompleteMessages += 1
             return (MORE_COMING_IDENTIFIER, udpIdentifier, Data(), data)
-            //return malformedMessageResponse(details: "Message processor found too little data for a header. ", proto: proto, device: device)
+            // return malformedMessageResponse(details: "Message processor found too little data for a header. ", proto: proto, device: device)
         }
         
         // The element identifier tells us which amoung the set of user-defined elements the message represents.
@@ -124,7 +122,7 @@ class Message {
         let lengthOfValueAsData = data.subdata(in: dataPointer..<dataPointer + ELEMENT_VALUE_LENGTH)
         lengthOfValue = Int(Element.int32Value(data: lengthOfValueAsData))
         if lengthOfValue < 1 {
-            return malformedMessageResponse(details: "Element (\(elementIdentifier)) length of value is less than 1.", proto: proto, device: device)
+            return self.malformedMessageResponse(details: "Element (\(elementIdentifier)) length of value is less than 1.", proto: proto, device: device)
         }
         dataPointer += ELEMENT_VALUE_LENGTH
         
@@ -137,19 +135,19 @@ class Message {
         if data.count < (dataPointer + lengthOfValue) {
             logVerbose("\(formatProtoForLogging(proto: proto)) Streamer fetching additional data: current bytes = \(data.count)")
             
-            performanceVars.incompleteMessages += 1
+            self.performanceVars.incompleteMessages += 1
             // In this case, we don't reset the data stream in the hopes that we'll
             // get more data that restores the integrity of the current message.
             return (MORE_COMING_IDENTIFIER, udpIdentifier, Data(), data)
         }
         
-        if data.count < dataPointer + lengthOfValue  {
-            return malformedMessageResponse(details: "Length of data is inadequate to the header indication of length.", proto: proto, device: device)
+        if data.count < dataPointer + lengthOfValue {
+            return self.malformedMessageResponse(details: "Length of data is inadequate to the header indication of length.", proto: proto, device: device)
         }
         
         var elementValueData: Data = data.subdata(in: dataPointer..<dataPointer + lengthOfValue)
         let dataRemainingAfterCurrentElement = data.subdata(in: dataPointer + lengthOfValue..<data.count)
-
+        
         // TODO: Re-enable performance testing
         if elementValueData.count == lengthOfValue {
             if ElementalController.enableTransferAnalysis {

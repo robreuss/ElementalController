@@ -56,11 +56,10 @@ class TCPService {
                     let newSocket = try socket.acceptClientConnection()
                     
                     self.parentService!.clientDeviceConnectedOn(socket: newSocket)
-
                     
                 } while self.continueRunning
                 
-            } catch let error {
+            } catch {
                 guard let socketError = error as? Socket.Error else { logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) TCPServer: Unexpected error...")
                     self.isListening = false
                     (DispatchQueue.main).sync {
@@ -93,7 +92,7 @@ class TCPClient {
     var message: Message?
     let elementDataBufferLockQueue = DispatchQueue(label: "elementDataBufferLockQueue")
     var shouldKeepRunning = true
-
+    
     init(device: Device, socket: Socket) {
         self.device = device
         connected = true
@@ -125,16 +124,15 @@ class TCPClient {
             //logVerbose("\(prefixForLoggingDevice(device: device)) Sending element message: \(element.encodeAsMessage) over \(element.proto) with value: \(String(describing: element.value))")
             try socket!.write(from: element.encodeAsMessage(udpIdentifier: (device.udpIdentifier)))
             return true
-        }
-        catch let error {
+        } catch {
             logError("\(prefixForLoggingDevice(device: device)) TCP send failure: \(error)")
-            self.connected = false
+            connected = false
             logError("\(prefixForLoggingDevice(device: device)) Remote TCP service seems to have stopped unexpectedly")
             disconnected()
             return false
         }
     }
-
+    
     func disconnected() {
         if device is ServerDevice {
             (device as! ServerDevice).disconnected()
@@ -145,13 +143,12 @@ class TCPClient {
     
     func shutdown() {
         logDebug("\(prefixForLoggingDevice(device: device)) Shutting down TCP service")
-        self.shouldKeepRunning = false
+        shouldKeepRunning = false
         socket!.close()
         connected = false
     }
     
     func run() {
-        
         // Get the global concurrent queue...
         let queue = DispatchQueue.global(qos: .userInteractive)
         
@@ -170,8 +167,8 @@ class TCPClient {
                     // self.elementDataBufferLockQueue.sync {
                     messageDataBuffer.append(readData)
                     
-                    while messageDataBuffer.count > 0 && self.shouldKeepRunning {
-                        let (identifier, udpIdentifier, valueData, remainingData) = device.tcpMessage.process(data: messageDataBuffer,  proto: .tcp, device: device)
+                    while messageDataBuffer.count > 0, self.shouldKeepRunning {
+                        let (identifier, udpIdentifier, valueData, remainingData) = device.tcpMessage.process(data: messageDataBuffer, proto: .tcp, device: device)
                         messageDataBuffer = remainingData
                         if identifier == MALFORMED_MESSAGE_IDENTIFIER {
                             break
@@ -179,10 +176,9 @@ class TCPClient {
                             break
                         } else {
                             device.processMessageIntoElement(identifier: identifier, valueData: valueData)
-
                         }
                     }
-
+                    
                     // If there's anything left in the buffer after a disconnect, finish
                     // processing it
                     if bytesRead == 0 {
@@ -195,10 +191,8 @@ class TCPClient {
                     }
                     
                     readData.count = 0
-                }  while self.shouldKeepRunning
-
-            }
-            catch let error {
+                } while self.shouldKeepRunning
+            } catch {
                 guard let socketError = error as? Socket.Error else {
                     logDebug("\(prefixForLoggingDevice(device: device)) Unexpected error by connection at \(socket!.remoteHostname):\(socket!.remotePort)")
                     self.connected = false
@@ -259,8 +253,7 @@ class TCPClientConnector {
             do {
                 do {
                     self.socket = try Socket.create(family: UDPClient.udpProtocolFamily)
-                }
-                catch let error {
+                } catch {
                     logError("\(serviceNameForLogging(device: self.device)) TCP Client got error creating socket: \(error)")
                     self.socket?.close()
                     DispatchQueue.main.sync {
@@ -276,14 +269,13 @@ class TCPClientConnector {
                 self.device!.tcpClient = TCPClient(device: self.device!, socket: self.socket!)
                 self.device!.tcpClient!.run()
                 if Thread.isMainThread {
-                        self.device?.connectSuccess(proto: .tcp)
+                    self.device?.connectSuccess(proto: .tcp)
                 } else {
                     (DispatchQueue.main).sync {
                         self.device?.connectSuccess(proto: .tcp)
                     }
                 }
-            }
-            catch let error {
+            } catch {
                 logError("\(serviceNameForLogging(device: self.device)) TCP Client got error connecting socket: \(error)")
                 DispatchQueue.main.sync {
                     self.delegate?.connectFailed(proto: .tcp)

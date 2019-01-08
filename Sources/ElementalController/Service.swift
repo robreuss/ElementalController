@@ -89,7 +89,6 @@ protocol ServiceDelegate {
 }
 
 public class Service: ServiceDelegate {
-
     var udpService: UDPService?
     var tcpService: TCPService?
     var publisher: Publisher?
@@ -135,15 +134,14 @@ public class Service: ServiceDelegate {
         tcpService!.shutdown()
         publisher?.stop()
         devices.removeAll() // Clear out the dictionary of devices used for UDP ids
-
     }
-
+    
     // Start the TCP service - this will give us an assigned port if passed a zero value
     public func publish(onPort: Int) {
         tcpService = TCPService(parentServer: self)
         tcpService!.listenForConnections(onPort: onPort)
     }
-
+    
     // Advertise the TCP service
     func publishTCPServiceAdvertisment(onPort: Int) {
         publisher = Publisher(delegate: self)
@@ -159,9 +157,8 @@ public class Service: ServiceDelegate {
             }
         }
     }
-
+    
     func clientDeviceConnectedOn(socket: Socket) {
-
         let device = ClientDevice(service: self, serviceName: serviceName, displayName: displayName)
         device.tcpClient = TCPClient(device: device, socket: socket)
         device.address = socket.remoteHostname
@@ -193,15 +190,12 @@ public class Service: ServiceDelegate {
     // All devices kept here for use by the UDP Server in
     // identifying messages to services.  Assigns udpIdentifier.
     func addDevice(device: ClientDevice) {
-        
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Adding device to collection for UDP identification")
         
         var udpID: UInt8 = 1
         
         deviceIDLockQueue.sync {
-            
             while udpID < UInt8.max - 1 {
-                
                 if devices.keys.contains(udpID) {
                     udpID += 1
                     continue
@@ -211,10 +205,7 @@ public class Service: ServiceDelegate {
                     device.udpIdentifier = udpID
                     break
                 }
-                
             }
-            
-            
         }
     }
     
@@ -224,8 +215,6 @@ public class Service: ServiceDelegate {
         }
         return device
     }
-    
-    
 }
 
 class Publisher: NSObject, NetServiceDelegate {
@@ -247,12 +236,11 @@ class Publisher: NSObject, NetServiceDelegate {
     }
     
     func start(serviceName: String, displayName: String, proto: Proto, onPort: Int) {
-        
         netService = NetService(domain: ElementalController.serviceDomain, type: ElementalController.serviceType(serviceName: serviceName, proto: proto), name: displayName, port: Int32(onPort))
-
+        
         logDebug("\(prefixForLogging(serviceName: serviceName, proto: .tcp)) Publishing as type \(ElementalController.serviceType(serviceName: serviceName, proto: .tcp)) on domain \(ElementalController.serviceDomain) port \(netService!.port) with name \"\(displayName)\"")
         netService?.delegate = self
-
+        
         self.serviceName = serviceName
         
         netService?.publish()
@@ -260,7 +248,6 @@ class Publisher: NSObject, NetServiceDelegate {
     
     public func netServiceDidPublish(_ sender: NetService) {
         logDebug("Service \(serviceName) is now published")
-        
     }
     
     func stop() {

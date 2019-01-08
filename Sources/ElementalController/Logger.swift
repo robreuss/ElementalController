@@ -12,7 +12,7 @@ import Foundation
     case Error = 0
     case Debug = 1
     case Verbose = 2
-    
+
     public var description: String {
         switch self {
             case .Error: return "Error"
@@ -26,14 +26,14 @@ func logAtLevel(_ priority: LogLevel, logLine: String) {
     if priority.rawValue <= ElementalController.loggerLogLevel.rawValue {
         if ElementalController.loggerUseNSLog {
             let nsLogLine = "[\(ElementalController.loggerPrefix)] \(logLine)" // Need to do this for Linux
-            
+
             // There's an issue with printing to NSLog under Linux
             #if os(Linux)
             print("[\(ElementalController.loggerPrefix)] \(logLine)")
             #else
             NSLog("[\(ElementalController.loggerPrefix)] %@", nsLogLine)
             #endif
-            
+
         } else {
             print("[\(ElementalController.loggerPrefix)] \(logLine)")
         }

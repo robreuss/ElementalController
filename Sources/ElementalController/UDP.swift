@@ -10,7 +10,6 @@ import Foundation
 import Socket
 
 class UDPClient {
-    
     static var udpProtocolFamily = Socket.ProtocolFamily.inet6
     
     var device: Device?
@@ -28,8 +27,7 @@ class UDPClient {
         
         do {
             try self.socket = Socket.create(family: UDPClient.udpProtocolFamily, type: Socket.SocketType.datagram, proto: Socket.SocketProtocol.udp)
-        }
-        catch {
+        } catch {
             guard error is Socket.Error else {
                 logDebug("\(serviceNameForLogging(device: device)) Error while creating UDP socket: \(error.localizedDescription)")
                 return
@@ -39,22 +37,20 @@ class UDPClient {
     }
     
     func shutdown() {
-        logDebug("\(serviceNameForLogging(device: device)) UDP client shutting down at server request")
+        logDebug("\(serviceNameForLogging(device: self.device)) UDP client shutting down at server request")
         self.socket!.close()
     }
     
     func sendElement(element: Element) -> Bool {
         do {
             if let s = self.socket {
-                let _ = try s.write(from: element.encodeAsMessage(udpIdentifier: (device?.udpIdentifier)!), to: self.remoteAddress!)
+                _ = try s.write(from: element.encodeAsMessage(udpIdentifier: (self.device?.udpIdentifier)!), to: self.remoteAddress!)
                 return true
-            }
-            else {
+            } else {
                 logDebug("\(serviceNameForLogging(device: self.device)) UDP Attempt to write against nil UDP socket")
                 return false
             }
-        }
-        catch let error {
+        } catch {
             guard error is Socket.Error else {
                 logDebug("\(serviceNameForLogging(device: self.device)) UDP failure to write element \(element.identifier) to socket with remote address \(String(describing: self.remoteAddress)) with error \(error.localizedDescription)")
                 return false
@@ -72,7 +68,6 @@ internal protocol NetworkUDPServerDelegate {
 }
 
 open class UDPService {
-    
     var serviceName = "" // For logging purposes
     var socket: Socket?
     var shouldKeepRunning = true
@@ -86,32 +81,29 @@ open class UDPService {
     func shutdown() {
         // Only do shutdown procedures if we haven't shutdown already
         // TODO: Should have an event handler here
-        if shouldKeepRunning {
-            logDebug("\(prefixForLogging(serviceName: serviceName, proto: .udp)) Shutting down UDP Server")
-            shouldKeepRunning = false
-            socket?.close()
+        if self.shouldKeepRunning {
+            logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Shutting down UDP Server")
+            self.shouldKeepRunning = false
+            self.socket?.close()
         }
     }
-
+    
     // Port is passed in based on what port was set or dynamically
     // assigned for TCP.  Both protocols run on the same defined port.
     func listenForConnections(onPort: Int) {
-
         // TODO: Expose QOS to user
         let queue = DispatchQueue.global(qos: .userInteractive)
         queue.async { [unowned self] in
             
             do {
-                
                 try self.socket = Socket.create(family: UDPClient.udpProtocolFamily, type: Socket.SocketType.datagram, proto: Socket.SocketProtocol.udp)
-
+                
                 logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) UDP service listening on port \(onPort)")
                 
                 guard let socket = self.socket else {
-                logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Unable to unwrap socket")
-                  self.shouldKeepRunning = false
+                    logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Unable to unwrap socket")
+                    self.shouldKeepRunning = false
                     (DispatchQueue.main).sync {
-
                         // TODO: Need to callback with this information and probably shut TCP down as well.
                         return
                     }
@@ -122,7 +114,6 @@ open class UDPService {
                 var messageDataBuffer = Data(capacity: ElementalController.UDPBufferSize)
                 
                 while self.shouldKeepRunning {
-
                     let (bytesRead, _) = try socket.listen(forMessage: &messageDataBuffer, on: onPort)
                     if bytesRead >= ElementalController.UDPBufferSize {
                         logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Your UDP messages are exceeding the UDPBufferSize and may not be well-formed.")
@@ -139,9 +130,7 @@ open class UDPService {
                         logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Received malformed element message.  Clearing buffer.")
                         messageDataBuffer = Data(capacity: ElementalController.UDPBufferSize)
                     } else {
-                        
-                        while messageDataBuffer.count > 0 && self.shouldKeepRunning  {
-                        
+                        while messageDataBuffer.count > 0, self.shouldKeepRunning {
                             // Get the UDP identifier so we know what client device is connecting
                             let udpIdentifierData = messageDataBuffer.subdata(in: udpIdentifierBegins..<udpIdentifierBegins + UDP_ID_LENGTH)
                             let udpIdentifier = UInt8(Element.uint8Value(data: udpIdentifierData))
@@ -152,11 +141,11 @@ open class UDPService {
                                 logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Unable to find device for processing UDP message.")
                             } else {
                                 // Extract the identifier and value data from the message
-                                let (identifier, _, valueData, remainingData) = device!.udpMessage.process(data: messageDataBuffer,  proto: Proto.udp, device: device!)  // Extract identifier and value from the raw Data
+                                let (identifier, _, valueData, remainingData) = device!.udpMessage.process(data: messageDataBuffer, proto: Proto.udp, device: device!) // Extract identifier and value from the raw Data
                                 messageDataBuffer = remainingData
                                 if identifier == MALFORMED_MESSAGE_IDENTIFIER {
                                     break
-                                } else if identifier == MORE_COMING_IDENTIFIER {  // In the case of UDP, we don't buffer so we just grap the next batch of data
+                                } else if identifier == MORE_COMING_IDENTIFIER { // In the case of UDP, we don't buffer so we just grap the next batch of data
                                     break
                                 } else {
                                     // Process the identity and value of the element, and in turn, call handlers
@@ -166,20 +155,19 @@ open class UDPService {
                             }
                         }
                     }
-
                 }
                 
                 // Probably shutdown was already called and continueRunning set to false, but we
                 // call shutdown anyway.
                 self.shutdown()
                 
-            } catch let error {
+            } catch {
                 guard error is Socket.Error else {
                     logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) UDP server stopped on error: \(error.localizedDescription)")
                     (DispatchQueue.main).sync {
                         return
                     }
-                    return  // TODO: Add throw here to silence compiler warning when this is absent
+                    return // TODO: Add throw here to silence compiler warning when this is absent
                 }
             }
         }
@@ -188,5 +176,4 @@ open class UDPService {
     deinit {
         logDebug("\(prefixForLogging(serviceName: serviceName, proto: .udp))UDP Server deinitialized")
     }
-    
 }
