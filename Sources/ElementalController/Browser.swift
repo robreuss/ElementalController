@@ -60,6 +60,7 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     var browserName: String = ElementalController.machineName
     var serverDevice: Dictionary<String, ServerDevice> = [:]
     var proto: Proto = .tcp
+    var resolving = false
     
     public var events = BrowserEventTypes()
     
@@ -104,11 +105,16 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     }
     
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type), resolving address...")
+        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
         
-        netService = service
-        netService?.delegate = self
-        netService?.resolve(withTimeout: 5.0) // TODO: Make this value configurable
+        if !resolving {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
+            netService = service
+            netService?.delegate = self
+            netService?.resolve(withTimeout: 5.0) // TODO: Make this value configurable
+        } else {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Not resolving service \(service.type), already resolving a service")
+        }
     }
     
     func setupServerDevicefor(aServiceName: String, withDisplayName: String, atHost: String, onPort: Int) {
