@@ -276,9 +276,14 @@ class TCPClientConnector {
                     }
                 }
             } catch {
+                // TODO: Should this be calling back to delegate or device?
                 logError("\(serviceNameForLogging(device: self.device)) TCP Client got error connecting socket: \(error)")
-                DispatchQueue.main.sync {
+                if Thread.isMainThread {
                     self.delegate?.connectFailed(proto: .tcp)
+                } else {
+                    (DispatchQueue.main).sync {
+                    self.delegate?.connectFailed(proto: .tcp)
+                    }
                 }
             }
             
