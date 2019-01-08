@@ -26,9 +26,11 @@ Compared to MQTT:
 * No security yet, coming soon (SSL/TLS)
 
 ### Features:
-* Support for iOS, tvOS, macOS and Linux, written in Swift 4.1
-* Support for the selective use of TCP or UDP per element
+* Works on iOS, tvOS, macOS and Linux (tvOS not tested yet)
+* Tested on Ubuntu, Ubuntu Mate and Raspberian
 * Tested on the Raspberry Pi and Raspberry Pi Zero
+* Linux can act as client or server as can iOS, tvOS and macOS
+* Support for the selective use of TCP or UDP per element
 * Event-oriented handling of incoming elements (block-based)  
 * Dynamic or static port assignment with Zeroconf service discovery
 * Minimal latency 
@@ -50,8 +52,6 @@ When an Elemental Controller service is setup, both a TCP and UDP service are es
 TCP is a connection-oriented protocol and therefore supports bi-directional communication, whereas UDP only supports communication from the client to the server.  
 
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
-
-
 ## Installation 
 ### CocoaPods
 Coming soon.  For now use Carthage for iOS/macOS/tvOS, or just clone the repo and add the files to your project directly.

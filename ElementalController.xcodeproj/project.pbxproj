@@ -17,11 +17,10 @@
 		20B9C54621E45A4E0003EC75 /* ElementalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B9C53D21E45A4E0003EC75 /* ElementalController.swift */; };
 		20B9C54721E45A4E0003EC75 /* UDP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B9C53E21E45A4E0003EC75 /* UDP.swift */; };
 		20B9C56821E461660003EC75 /* Socket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20B9C56721E461660003EC75 /* Socket.framework */; };
-		20B9C57621E465180003EC75 /* ElementalController_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 20B9C57421E465180003EC75 /* ElementalController_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		20B9C58321E465410003EC75 /* ElementalController.h in Headers */ = {isa = PBXBuildFile; fileRef = 20B9C58121E465410003EC75 /* ElementalController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2083572521E532F100D31FCE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20B9C52921E45A150003EC75 /* ElementalController_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20B9C53621E45A4E0003EC75 /* TCP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCP.swift; sourceTree = "<group>"; };
 		20B9C53721E45A4E0003EC75 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
@@ -34,11 +33,7 @@
 		20B9C53E21E45A4E0003EC75 /* UDP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDP.swift; sourceTree = "<group>"; };
 		20B9C56721E461660003EC75 /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/iOS/Socket.framework; sourceTree = "<group>"; };
 		20B9C57221E465180003EC75 /* ElementalController_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		20B9C57421E465180003EC75 /* ElementalController_macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementalController_macOS.h; sourceTree = "<group>"; };
-		20B9C57521E465180003EC75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20B9C57F21E465410003EC75 /* ElementalController_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		20B9C58121E465410003EC75 /* ElementalController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementalController.h; sourceTree = "<group>"; };
-		20B9C58221E465410003EC75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,9 +65,7 @@
 		20B9C51F21E45A150003EC75 = {
 			isa = PBXGroup;
 			children = (
-				20B9C52B21E45A150003EC75 /* ElementalController */,
-				20B9C57321E465180003EC75 /* ElementalController macOS */,
-				20B9C58021E465410003EC75 /* ElementalController iOS */,
+				20B9C53421E45A4E0003EC75 /* Sources */,
 				20B9C52A21E45A150003EC75 /* Products */,
 				20B9C56621E461660003EC75 /* Frameworks */,
 			);
@@ -88,14 +81,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		20B9C52B21E45A150003EC75 /* ElementalController */ = {
-			isa = PBXGroup;
-			children = (
-				20B9C53421E45A4E0003EC75 /* Sources */,
-			);
-			path = ElementalController;
-			sourceTree = "<group>";
-		};
 		20B9C53421E45A4E0003EC75 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +92,7 @@
 		20B9C53521E45A4E0003EC75 /* ElementalController */ = {
 			isa = PBXGroup;
 			children = (
+				2083572521E532F100D31FCE /* Info.plist */,
 				20B9C53621E45A4E0003EC75 /* TCP.swift */,
 				20B9C53721E45A4E0003EC75 /* Service.swift */,
 				20B9C53821E45A4E0003EC75 /* Logger.swift */,
@@ -128,24 +114,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		20B9C57321E465180003EC75 /* ElementalController macOS */ = {
-			isa = PBXGroup;
-			children = (
-				20B9C57421E465180003EC75 /* ElementalController_macOS.h */,
-				20B9C57521E465180003EC75 /* Info.plist */,
-			);
-			path = "ElementalController macOS";
-			sourceTree = "<group>";
-		};
-		20B9C58021E465410003EC75 /* ElementalController iOS */ = {
-			isa = PBXGroup;
-			children = (
-				20B9C58121E465410003EC75 /* ElementalController.h */,
-				20B9C58221E465410003EC75 /* Info.plist */,
-			);
-			path = "ElementalController iOS";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -160,7 +128,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20B9C57621E465180003EC75 /* ElementalController_macOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,7 +135,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20B9C58321E465410003EC75 /* ElementalController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -462,7 +428,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/ElementalController iOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/ElementalController/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -491,7 +457,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/ElementalController iOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/ElementalController/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -518,7 +484,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "ElementalController macOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/ElementalController/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -546,7 +512,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "ElementalController macOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/ElementalController/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -572,7 +538,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/ElementalController iOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/ElementalController/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -599,7 +565,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/ElementalController iOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/ElementalController/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
