@@ -60,7 +60,7 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     var browserName: String = ElementalController.machineName
     var serverDevice: Dictionary<String, ServerDevice> = [:]
     var proto: Proto = .tcp
-    var resolving = false
+    var resolvingService = false
     
     public var events = BrowserEventTypes()
     
@@ -90,6 +90,7 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     public func stopBrowsing() {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Stopping browsing for \(serviceName)")
         browser.stop()
+        resolvingService = false
     }
     
     func startBrowsing() {
@@ -101,8 +102,8 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
         
-        if !resolving {
-            resolving = true
+        if !resolvingService {
+            resolvingService = true
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
             netService = service
             netService?.delegate = self
@@ -122,15 +123,20 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         }
     }
     
+    // TODO: Need to test this resolvingService guard for scenarios where resolving
+    // is cancelled before completion.
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        if let hostName = sender.hostName {
-            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved address: \(hostName): \(sender.port), service name: \"\(sender.name)\"")
+        if !resolvingService {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Ignoring resolution of service name \"\(sender.name)\" because resolution was cancelled.")
         } else {
-            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved (unknown host name)")
+            if let hostName = sender.hostName {
+                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved address: \(hostName): \(sender.port), service name: \"\(sender.name)\"")
+            } else {
+                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved (unknown host name)")
+            }
+            setupServerDevicefor(aServiceName: serviceName, withDisplayName: sender.name, atHost: sender.hostName!, onPort: sender.port)
+            stopBrowsing()
         }
-        
-        setupServerDevicefor(aServiceName: serviceName, withDisplayName: sender.name, atHost: sender.hostName!, onPort: sender.port)
-        stopBrowsing()
     }
     
     // NetService Stubs
@@ -143,13 +149,19 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         // ElementalController.events.browsingStopped.executeHandlers(contextInfo: ["serviceName": serviceName])
     }
     
+    // TODO: Need to handle this more substantially, providing feedback to the user so they
+    // can restart the search
     public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
         logVerbose("\(formatServiceNameForLogging(serviceName: serviceName)) Browser did not search: \(errorDict)")
         // self.events.browsingError.executeHandlers(contextInfo: ["serviceName": serviceName, "error": errorDict])
+        stopBrowsing()
     }
     
+    // TODO: Need to handle this more substantially, providing feedback to the user so they
+    // can restart the search
     public func netService(_ sender: NetService, didNotResolve errorDict: [String: NSNumber]) {
         logVerbose("\(formatServiceNameForLogging(serviceName: serviceName)) Browser did not resolve: \(errorDict)")
+        stopBrowsing()
         // self.events.browsingError.executeHandlers(contextInfo: ["serviceName": serviceName, "error": errorDict])
     }
     
