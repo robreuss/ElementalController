@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "20B9C52821E45A150003EC75"
                BuildableName = "ElementalController_iOS.framework"
-               BlueprintName = "ElementalController iOS"
+               BlueprintName = "ElementalController-iOS"
                ReferencedContainer = "container:ElementalController.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20B9C52821E45A150003EC75"
             BuildableName = "ElementalController_iOS.framework"
-            BlueprintName = "ElementalController iOS"
+            BlueprintName = "ElementalController-iOS"
             ReferencedContainer = "container:ElementalController.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20B9C52821E45A150003EC75"
             BuildableName = "ElementalController_iOS.framework"
-            BlueprintName = "ElementalController iOS"
+            BlueprintName = "ElementalController-iOS"
             ReferencedContainer = "container:ElementalController.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

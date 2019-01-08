@@ -141,9 +141,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		20B9C52821E45A150003EC75 /* ElementalController iOS */ = {
+		20B9C52821E45A150003EC75 /* ElementalController-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20B9C53121E45A150003EC75 /* Build configuration list for PBXNativeTarget "ElementalController iOS" */;
+			buildConfigurationList = 20B9C53121E45A150003EC75 /* Build configuration list for PBXNativeTarget "ElementalController-iOS" */;
 			buildPhases = (
 				20B9C52421E45A150003EC75 /* Headers */,
 				20B9C52521E45A150003EC75 /* Sources */,
@@ -154,14 +154,14 @@
 			);
 			dependencies = (
 			);
-			name = "ElementalController iOS";
+			name = "ElementalController-iOS";
 			productName = ElementalController;
 			productReference = 20B9C52921E45A150003EC75 /* ElementalController_iOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		20B9C57121E465180003EC75 /* ElementalController macOS */ = {
+		20B9C57121E465180003EC75 /* ElementalController-macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20B9C57921E465180003EC75 /* Build configuration list for PBXNativeTarget "ElementalController macOS" */;
+			buildConfigurationList = 20B9C57921E465180003EC75 /* Build configuration list for PBXNativeTarget "ElementalController-macOS" */;
 			buildPhases = (
 				20B9C56D21E465180003EC75 /* Headers */,
 				20B9C56E21E465180003EC75 /* Sources */,
@@ -172,14 +172,14 @@
 			);
 			dependencies = (
 			);
-			name = "ElementalController macOS";
+			name = "ElementalController-macOS";
 			productName = "ElementalController macOS";
 			productReference = 20B9C57221E465180003EC75 /* ElementalController_macOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		20B9C57E21E465410003EC75 /* ElementalController tvOS */ = {
+		20B9C57E21E465410003EC75 /* ElementalController-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20B9C58421E465410003EC75 /* Build configuration list for PBXNativeTarget "ElementalController tvOS" */;
+			buildConfigurationList = 20B9C58421E465410003EC75 /* Build configuration list for PBXNativeTarget "ElementalController-tvOS" */;
 			buildPhases = (
 				20B9C57A21E465410003EC75 /* Headers */,
 				20B9C57B21E465410003EC75 /* Sources */,
@@ -190,7 +190,7 @@
 			);
 			dependencies = (
 			);
-			name = "ElementalController tvOS";
+			name = "ElementalController-tvOS";
 			productName = ElementalController;
 			productReference = 20B9C57F21E465410003EC75 /* ElementalController_tvOS.framework */;
 			productType = "com.apple.product-type.framework";
@@ -227,9 +227,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				20B9C52821E45A150003EC75 /* ElementalController iOS */,
-				20B9C57121E465180003EC75 /* ElementalController macOS */,
-				20B9C57E21E465410003EC75 /* ElementalController tvOS */,
+				20B9C52821E45A150003EC75 /* ElementalController-iOS */,
+				20B9C57121E465180003EC75 /* ElementalController-macOS */,
+				20B9C57E21E465410003EC75 /* ElementalController-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -594,7 +594,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20B9C53121E45A150003EC75 /* Build configuration list for PBXNativeTarget "ElementalController iOS" */ = {
+		20B9C53121E45A150003EC75 /* Build configuration list for PBXNativeTarget "ElementalController-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20B9C53221E45A150003EC75 /* Debug */,
@@ -603,7 +603,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20B9C57921E465180003EC75 /* Build configuration list for PBXNativeTarget "ElementalController macOS" */ = {
+		20B9C57921E465180003EC75 /* Build configuration list for PBXNativeTarget "ElementalController-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20B9C57721E465180003EC75 /* Debug */,
@@ -612,7 +612,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20B9C58421E465410003EC75 /* Build configuration list for PBXNativeTarget "ElementalController tvOS" */ = {
+		20B9C58421E465410003EC75 /* Build configuration list for PBXNativeTarget "ElementalController-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20B9C58521E465410003EC75 /* Debug */,

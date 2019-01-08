@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "20B9C57121E465180003EC75"
                BuildableName = "ElementalController_macOS.framework"
-               BlueprintName = "ElementalController macOS"
+               BlueprintName = "ElementalController-macOS"
                ReferencedContainer = "container:ElementalController.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20B9C57121E465180003EC75"
             BuildableName = "ElementalController_macOS.framework"
-            BlueprintName = "ElementalController macOS"
+            BlueprintName = "ElementalController-macOS"
             ReferencedContainer = "container:ElementalController.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20B9C57121E465180003EC75"
             BuildableName = "ElementalController_macOS.framework"
-            BlueprintName = "ElementalController macOS"
+            BlueprintName = "ElementalController-macOS"
             ReferencedContainer = "container:ElementalController.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

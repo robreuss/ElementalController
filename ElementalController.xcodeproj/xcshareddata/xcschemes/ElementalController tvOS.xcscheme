@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "20B9C57E21E465410003EC75"
                BuildableName = "ElementalController_tvOS.framework"
-               BlueprintName = "ElementalController tvOS"
+               BlueprintName = "ElementalController-tvOS"
                ReferencedContainer = "container:ElementalController.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20B9C57E21E465410003EC75"
             BuildableName = "ElementalController_tvOS.framework"
-            BlueprintName = "ElementalController tvOS"
+            BlueprintName = "ElementalController-tvOS"
             ReferencedContainer = "container:ElementalController.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,7 +65,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20B9C57E21E465410003EC75"
             BuildableName = "ElementalController_tvOS.framework"
-            BlueprintName = "ElementalController tvOS"
+            BlueprintName = "ElementalController-tvOS"
             ReferencedContainer = "container:ElementalController.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
