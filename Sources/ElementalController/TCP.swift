@@ -53,14 +53,19 @@ class TCPService {
                 self.parentService!.startUDPService(onPort: Int(socket.listeningPort))
                 
                 repeat {
-                    let newSocket = try socket.acceptClientConnection()
                     
+                    do {
+                        let newSocket = try socket.acceptClientConnection()
+                    }
+                    catch {
+                        logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Failure accepting client connection: \(error)")
+                    }
                     self.parentService!.clientDeviceConnectedOn(socket: newSocket)
                     
                 } while self.continueRunning
                 
             } catch {
-                guard let socketError = error as? Socket.Error else { logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) TCPServer: Unexpected error...")
+                guard let socketError = error as else { logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) TCPServer: Unexpected error...")
                     self.isListening = false
                     (DispatchQueue.main).sync {
                         return
