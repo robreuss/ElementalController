@@ -102,6 +102,7 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
         
         if !resolving {
+            resolving = true
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
             netService = service
             netService?.delegate = self
