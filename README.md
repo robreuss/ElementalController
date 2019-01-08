@@ -35,9 +35,9 @@ Compared to MQTT:
 * Flexible model that allows a single instance to be both a client and server, supporting a variety of network topologies including relays and P2P.
 ### Latency
 During informal testing, latency was measured by sending a Unix timestamp (64 bits) as a  payload from an iOS device (client) to a Raspberry Pi 3 Model B (server) over TCP and measuring the elapsed time for a round trip.  On my home WiFi, sending 90 messages/second, latency was typically about 10ms for the round trip when averaged over 20,000 messages.  That was equivilent to the ping response times tested during the same session, suggesting little or no overhead beyond underlying network performance.
-## Throughput
+### Throughput
 During informal testing, throughput was measured by sending a 64-bit element message every 1/10th of a millisecond.  Transmission occured from an iPhone X to a Raspberry Pi 3 Model B and approximately 3500 messages/second were processed inclusive of event handling.
-## Message Envelope
+### Message Envelope
 Messages sent over TCP have a message envelope of 5 bytes which precede the value data, which is of variable length depending on data type.  UDP message envelopes are 6 bytes to accomodate a UDP device identifier, required to identify clients given the connectionless state of a UDP service.
   
 * **_1 Byte_**: An element identifier that refers to a data structure shared by both end points, containing the element display name, type and network protocol (TCP or UDP).  
