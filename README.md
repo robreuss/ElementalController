@@ -51,9 +51,12 @@ TCP is a connection-oriented protocol and therefore supports bi-directional comm
 
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
 
+
+## Installation 
+### Carthage
+### Swift Package Manager
+
 ## Usage
-### Installation and Import
-Coming soon.
 ### Client-Side 
 Here's an example of setting up the framework with a few elements on the client side.  This is not a complete representation of available functionality.  Note that Linux hosts cannot at this point act as a client (browsing for services), only servers (publishing services).  This is a temporary limitation of the zero config package used and should be solved shortly.
 

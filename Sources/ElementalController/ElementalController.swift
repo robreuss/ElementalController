@@ -11,6 +11,9 @@
 
 import Foundation
 import Socket
+#if os(iOS) || os(tvOS)
+import UIKit
+#endif
 #if os(Linux)
 import Dispatch
 import Glibc
@@ -95,7 +98,7 @@ public class ElementalController {
             return UIDevice.current.name
             #endif
             
-            #if os(OSX)
+            #if os(macOS)
             return Host.current().localizedName!
             #endif
             
