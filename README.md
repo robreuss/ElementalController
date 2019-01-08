@@ -1,7 +1,7 @@
 ***This is alpha software and should be utilized at your own risk.  The programmatic interface is subject to change.***
 # Elemental Controller
 
-Intended for Swift developers, this framework impliements a simple application layer protocol above TCP and UDP to provide a lean, low latency, and event-driven approach to controlling devices in a LAN-based environment.  It is designed for use cases such as controlling a Raspberry Pi robot on a LAN rather than managing a large fleet of agricultural sensors across the world.
+Intended for Swift developers, this framework impliements a simple application layer protocol over TCP and UDP to provide a lean, low latency, and event-driven approach to controlling devices in a LAN-based environment.  It is designed for use cases such as controlling a Raspberry Pi robot on a LAN rather than managing a large fleet of agricultural sensors across the world.
 
 It runs on iOS, MacOS, tvOS and Linux.
 
@@ -56,13 +56,13 @@ Each individual element has a prototype property, either TCP and UDP. You can mi
 ### CocoaPods
 Coming soon.  For now use Carthage for iOS/macOS/tvOS, or just clone the repo and add the files to your project directly.
 ### Carthage
-Learn about [Carthage](https://github.com/Carthage/Carthage).
-
 Using a Cartfile, you can get the ElementalController framework for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile:
 
 `github "robreuss/ElementalController" ~> 0.0.4`
 
 Once you run the command `carthage update` you'll fine the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+
+Learn more about [Carthage](https://github.com/Carthage/Carthage).
 
 ### Swift Package Manager
 A Package.swift file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  
@@ -81,13 +81,7 @@ enum ElementIdentifier: Int8 {
     
     case brightness = 1
     case backlight = 2
-    
-    var description: String {
-    	switch self {
-    	case .brightness: return "Brightness"
-    	case .backlight: return "Backlight"
-    	}
-    }
+
 }
     
 var elementalController = ElementalController()
@@ -139,12 +133,6 @@ enum ElementIdentifier: Int8 {
     case brightness = 1
     case backlight = 2
     
-    var description: String {
-        switch self {
-        case .brightness: return "Brightness"
-        case .backlight: return "Backlight"
-        }
-    }
 }
     
 var elementalController = ElementalController()
@@ -180,11 +168,13 @@ elementalController.service.events.onDeviceConnected.addHandler(
 elementalController.service.publish(onPort: 0)
 ```
 ## Thanks
-ElementalController is really just glue around the following two projects:
+ElementalController depends on the following projects:
 ### NetService
 Linux-side Zeroconf functionality (publishing and browsing of services) is thanks to [NetService](https://github.com/Bouke) by [Bouke Haarsma](https://github.com/Bouke).  
 ### BlueSocket
 TCP and UDP functionality is thanks to [BlueSocket](https://github.com/IBM-Swift/BlueSocket).
+### Swift on ARM Community
+The Raspberry Pi capability in the framework depends upon the hard work of those who have brought Swift to ARM.
 
 
 

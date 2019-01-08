@@ -1,9 +1,9 @@
 //
 //  Elements.swift
-//  Elemental Controller
+//  ElementalController
 //
 //  Created by Rob Reuss on 12/6/18.
-//  Copyright © 2018 Rob Reuss. All rights reserved.
+//  Copyright © 2019 Rob Reuss. All rights reserved.
 //
 
 // TODO: Be sure to add to documentation that negative numbers cannot be used

@@ -1,9 +1,9 @@
 //
 //  Message.swift
-//  Elemental Controller
+//  ElementalController
 //
 //  Created by Rob Reuss on 12/11/18.
-//  Copyright © 2018 Rob Reuss. All rights reserved.
+//  Copyright © 2019 Rob Reuss. All rights reserved.
 //
 
 import Foundation

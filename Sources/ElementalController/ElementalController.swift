@@ -1,9 +1,9 @@
 //
-//  Elemental Controller.swift
-//  Elemental Controller
+//  ElementalController.swift
+//  ElementalController
 //
 //  Created by Rob Reuss on 12/15/18.
-//  Copyright © 2018 Rob Reuss. All rights reserved.
+//  Copyright © 2019 Rob Reuss. All rights reserved.
 //
 
 // Implementation notes:
