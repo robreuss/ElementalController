@@ -37,22 +37,22 @@ public class DeviceEvent {
 
 public class DeviceEventTypes {
     public enum EventType {
-        case onDeviceDisconnected
-        case onConnectFailed
-        case onConnect
+        case deviceDisconnected
+        case connectFailed
+        case connect
         
         private var description: String {
             switch self {
-            case .onDeviceDisconnected: return "Device Disconnected"
-            case .onConnectFailed: return "Connect Failed"
-            case .onConnect: return "On connect"
+            case .deviceDisconnected: return "Device Disconnected"
+            case .connectFailed: return "Connect Failed"
+            case .connect: return "Connected"
             }
         }
     }
     
-    public var onDeviceDisconnected = DeviceEvent(type: .onDeviceDisconnected)
-    public var onConnectFailed = DeviceEvent(type: .onConnectFailed)
-    public var onConnect = DeviceEvent(type: .onConnect)
+    public var deviceDisconnected = DeviceEvent(type: .deviceDisconnected)
+    public var connectFailed = DeviceEvent(type: .connectFailed)
+    public var connect = DeviceEvent(type: .connect)
     
     deinit {
         logDebug("DeviceEventTypes deinitialized")
@@ -109,7 +109,7 @@ public class Device {
             if ElementalController.allowUDPService, self is ServerDevice {
                 return (self as! ServerDevice).sendUDPElement(element: element)
             } else {
-                preconditionFailure("Attempt to send UDP element when UDP disallowed in ElementalController")
+                preconditionFailure("Attempt to send UDP element when UDP disallowed in ElementalController or attempt to send element with server identity.")
             }
         default:
             return false
@@ -151,14 +151,14 @@ public class Device {
         // Clear other connection here
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) connection failed")
         connected = false
-        events.onConnectFailed.executeHandler(device: self)
+        events.connectFailed.executeHandler(device: self)
     }
     
     func lostConnection(proto: Proto) {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) lost connection")
         // Clear other connection here
         connected = false
-        events.onDeviceDisconnected.executeHandler(device: self)
+        events.deviceDisconnected.executeHandler(device: self)
     }
     
     func processMessageIntoElement(identifier: Int8, valueData: Data) {
@@ -184,13 +184,13 @@ public class Device {
                 
                 logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Notifying client that they are connected.")
                 
-                events.onConnect.executeHandler(device: self)
+                events.connect.executeHandler(device: self)
                 
             // The client sends the server a device name, which will typically be their
             // hostname.
             case SystemElements.deviceName.rawValue:
                 displayName = element.value as! String
-                logDebug("\(prefixForLogging(device: self, proto: .tcp)) \(formatDeviceNameForLogging(deviceName: displayName)) Device connected from \(address)")
+                logDebug("\(prefixForLogging(device: self, proto: .tcp)) \(formatDeviceNameForLogging(deviceName: displayName)) device connected from \(address)")
                 
             case SystemElements.shutdownMessage.rawValue:
                 logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Received shutdown message")
@@ -269,7 +269,7 @@ public class ServerDevice: Device {
     
     // When the service goes offline
     public func disconnected() {
-        events.onDeviceDisconnected.executeHandler(device: self)
+        events.deviceDisconnected.executeHandler(device: self)
     }
     
     func sendUDPElement(element: Element) -> Bool {

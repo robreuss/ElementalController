@@ -80,7 +80,9 @@ Counter-intuitively, elements and their handlers are defined first, and the comm
 ```swift
 import ElementalController
 
-// Define a integer identifier for elements
+// Elements are identified by an integer that
+// gets transfered with it's value
+
 enum ElementIdentifier: Int8 {
     
     case brightness = 1
@@ -173,11 +175,11 @@ elementalController.service.publish(onPort: 0)
 ```
 ## Thanks
 ElementalController depends on the following projects:
-### NetService
+#### NetService
 Linux-side Zeroconf functionality (publishing and browsing of services) is thanks to [NetService](https://github.com/Bouke) by [Bouke Haarsma](https://github.com/Bouke).  
-### BlueSocket
+#### BlueSocket
 TCP and UDP functionality is thanks to [BlueSocket](https://github.com/IBM-Swift/BlueSocket).
-### Swift on ARM Community
+#### Swift on ARM Community
 The Raspberry Pi capability in the framework depends upon the hard work of those who have brought Swift to ARM.
 
 
