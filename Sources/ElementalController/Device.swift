@@ -39,20 +39,20 @@ public class DeviceEventTypes {
     public enum EventType {
         case deviceDisconnected
         case connectFailed
-        case connect
+        case connected
         
         private var description: String {
             switch self {
             case .deviceDisconnected: return "Device Disconnected"
             case .connectFailed: return "Connect Failed"
-            case .connect: return "Connected"
+            case .connected: return "Connected"
             }
         }
     }
     
     public var deviceDisconnected = DeviceEvent(type: .deviceDisconnected)
     public var connectFailed = DeviceEvent(type: .connectFailed)
-    public var connect = DeviceEvent(type: .connect)
+    public var connected = DeviceEvent(type: .connected)
     
     deinit {
         logDebug("DeviceEventTypes deinitialized")
@@ -142,7 +142,7 @@ public class Device {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) [\(proto)] Device received connect success")
         
         // Send device name
-        let deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (system)", proto: .tcp, dataType: .String))
+        let deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (SYSTEM ELEMENT)", proto: .tcp, dataType: .String))
         deviceNameElement.value = deviceName
         _ = send(element: deviceNameElement)
     }
@@ -182,9 +182,9 @@ public class Device {
                 // Getting the UDP is when we consider things ready to rock and roll
                 // from a data transmission standpoint
                 
-                logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Notifying client that they are connected.")
+                logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Connected to server.")
                 
-                events.connect.executeHandler(device: self)
+                events.connected.executeHandler(device: self)
                 
             // The client sends the server a device name, which will typically be their
             // hostname.
@@ -254,9 +254,9 @@ public class ServerDevice: Device {
     override init(serviceName: String, displayName: String) {
         super.init(serviceName: serviceName, displayName: displayName)
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Initializing Server Device")
-        udpIdentifierElement = attachElement(Element(identifier: SystemElements.udpIdentifier.rawValue, displayName: "UDP Identifier (system)", proto: .tcp, dataType: .UInt8))
-        deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (system)", proto: .tcp, dataType: .String))
-        shutdownMessageElement = attachElement(Element(identifier: SystemElements.shutdownMessage.rawValue, displayName: "Shutdown Message (system)", proto: .tcp, dataType: .String))
+        udpIdentifierElement = attachElement(Element(identifier: SystemElements.udpIdentifier.rawValue, displayName: "UDP Identifier (SYSTEM ELEMENT)", proto: .tcp, dataType: .UInt8))
+        deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (SYSTEM ELEMENT)", proto: .tcp, dataType: .String))
+        shutdownMessageElement = attachElement(Element(identifier: SystemElements.shutdownMessage.rawValue, displayName: "Shutdown Message (SYSTEM ELEMENT)", proto: .tcp, dataType: .String))
     }
     
     // Used when a client has found a service and wants to connect to it

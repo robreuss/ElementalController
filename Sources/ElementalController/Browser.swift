@@ -135,7 +135,7 @@ extension Browser: NetServiceBrowserDelegate {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Ignoring resolution of service name \"\(sender.name)\" because resolution was cancelled.")
         } else {
             if let hostName = sender.hostName {
-                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved address: \(hostName): \(sender.port), service name: \"\(sender.name)\"")
+                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved address: \(hostName): \(sender.port), service name: \(serviceName) display name: \"\(sender.name)\"")
             } else {
                 logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved (unknown host name)")
             }

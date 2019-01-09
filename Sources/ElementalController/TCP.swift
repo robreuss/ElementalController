@@ -52,6 +52,7 @@ class TCPService {
                 //logDebug("*************************************************************************")
 
                 self.parentService!.startUDPService(onPort: Int(socket.listeningPort))
+                sleep(1) // Give UDP a second to startup before we advertise
                 self.parentService!.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
 
                 

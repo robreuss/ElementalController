@@ -45,7 +45,7 @@ public class ServiceEventTypes {
     // var type: ServiceEventTypes.EventType // For logging purposes
     
     init() {
-        logDebug("Service event types initialized")
+        logVerbose("Service event types initialized")
     }
     
     public enum EventType {
@@ -107,7 +107,7 @@ public class Service: ServiceDelegate {
     
     public var events: ServiceEventTypes
     
-    // TODO: Need to make locks configurable?
+    // TODO: Need to make lock string configurable?
     let deviceIDLockQueue = DispatchQueue(label: "net.simplyformed.deviceIDLockQueue")
     
     init() {
@@ -117,7 +117,7 @@ public class Service: ServiceDelegate {
     func setup(serviceName: String, displayName: String) {
         self.serviceName = serviceName
         self.displayName = displayName
-        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Server initialized")
+        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Setting up TCP and UDP services")
         tcpServiceDevice = ServiceDevice(service: self, serviceName: serviceName, displayName: displayName)
         udpServiceDevice = ServiceDevice(service: self, serviceName: serviceName, displayName: displayName)
     }
