@@ -41,16 +41,16 @@ public class BrowserEvent {
 
 public class BrowserEventTypes {
     public enum EventType {
-        case onFoundServer
+        case foundServer
         
         private var description: String {
             switch self {
-            case .onFoundServer: return "Found Server"
+            case .foundServer: return "Found Server"
             }
         }
     }
     
-    public var onFoundServer = BrowserEvent(type: .onFoundServer)
+    public var foundServer = BrowserEvent(type: .foundServer)
 }
 
 public class Browser: NSObject, NetServiceDelegate {
@@ -58,7 +58,7 @@ public class Browser: NSObject, NetServiceDelegate {
     var browser = NetServiceBrowser()
     var netService: NetService?
     var browserName: String = ElementalController.machineName
-    var serverDevice: Dictionary<String, ServerDevice> = [:]
+    var serverDevice: [String: ServerDevice] = [:]
     var proto: Proto = .tcp
     var resolvingService = false
     
@@ -82,7 +82,7 @@ public class Browser: NSObject, NetServiceDelegate {
         browser.delegate = self
     }
     
-    public func browse(serviceName: String) {
+    public func browseFor(serviceName: String) {
         self.serviceName = serviceName
         startBrowsing()
     }
@@ -101,11 +101,11 @@ public class Browser: NSObject, NetServiceDelegate {
     
     func setupServerDevicefor(aServiceName: String, withDisplayName: String, atHost: String, onPort: Int) {
         serverDevice[aServiceName] = ServerDevice(serviceName: aServiceName, displayName: withDisplayName)
-        if let serverDevice = self.serverDevice[aServiceName] {
+        if let serverDevice = serverDevice[aServiceName] {
             serverDevice.deviceName = browserName
             serverDevice.remoteServerAddress = atHost
             serverDevice.remoteServerPort = onPort
-            events.onFoundServer.executeHandler(serverDevice: serverDevice)
+            events.foundServer.executeHandler(serverDevice: serverDevice)
         }
     }
     

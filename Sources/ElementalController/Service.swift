@@ -49,25 +49,26 @@ public class ServiceEventTypes {
     }
     
     public enum EventType {
-        case onDeviceConnected
-        case onDeviceDisconnected
-        case onServicePublished
-        case onServerListening
+        case deviceConnected
+        case deviceDisconnected
+        case servicePublished
+        case serverListening
         
         private var description: String {
             switch self {
-            case .onDeviceConnected: return "Device Connected"
-            case .onDeviceDisconnected: return "Device Disconnected"
-            case .onServicePublished: return "Service Published"
-            case .onServerListening: return "Server Listening"
+            case .deviceConnected: return "Device Connected"
+            case .deviceDisconnected: return "Device Disconnected"
+            case .servicePublished: return "Service Published"
+            case .serverListening: return "Server Listening"
             }
         }
     }
     
-    public var onDeviceConnected = ServiceEvent(type: .onDeviceConnected)
-    public var onDeviceDisconnected = ServiceEvent(type: .onDeviceDisconnected)
-    public var onServicePublished = ServiceEvent(type: .onServicePublished)
-    public var onServerListening = ServiceEvent(type: .onServerListening)
+    public var deviceConnected = ServiceEvent(type: .deviceConnected)
+    public var deviceDisconnected = ServiceEvent(type: .deviceDisconnected)
+    // TODO: Implement these 2
+    public var servicePublished = ServiceEvent(type: .servicePublished)
+    public var serverListening = ServiceEvent(type: .serverListening)
     
     public typealias ServiceEventHandler = (Service, Device) -> Void
     
@@ -94,7 +95,7 @@ public class Service: ServiceDelegate {
     var publisher: Publisher?
     
     // Keeps a hash of client devices and their udpIdentifier (and to assign udpIdentifier)
-    var devices: Dictionary<UInt8, ClientDevice> = [:]
+    var devices: [UInt8: ClientDevice] = [:]
     
     var tcpServiceDevice: ServiceDevice?
     var udpServiceDevice: ServiceDevice?
@@ -121,7 +122,7 @@ public class Service: ServiceDelegate {
         udpServiceDevice = ServiceDevice(service: self, serviceName: serviceName, displayName: displayName)
     }
     
-    public func shutdown() {
+    public func stopService() {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Shutting down service")
         for device: ClientDevice in devices.values {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Device TCP client being shutdown: \(device.displayName)")
@@ -171,13 +172,13 @@ public class Service: ServiceDelegate {
     
     func deviceConnected(device: ClientDevice) {
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device connected.")
-        events.onDeviceConnected.executeHandlers(device: device)
+        events.deviceConnected.executeHandlers(device: device)
     }
     
     func deviceDisconnected(device: ClientDevice) {
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device disconnected.")
         devices.removeValue(forKey: device.udpIdentifier)
-        events.onDeviceDisconnected.executeHandlers(device: device)
+        events.deviceDisconnected.executeHandlers(device: device)
     }
     
     // Once a device representing the client is created, send the UDP identififer

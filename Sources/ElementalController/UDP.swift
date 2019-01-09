@@ -37,25 +37,25 @@ class UDPClient {
     }
     
     func shutdown() {
-        logDebug("\(serviceNameForLogging(device: self.device)) UDP client shutting down at server request")
-        self.socket!.close()
+        logDebug("\(serviceNameForLogging(device: device)) UDP client shutting down at server request")
+        socket!.close()
     }
     
     func sendElement(element: Element) -> Bool {
         do {
-            if let s = self.socket {
-                _ = try s.write(from: element.encodeAsMessage(udpIdentifier: (self.device?.udpIdentifier)!), to: self.remoteAddress!)
+            if let s = socket {
+                _ = try s.write(from: element.encodeAsMessage(udpIdentifier: (device?.udpIdentifier)!), to: remoteAddress!)
                 return true
             } else {
-                logDebug("\(serviceNameForLogging(device: self.device)) UDP Attempt to write against nil UDP socket")
+                logDebug("\(serviceNameForLogging(device: device)) UDP Attempt to write against nil UDP socket")
                 return false
             }
         } catch {
             guard error is Socket.Error else {
-                logDebug("\(serviceNameForLogging(device: self.device)) UDP failure to write element \(element.identifier) to socket with remote address \(String(describing: self.remoteAddress)) with error \(error.localizedDescription)")
+                logDebug("\(serviceNameForLogging(device: device)) UDP failure to write element \(element.identifier) to socket with remote address \(String(describing: remoteAddress)) with error \(error.localizedDescription)")
                 return false
             }
-            logDebug("\(serviceNameForLogging(device: self.device)) Fell through: \(error)")
+            logDebug("\(serviceNameForLogging(device: device)) Fell through: \(error)")
             return false
         }
     }
@@ -81,10 +81,10 @@ open class UDPService {
     func shutdown() {
         // Only do shutdown procedures if we haven't shutdown already
         // TODO: Should have an event handler here
-        if self.shouldKeepRunning {
-            logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Shutting down UDP Server")
-            self.shouldKeepRunning = false
-            self.socket?.close()
+        if shouldKeepRunning {
+            logDebug("\(prefixForLogging(serviceName: serviceName, proto: .udp)) Shutting down UDP Server")
+            shouldKeepRunning = false
+            socket?.close()
         }
     }
     
