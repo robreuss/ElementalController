@@ -67,7 +67,7 @@ class Message {
     func malformedMessageResponse(details: String, proto: Proto, device: Device) -> (Int8, UInt8, Data, Data) {
         logError("\(prefixForLogging(device: device, proto: proto)) Malformed message: \(details)")
         if ElementalController.enableTransferAnalysis {
-            self.self.performanceVars.invalidMessages += 1
+            performanceVars.invalidMessages += 1
         }
         return (MALFORMED_MESSAGE_IDENTIFIER, UInt8.max, Data(), Data())
     }
@@ -94,7 +94,7 @@ class Message {
                 let headerID = data.subdata(in: dataPointer..<HEADER_ID_LENGTH)
                 dataPointer += HEADER_ID_LENGTH
                 if headerID != Message.headerIdentifierAsData {
-                    return self.malformedMessageResponse(details: "Non-matching header ID", proto: proto, device: device)
+                    return malformedMessageResponse(details: "Non-matching header ID", proto: proto, device: device)
                 }
             } else {
                 logDebug("\(formatProtoForLogging(proto: proto)) Data too short to have header ID (\(data.count)), fetching more data")
@@ -108,8 +108,8 @@ class Message {
         }
         
         // Test for a enough data for a header (plus one byte for at least a byte of data)
-        if data.count < self.expectedHeaderLength(proto: proto) {
-            self.performanceVars.incompleteMessages += 1
+        if data.count < expectedHeaderLength(proto: proto) {
+            performanceVars.incompleteMessages += 1
             return (MORE_COMING_IDENTIFIER, udpIdentifier, Data(), data)
             // return malformedMessageResponse(details: "Message processor found too little data for a header. ", proto: proto, device: device)
         }
@@ -122,7 +122,7 @@ class Message {
         let lengthOfValueAsData = data.subdata(in: dataPointer..<dataPointer + ELEMENT_VALUE_LENGTH)
         lengthOfValue = Int(Element.int32Value(data: lengthOfValueAsData))
         if lengthOfValue < 1 {
-            return self.malformedMessageResponse(details: "Element (\(elementIdentifier)) length of value is less than 1.", proto: proto, device: device)
+            return malformedMessageResponse(details: "Element (\(elementIdentifier)) length of value is less than 1.", proto: proto, device: device)
         }
         dataPointer += ELEMENT_VALUE_LENGTH
         
@@ -135,14 +135,14 @@ class Message {
         if data.count < (dataPointer + lengthOfValue) {
             logVerbose("\(formatProtoForLogging(proto: proto)) Streamer fetching additional data: current bytes = \(data.count)")
             
-            self.performanceVars.incompleteMessages += 1
+            performanceVars.incompleteMessages += 1
             // In this case, we don't reset the data stream in the hopes that we'll
             // get more data that restores the integrity of the current message.
             return (MORE_COMING_IDENTIFIER, udpIdentifier, Data(), data)
         }
         
         if data.count < dataPointer + lengthOfValue {
-            return self.malformedMessageResponse(details: "Length of data is inadequate to the header indication of length.", proto: proto, device: device)
+            return malformedMessageResponse(details: "Length of data is inadequate to the header indication of length.", proto: proto, device: device)
         }
         
         var elementValueData: Data = data.subdata(in: dataPointer..<dataPointer + lengthOfValue)
@@ -151,12 +151,12 @@ class Message {
         // TODO: Re-enable performance testing
         if elementValueData.count == lengthOfValue {
             if ElementalController.enableTransferAnalysis {
-                self.performanceVars.bytesReceived += dataPointer + lengthOfValue
+                performanceVars.bytesReceived += dataPointer + lengthOfValue
                 let currentBuffer = data.count - (dataPointer + lengthOfValue) // Consider the buffer to be the total data being processed minus the current message data
-                if currentBuffer > self.performanceVars.maxLoad { self.performanceVars.maxLoad = currentBuffer }
-                self.performanceVars.bufferLoad += currentBuffer
-                self.performanceVars.bufferCycles += 1
-                self.doPerformanceTesting(device: device, proto: proto)
+                if currentBuffer > performanceVars.maxLoad { performanceVars.maxLoad = currentBuffer }
+                performanceVars.bufferLoad += currentBuffer
+                performanceVars.bufferCycles += 1
+                doPerformanceTesting(device: device, proto: proto)
                 logVerbose("\(formatProtoForLogging(proto: proto)) Message Processor: \(data.count) bytes in, header length: \(dataPointer), expected value length: \(lengthOfValue), total expected bytes: \(dataPointer + lengthOfValue), remainder: \(dataRemainingAfterCurrentElement.count), udpIdentifier: \(udpIdentifier)")
             }
             return (elementIdentifier, udpIdentifier, elementValueData, dataRemainingAfterCurrentElement)
@@ -172,31 +172,31 @@ class Message {
         // Performance testing is about calculating elements received per second
         // By sending motion data, it can be  compared to expected rates.
         
-        if self.performanceVars.startTime == nil { self.performanceVars.startTime = Date() }
+        if performanceVars.startTime == nil { performanceVars.startTime = Date() }
         
-        self.performanceVars.messagesReceived += 1
-        if Float(self.performanceVars.lastPublicationOfPerformance.timeIntervalSinceNow) < -(ElementalController.transferAnalysisFrequency) {
-            let messagesPerSecond: Float = self.performanceVars.messagesReceived / ElementalController.transferAnalysisFrequency
-            var kbPerSecond: Float = (Float(self.performanceVars.bytesReceived) / ElementalController.transferAnalysisFrequency) / 1000
+        performanceVars.messagesReceived += 1
+        if Float(performanceVars.lastPublicationOfPerformance.timeIntervalSinceNow) < -(ElementalController.transferAnalysisFrequency) {
+            let messagesPerSecond: Float = performanceVars.messagesReceived / ElementalController.transferAnalysisFrequency
+            var kbPerSecond: Float = (Float(performanceVars.bytesReceived) / ElementalController.transferAnalysisFrequency) / 1000
             kbPerSecond.round()
-            var averageBufferLoad: Float = Float(self.performanceVars.bufferLoad) / Float(self.performanceVars.bufferCycles)
+            var averageBufferLoad: Float = Float(performanceVars.bufferLoad) / Float(performanceVars.bufferCycles)
             averageBufferLoad.round()
-            var kilobytesReceived: Float = Float(self.performanceVars.bytesReceived) / 1000.0
+            var kilobytesReceived: Float = Float(performanceVars.bytesReceived) / 1000.0
             kilobytesReceived.round()
-            self.performanceVars.totalSessionMessages += self.performanceVars.messagesReceived
-            var elapsedTimeMinutes = ((self.performanceVars.startTime?.timeIntervalSinceNow)! / 60) * 10
+            performanceVars.totalSessionMessages += performanceVars.messagesReceived
+            var elapsedTimeMinutes = ((performanceVars.startTime?.timeIntervalSinceNow)! / 60) * 10
             elapsedTimeMinutes.round()
             elapsedTimeMinutes = abs(elapsedTimeMinutes / 10)
-            logDebug("\(proto.description.uppercased()): \(device.serviceName): [\(device.displayName)]: \(self.performanceVars.messagesReceived) msgs (\(self.performanceVars.totalSessionMessages) total), \(messagesPerSecond) msgs/sec, \(self.performanceVars.incompleteMessages) required more, \(self.performanceVars.invalidMessages) malformed, \(kbPerSecond) KB/sec rcvd, \(kilobytesReceived) KB rcvd , Max buffer \(self.performanceVars.maxLoad) bytes, avg buffer \(averageBufferLoad) bytes")
-            self.performanceVars.messagesReceived = 0
-            self.performanceVars.invalidMessages = 0
-            self.performanceVars.incompleteMessages = 0
-            self.performanceVars.lastPublicationOfPerformance = Date()
-            self.performanceVars.bytesReceived = 0
-            self.performanceVars.bufferLoad = 0
-            self.performanceVars.bufferCycles = 0
-            self.performanceVars.bufferReads = 0
-            self.performanceVars.maxLoad = 0
+            logDebug("\(proto.description.uppercased()): \(device.serviceName): [\(device.displayName)]: \(performanceVars.messagesReceived) msgs (\(performanceVars.totalSessionMessages) total), \(messagesPerSecond) msgs/sec, \(performanceVars.incompleteMessages) required more, \(performanceVars.invalidMessages) malformed, \(kbPerSecond) KB/sec rcvd, \(kilobytesReceived) KB rcvd , Max buffer \(performanceVars.maxLoad) bytes, avg buffer \(averageBufferLoad) bytes")
+            performanceVars.messagesReceived = 0
+            performanceVars.invalidMessages = 0
+            performanceVars.incompleteMessages = 0
+            performanceVars.lastPublicationOfPerformance = Date()
+            performanceVars.bytesReceived = 0
+            performanceVars.bufferLoad = 0
+            performanceVars.bufferCycles = 0
+            performanceVars.bufferReads = 0
+            performanceVars.maxLoad = 0
         }
     }
 }

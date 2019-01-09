@@ -108,13 +108,13 @@ public class Element {
         
         messageData.append(lengthAsData) // 4 bytes:   length of the message
         
-        if self.proto == .udp {
+        if proto == .udp {
             var udpIdentifierInt8: UInt8 = UInt8(udpIdentifier)
             let udpIdentifierData = Data(bytes: &udpIdentifierInt8, count: MemoryLayout<UInt8>.size)
             messageData.append(udpIdentifierData) // 2 bytes:  Central this element is destined for
         }
         
-        messageData.append(self.valueAsData)
+        messageData.append(valueAsData)
 
         return messageData
     }
@@ -126,37 +126,37 @@ public class Element {
     public var value: Any? {
         get {
 
-            switch self.dataType {
+            switch dataType {
             case .Int8:
-                return readValue is Int8 ? self.readValue : nil
+                return readValue is Int8 ? readValue : nil
             case .UInt8:
-                return readValue is UInt8 ? self.readValue : nil
+                return readValue is UInt8 ? readValue : nil
             case .Int16:
-                return readValue is Int16 ? self.readValue : nil
+                return readValue is Int16 ? readValue : nil
             case .UInt16:
-                return readValue is UInt16 ? self.readValue : nil
+                return readValue is UInt16 ? readValue : nil
             case .Int32:
-                return readValue is Int32 ? self.readValue : nil
+                return readValue is Int32 ? readValue : nil
             case .UInt32:
-                return readValue is UInt32 ? self.readValue : nil
+                return readValue is UInt32 ? readValue : nil
             case .Int64:
-                return readValue is Int64 ? self.readValue : nil
+                return readValue is Int64 ? readValue : nil
             case .UInt64:
-                return readValue is UInt64 ? self.readValue : nil
+                return readValue is UInt64 ? readValue : nil
             case .Float:
-                return readValue is Float ? self.readValue : nil
+                return readValue is Float ? readValue : nil
             case .Double:
-                return readValue is Double ? self.readValue : nil
+                return readValue is Double ? readValue : nil
             case .String:
-                return readValue is String ? self.readValue : nil
+                return readValue is String ? readValue : nil
             case .Data:
-                return readValue is Data ? self.readValue : nil
+                return readValue is Data ? readValue : nil
             }
 
         }
         set {
-            self.elementReadWriteLock.sync {
-                self.writeValue = newValue as Any
+            elementReadWriteLock.sync {
+                writeValue = newValue as Any
             }
 
         }
@@ -168,111 +168,111 @@ public class Element {
     var valueAsData: Data {
         
         get {
-            let error = "\(self.displayName) (\(self.identifier)) nil encountered when encoding value as data (possible type error)."
+            let error = "\(displayName) (\(identifier)) nil encountered when encoding value as data (possible type error)."
 
-            switch self.dataType {
+            switch dataType {
             case .Int8:
-                if var value = self.writeValue as? Int8 {
+                if var value = writeValue as? Int8 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode Int8 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode Int8 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .UInt8:
-                if var value = self.writeValue as? UInt8 {
+                if var value = writeValue as? UInt8 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode UInt8 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode UInt8 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .Int16:
                 
-                if var value = self.writeValue as? Int16 {
+                if var value = writeValue as? Int16 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode Int16 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode Int16 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .UInt16:
                 
-                if var value = self.writeValue as? UInt16 {
+                if var value = writeValue as? UInt16 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode UInt16 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode UInt16 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .Int32:
                 
-                if var value = self.writeValue as? Int32 {
+                if var value = writeValue as? Int32 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode Int32 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode Int32 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .UInt32:
                 
-                if var value = self.writeValue as? UInt32 {
+                if var value = writeValue as? UInt32 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode UInt32 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode UInt32 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .Int64:
                 
-                if var value = self.writeValue as? Int64 {
+                if var value = writeValue as? Int64 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode Int64 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode Int64 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .UInt64:
                 
-                if var value = self.writeValue as? UInt64 {
+                if var value = writeValue as? UInt64 {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode UInt64 element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode UInt64 element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .Float:
                 
-                if var value = self.writeValue as? Float {
+                if var value = writeValue as? Float {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode Float element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode Float element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .Double:
                 
-                if var value = self.writeValue as? Double {
+                if var value = writeValue as? Double {
                     return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
-                    logError("Attempted to encode Double element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .Data:
                 
-                if var value = self.writeValue as? Data {
-                    return self.writeValue as! Data
+                if var value = writeValue as? Data {
+                    return writeValue as! Data
                 } else {
-                    logError("Attempted to encode Double element \"\(self.displayName)\" failed - wrong type")
+                    logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
                     fatalError()
                 }
                 
             case .String:
                 
                 var returnData = Data()
-                self.elementReadWriteLock.sync {
-                    if let myData = (self.writeValue as! String).data(using: String.Encoding.utf8) {
+                elementReadWriteLock.sync {
+                    if let myData = (writeValue as! String).data(using: String.Encoding.utf8) {
                         returnData = myData
                     } else {
                         logError("Element got nil when expecting string data")
@@ -284,63 +284,63 @@ public class Element {
         }
         
         set {
-            self.elementReadWriteLock.sync {
+            elementReadWriteLock.sync {
                 
-                switch self.dataType {
+                switch dataType {
                 case .Int8:
                     let int = Element.int8Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .UInt8:
                     let int = Element.uint8Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .Int16:
                     
                     let int = Element.int16Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .UInt16:
                     
                     let int = Element.uint16Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .Int32:
                     
                     let int = Element.int32Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .UInt32:
                     
                     let int = Element.uint32Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .Int64:
                     
                     let int = Element.int64Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .UInt64:
                     
                     let int = Element.uint64Value(data: newValue)
-                    self.readValue = int as Any
+                    readValue = int as Any
                     
                 case .Float:
                     
                     let float = Element.floatValue(data: newValue)
-                    self.readValue = float as Any
+                    readValue = float as Any
                     
                 case .Double:
 
                     let double = Element.doubleValue(data: newValue)
-                    self.readValue = double as Any
+                    readValue = double as Any
                     
                 case .Data:
-                    self.readValue = newValue as Any
+                    readValue = newValue as Any
                     
                 case .String:
                     if let s = String(data: newValue, encoding: String.Encoding.utf8) {
-                        self.readValue = s
+                        readValue = s
                     } else {
                         logError("\(displayName) (\(identifier)) Element of type \(dataType) got nil while encoding to bytes")
                         

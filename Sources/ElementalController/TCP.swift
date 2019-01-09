@@ -23,7 +23,8 @@ class TCPService {
     
     deinit {
         logDebug("\(prefixForLogging(serviceName: (parentService?.serviceName)!, proto: .tcp)) Deinit TCPServer, closing socket")
-        self.listenerSocket?.close()
+        
+        listenerSocket?.close()
     }
     
     func listenForConnections(onPort: Int) {

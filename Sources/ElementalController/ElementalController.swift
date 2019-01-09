@@ -70,7 +70,7 @@ public class ElementalController {
     }
     
     public func stopService() {
-        service.shutdown()
+        service.stopService()
     }
     
     // Initialize the browser, and then next would call the "browse" method
@@ -79,7 +79,15 @@ public class ElementalController {
         browser.setup(named: deviceNamed)
     }
     
-    // Skip browsing directly connect on a specific port
+    // Connect to a known service
+    /// Used as an alternative to Zeroconf service discovery when the
+    /// identity, hostname and port of a service is already known.
+    /// The foundServer event will still fire wherein element handlers
+    /// should be defined for that service.
+    /// - Parameters:
+    ///   - named: The short (not the display name) of a service (e.g. "robot")
+    ///   - atHost: Host name on the LAN, either a host name or IP address.
+    ///   - onPort: The port the service is published on at the hostname.
     public func connectToService(named: String, atHost: String, onPort: Int) {
         logDebug("\(prefixForLogging(serviceName: named, proto: .tcp)) Connecting to host \(atHost) on port \(onPort)")
         browser.setupServerDevicefor(aServiceName: named, withDisplayName: named, atHost: atHost, onPort: onPort)
