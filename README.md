@@ -53,6 +53,10 @@ TCP is a connection-oriented protocol and therefore supports bi-directional comm
 
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
 ## Installation 
+### Using on Linux
+You will need to install the following in order for publishing and discovery of services to take place under Linux:
+
+```sudo apt install libavahi-compat-libdnssd-dev```
 ### CocoaPods
 Coming soon.  For now use Carthage for iOS/macOS/tvOS, or just clone the repo and add the files to your project directly.
 ### Carthage
