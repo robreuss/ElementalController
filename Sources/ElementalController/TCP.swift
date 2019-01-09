@@ -32,7 +32,7 @@ class TCPService {
         queue.async {
             do {
                 // Create an IPV6 socket...
-                try self.listenerSocket = Socket.create(family: .inet)
+                try self.listenerSocket = Socket.create(family: .inet6)
                 guard let socket = self.listenerSocket else {
                     logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Unable to unwrap socket...")
                     (DispatchQueue.main).sync {
