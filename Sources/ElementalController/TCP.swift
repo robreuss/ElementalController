@@ -31,7 +31,7 @@ class TCPService {
         
         queue.async {
             do {
-                // Create an IPV6 socket...
+                // Create an IPV4 socket...
                 try self.listenerSocket = Socket.create(family: .inet)
                 guard let socket = self.listenerSocket else {
                     logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Unable to unwrap socket...")
