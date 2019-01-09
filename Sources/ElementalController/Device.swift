@@ -190,7 +190,7 @@ public class Device {
             // hostname.
             case SystemElements.deviceName.rawValue:
                 displayName = element.value as! String
-                logDebug("\(prefixForLogging(device: self, proto: .tcp)) \(formatDeviceNameForLogging(deviceName: displayName)) Device connected from \(address)")
+                logDebug("\(prefixForLogging(device: self, proto: .tcp)) \(formatDeviceNameForLogging(deviceName: displayName)) device connected from \(address)")
                 
             case SystemElements.shutdownMessage.rawValue:
                 logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Received shutdown message")
