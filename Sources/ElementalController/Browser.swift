@@ -53,7 +53,7 @@ public class BrowserEventTypes {
     public var onFoundServer = BrowserEvent(type: .onFoundServer)
 }
 
-public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
+public class Browser: NSObject, NetServiceDelegate {
     var serviceName: String = ""
     var browser = NetServiceBrowser()
     var netService: NetService?
@@ -99,6 +99,21 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         browser.searchForServices(ofType: ElementalController.serviceType(serviceName: serviceName, proto: proto), inDomain: ElementalController.serviceDomain)
     }
     
+    func setupServerDevicefor(aServiceName: String, withDisplayName: String, atHost: String, onPort: Int) {
+        serverDevice[aServiceName] = ServerDevice(serviceName: aServiceName, displayName: withDisplayName)
+        if let serverDevice = self.serverDevice[aServiceName] {
+            serverDevice.deviceName = browserName
+            serverDevice.remoteServerAddress = atHost
+            serverDevice.remoteServerPort = onPort
+            events.onFoundServer.executeHandler(serverDevice: serverDevice)
+        }
+    }
+    
+
+}
+
+extension Browser: NetServiceBrowserDelegate {
+    
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
         
@@ -110,16 +125,6 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
             netService?.resolve(withTimeout: 5.0) // TODO: Make this value configurable
         } else {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Not resolving service \(service.type), already resolving a service")
-        }
-    }
-    
-    func setupServerDevicefor(aServiceName: String, withDisplayName: String, atHost: String, onPort: Int) {
-        serverDevice[aServiceName] = ServerDevice(serviceName: aServiceName, displayName: withDisplayName)
-        if let serverDevice = self.serverDevice[aServiceName] {
-            serverDevice.deviceName = browserName
-            serverDevice.remoteServerAddress = atHost
-            serverDevice.remoteServerPort = onPort
-            events.onFoundServer.executeHandler(serverDevice: serverDevice)
         }
     }
     
@@ -189,4 +194,5 @@ public class Browser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     func netServiceDidNotResolve(_ sender: NetService, error: Error) {
         logVerbose("\(formatServiceNameForLogging(serviceName: serviceName)) Failed to resolve server \(sender.type)")
     }
+    
 }
