@@ -243,7 +243,7 @@ class Publisher: NSObject, NetServiceDelegate {
         
         self.serviceName = serviceName
         
-        netService?.publish()
+        //netService?.publish()
     }
     
     public func netServiceDidPublish(_ sender: NetService) {
