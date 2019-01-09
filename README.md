@@ -7,6 +7,8 @@ It runs on iOS, MacOS, tvOS and Linux.
 
 Conceptually, the framework is built up around the notion of a set of type-specific control "elements" which are defined at compile time. A reference ID and element definition common to both endpoints provides the basis for the exchange of element data, within a tiny message envelope.  At the end-point, a message is decoded and a handler block triggered by the event. 
 
+It is a single codebase for both client and server.
+
 An alternative to utilizing raw TCP or UDP, it offers:
 
 * Easy service publishing and discovery
