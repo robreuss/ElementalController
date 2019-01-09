@@ -50,9 +50,10 @@ class TCPService {
                 //logDebug("*************************************************************************")
                 logDebug("\(prefixForLogging(serviceName: self.parentService!.serviceName, proto: .tcp)) TCP service listening on port \(socket.listeningPort)")
                 //logDebug("*************************************************************************")
-                
-                self.parentService!.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
+
                 self.parentService!.startUDPService(onPort: Int(socket.listeningPort))
+                self.parentService!.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
+
                 
                 repeat {
                     let newSocket = try socket.acceptClientConnection()
@@ -264,7 +265,7 @@ class TCPClientConnector {
                     return
                 }
                 
-                logDebug("\(serviceNameForLogging(device: self.device)) Connecting to server at \(address) \(port)")
+                logDebug("\(prefixForLogging(device: self.device, proto: .tcp)) Connecting to server at \(address) \(port)")
                 try self.socket!.connect(to: address, port: Int32(port))
                 
                 // TODO: Pass socket back to delegate
@@ -285,7 +286,7 @@ class TCPClientConnector {
             }
             
             if self.socket!.isConnected {
-                logDebug("\(serviceNameForLogging(device: self.device)) TCP Client connected to \(address)")
+                logDebug("\(prefixForLogging(device: self.device, proto: .tcp)) Client connected to \(address)")
                 self.connection?.connected = true
             }
         }
