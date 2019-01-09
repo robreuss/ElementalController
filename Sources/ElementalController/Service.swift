@@ -95,7 +95,7 @@ public class Service: ServiceDelegate {
     var publisher: Publisher?
     
     // Keeps a hash of client devices and their udpIdentifier (and to assign udpIdentifier)
-    var devices: Dictionary<UInt8, ClientDevice> = [:]
+    var devices: [UInt8: ClientDevice] = [:]
     
     var tcpServiceDevice: ServiceDevice?
     var udpServiceDevice: ServiceDevice?

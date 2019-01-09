@@ -58,7 +58,7 @@ public class Browser: NSObject, NetServiceDelegate {
     var browser = NetServiceBrowser()
     var netService: NetService?
     var browserName: String = ElementalController.machineName
-    var serverDevice: [String, ServerDevice] 
+    var serverDevice: [String: ServerDevice] = [:]
     var proto: Proto = .tcp
     var resolvingService = false
     
@@ -83,7 +83,7 @@ public class Browser: NSObject, NetServiceDelegate {
     }
     
     public func browseFor(serviceName: String) {
-        serviceName = serviceName
+        self.serviceName = serviceName
         startBrowsing()
     }
     
