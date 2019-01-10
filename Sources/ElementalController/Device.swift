@@ -154,8 +154,8 @@ public class Device {
         events.connectFailed.executeHandler(device: self)
     }
     
-    func lostConnection(proto: Proto) {
-        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) lost connection")
+    func lostConnection() {
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Lost TCP connection to client")
         // Clear other connection here
         connected = false
         events.deviceDisconnected.executeHandler(device: self)

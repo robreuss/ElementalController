@@ -141,7 +141,7 @@ class TCPClient {
         if device is ServerDevice {
             (device as! ServerDevice).disconnected()
         } else {
-            device.lostConnection(proto: .tcp)
+            device.lostConnection()
         }
     }
     
@@ -214,7 +214,7 @@ class TCPClient {
 
 protocol TCPClientConnectorDelegate {
     func connectSuccess(proto: Proto)
-    func lostConnection(proto: Proto)
+    func lostConnection()
     func connectFailed(proto: Proto)
     var tcpClient: TCPClient? { get set }
 }

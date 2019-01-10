@@ -13,8 +13,7 @@ import NetService
 import Socket
 
 public class ServiceEvent {
-    var handlers: Array<((ServiceEvent, ClientDevice) -> Void)?> = []
-    
+
     var type: ServiceEventTypes.EventType // For logging purposes
     
     init(type: ServiceEventTypes.EventType) {
@@ -22,27 +21,21 @@ public class ServiceEvent {
     }
     
     public typealias EventHandler = (ServiceEvent, ClientDevice) -> Void
+    public var handler: EventHandler?
     
-    func executeHandlers(device: ClientDevice) {
-        for handler in handlers {
-            if Thread.isMainThread {
+    func executeHandler(device: ClientDevice) {
+        if Thread.isMainThread {
+            handler!(self, device)
+        } else {
+            (DispatchQueue.main).sync {
                 handler!(self, device)
-            } else {
-                (DispatchQueue.main).sync {
-                    handler!(self, device)
-                }
             }
         }
     }
-    
-    public func addHandler(handler: @escaping EventHandler) {
-        handlers.append(handler)
-    }
+
 }
 
 public class ServiceEventTypes {
-    var handlers: Array<((Service, Device) -> Void)?> = []
-    // var type: ServiceEventTypes.EventType // For logging purposes
     
     init() {
         logVerbose("Service event types initialized")
@@ -64,6 +57,7 @@ public class ServiceEventTypes {
         }
     }
     
+ 
     public var deviceConnected = ServiceEvent(type: .deviceConnected)
     public var deviceDisconnected = ServiceEvent(type: .deviceDisconnected)
     // TODO: Implement these 2
@@ -71,10 +65,8 @@ public class ServiceEventTypes {
     public var serverListening = ServiceEvent(type: .serverListening)
     
     public typealias ServiceEventHandler = (Service, Device) -> Void
+
     
-    public func addHandler(handler: @escaping ServiceEventHandler) {
-        handlers.append(handler)
-    }
 }
 
 // This is Master
@@ -172,13 +164,13 @@ public class Service: ServiceDelegate {
     
     func deviceConnected(device: ClientDevice) {
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device connected.")
-        events.deviceConnected.executeHandlers(device: device)
+        events.deviceConnected.executeHandler(device: device)
     }
     
     func deviceDisconnected(device: ClientDevice) {
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device disconnected.")
         devices.removeValue(forKey: device.udpIdentifier)
-        events.deviceDisconnected.executeHandlers(device: device)
+        events.deviceDisconnected.executeHandler(device: device)
     }
     
     // Once a device representing the client is created, send the UDP identififer

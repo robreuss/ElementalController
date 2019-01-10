@@ -41,9 +41,6 @@ public class Element {
     
     let elementReadWriteLock = DispatchQueue(label: "net.simplyformed.elementReadWriteLock")
     
-    // Each elemented setup/added by a user can have an arbitrary number of
-    // executable handlers associated with it.  This handler returns the element
-    // instance along with a dictionary containing other references.
     public typealias ElementHandler = ((Element, Device) -> Void)?
     public var handler: ElementHandler
 
