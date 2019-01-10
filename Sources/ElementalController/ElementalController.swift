@@ -20,6 +20,8 @@ import Glibc
 import NetService
 #endif
 
+let NETSERVICE_RESOLVE_TIMEOUT = 5.0
+
 public enum Proto {
     case tcp
     case udp
@@ -105,10 +107,7 @@ public class ElementalController {
     // Service provides the basis of server functionality
     public var browser = Browser()
     public var service = Service()
-    
-    // TODO: Not sure implemented, not sure should be
-    public static var useRandomServiceName = false
-    
+
     public init() {}
     
     // First method called for setting up a service, provides a Service
@@ -161,6 +160,7 @@ public class ElementalController {
         
         // TODO: Fix handling of failed access
         do {
+            logDebug("Linux hostname is: \(gethostname())")
             return "Undefined service name"
         } catch {}
         
