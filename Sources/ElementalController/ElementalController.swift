@@ -160,7 +160,6 @@ public class ElementalController {
         
         // TODO: Fix handling of failed access
         do {
-            logDebug("Linux hostname is: \(gethostname(0)())")
             return "Undefined service name"
         } catch {}
         
