@@ -50,9 +50,11 @@ class TCPService {
                 //logDebug("*************************************************************************")
                 logDebug("\(prefixForLogging(serviceName: self.parentService!.serviceName, proto: .tcp)) TCP service listening on port \(socket.listeningPort)")
                 //logDebug("*************************************************************************")
-                
-                self.parentService!.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
+
                 self.parentService!.startUDPService(onPort: Int(socket.listeningPort))
+                sleep(1) // Give UDP a second to startup before we advertise
+                self.parentService!.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
+
                 
                 repeat {
 
@@ -145,7 +147,7 @@ class TCPClient {
         if device is ServerDevice {
             (device as! ServerDevice).disconnected()
         } else {
-            device.lostConnection(proto: .tcp)
+            device.lostConnection()
         }
     }
     
@@ -170,9 +172,7 @@ class TCPClient {
             do {
                 repeat {
                     let bytesRead = try socket!.read(into: &readData)
-                    
-                    // TODO: Clear elementDataBuffer on disconnect?
-                    // self.elementDataBufferLockQueue.sync {
+
                     messageDataBuffer.append(readData)
                     
                     while messageDataBuffer.count > 0, self.shouldKeepRunning {
@@ -218,7 +218,7 @@ class TCPClient {
 
 protocol TCPClientConnectorDelegate {
     func connectSuccess(proto: Proto)
-    func lostConnection(proto: Proto)
+    func lostConnection()
     func connectFailed(proto: Proto)
     var tcpClient: TCPClient? { get set }
 }
@@ -270,7 +270,7 @@ class TCPClientConnector {
                     return
                 }
                 
-                logDebug("\(serviceNameForLogging(device: self.device)) Connecting to server at \(address) \(port)")
+                logDebug("\(prefixForLogging(device: self.device, proto: .tcp)) Connecting to server at \(address) \(port)")
                 try self.socket!.connect(to: address, port: Int32(port))
                 
                 // TODO: Pass socket back to delegate
@@ -296,7 +296,7 @@ class TCPClientConnector {
             }
             
             if self.socket!.isConnected {
-                logDebug("\(serviceNameForLogging(device: self.device)) TCP Client connected to \(address)")
+                logDebug("\(prefixForLogging(device: self.device, proto: .tcp)) Client connected to \(address)")
                 self.connection?.connected = true
             }
         }

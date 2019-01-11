@@ -20,6 +20,8 @@ import Glibc
 import NetService
 #endif
 
+let NETSERVICE_RESOLVE_TIMEOUT = 5.0
+
 public enum Proto {
     case tcp
     case udp
@@ -34,32 +36,78 @@ public enum Proto {
 
 public class ElementalController {
     // User confirmation options
-    public static var serviceDomain = "local." // Currently framework is only tested for private LAN use so this shouldn't be changed
-    public static var TCPBufferSize = 4096 // Amount of data fetched from the socket per cycle.  Make larger or smaller based on typical message size
-    public static var UDPBufferSize = 512 // Same.
-    public static var loggerPrefix = "EC" // What if anything precedes log lines to it's clear the lines are coming from the framework
-    public static var transferAnalysisFrequency: Float = 10.0 // Frequency transfer analysis stats should be calculated and displayed
-    public static var enableTransferAnalysis = false // Transfer analysis logs information about the performance of network and message processing
+    
+    // Currently framework is only tested for private LAN use so this shouldn't be changed unless you're daring
+    public static var serviceDomain = "local." {
+        didSet {
+            logDebug("Service domain set to: \(serviceDomain)")
+        }
+    }
+    
+    // Amount of data fetched from the socket per cycle.  Make larger or smaller based on typical message size
+    public static var TCPBufferSize = 4096 {
+        didSet {
+            logDebug("TCP buffer size set to: \(TCPBufferSize)")
+        }
+    }
+    public static var UDPBufferSize = 512 {
+        didSet {
+            logDebug("UDP buffer size set to: \(UDPBufferSize)")
+        }
+    }
+    
+    // What if anything precedes log lines to it's clear the lines are coming from the framework
+    public static var loggerPrefix = "EC" {
+        didSet {
+            logDebug("Logger prefix set to: \(loggerPrefix)")
+        }
+    }
+    
+    // Frequency transfer analysis stats should be calculated and displayed
+    public static var transferAnalysisFrequency: Float = 10.0 {
+        didSet {
+            logDebug("Transfer analysis frequency set to: \(transferAnalysisFrequency)")
+        }
+    }
+    
+    // Transfer analysis logs information about the performance of network and message processing
+    public static var enableTransferAnalysis = false {
+        didSet {
+            logDebug("Transfer analysis: \(enableTransferAnalysis)")
+        }
+    }
     
     // An arbitrary number used to identify the start of an element message.
     // Not required, just a mechanism to keep messages aligned.
-    public static var headerIdentifier: UInt32 = 2584594329
-    public static var requireHeaderIdentifier = true
+    public static var headerIdentifier: UInt32 = 2584594329  {
+        didSet {
+            logDebug("Header identifier set to: \(headerIdentifier)")
+            logError("Header identifier depracated")
+        }
+    }
+    
+    public static var requireHeaderIdentifier = false {
+        didSet {
+            logDebug("Require header identifier: \(requireHeaderIdentifier)")
+            logError("Header identifier depracated")
+        }
+    }
     
     // If UDP server is disabled, we intentionally crash if a UDP element is added.
     // This may be preferred becuase UDP is so open, although in our implementation so
     // is TCP at this point.
-    public static var allowUDPService = true
+    public static var allowUDPService = true {
+        didSet {
+            logDebug("Allow UDP service: \(allowUDPService)")
+        }
+    }
     
     // Each instance use of the framework will employ one or both of these mechanisms:
     // Browser provides the basis of client functionality
     // Service provides the basis of server functionality
     public var browser = Browser()
     public var service = Service()
-    
-    // TODO: Not sure implemented, not sure should be
-    public static var useRandomServiceName = false
-    
+
     public init() {}
     
     // First method called for setting up a service, provides a Service

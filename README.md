@@ -7,6 +7,8 @@ It runs on iOS, MacOS, tvOS and Linux.
 
 Conceptually, the framework is built up around the notion of a set of type-specific control "elements" which are defined at compile time. A reference ID and element definition common to both endpoints provides the basis for the exchange of element data, within a tiny message envelope.  At the end-point, a message is decoded and a handler block triggered by the event. 
 
+It is a single codebase for both client and server.
+
 An alternative to utilizing raw TCP or UDP, it offers:
 
 * Easy service publishing and discovery
@@ -53,23 +55,50 @@ TCP is a connection-oriented protocol and therefore supports bi-directional comm
 
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
 ## Installation 
-### Using on Linux
-You will need to install the following in order for publishing and discovery of services to take place under Linux:
+### Installation on Linux
+#### Swift Package Manager
+A `Package.swift` file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  Your Swift `Package.swift` would look something like this:
+```swift
+// swift-tools-version:4.1
+import PackageDescription
+
+let package = Package(
+    name: "EC_ElementTests",
+    dependencies: [
+        .package(url: "https://github.com/robreuss/ElementalController.git", .branch("develop")),
+    ],
+    targets: [
+        .target(
+            name: "EC_ElementTests",
+            dependencies: ["ElementalController"]),
+    ]
+)
+```
+
+#### Swift Version
+Swift 4.1.3 is recommended and has been tested on Raspbian Stretch, Ubuntu Mate 16.04 and Ubuntu 16.04.  There are links at the top of [this page](https://www.uraimo.com/2018/06/13/A-big-update-on-Swift-4-1-2-for-raspberry-pi-zero-1-2-3/) to download different flavors of Linux and ARM hardware.
+#### Hostname
+Note that your hostname on Linux must end with the local domain, for example:
+
+```myhostname.local```
+#### Avahi
+You will need to install Avahi with the following Apt command to support publishing services under Linux:
 
 ```sudo apt install libavahi-compat-libdnssd-dev```
+### Installation on iOS / tvOS and macOS
 ### CocoaPods
-Coming soon.  For now use Carthage for iOS/macOS/tvOS, or just clone the repo and add the files to your project directly.
+Coming soon.  For now use Carthage to intgrate the iOS/macOS/tvOS frameworks, or just clone the repo and add the files to your project directly.
 ### Carthage
 Using a Cartfile, you can get the ElementalController framework for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile:
 
 `github "robreuss/ElementalController" ~> 0.0.4`
 
-Once you run the command `carthage update` you'll fine the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+Once you run the command `carthage update` you'll find the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
 
 Learn more about [Carthage](https://github.com/Carthage/Carthage).
 
-### Swift Package Manager
-A Package.swift file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  
+
+
 
 ## Usage
 ### Client-Side 
@@ -132,46 +161,67 @@ elementalController.browser.browse(serviceName: "screen_control")
 Code for the server side follows a similar pattern as the client side, with element and handler definition first and publishing only once those are done:
 ```swift
 import ElementalController
+import Foundation
+import Dispatch
+import Glibc
 
-// Element identifiers must be the same as the client side
-enum ElementIdentifier: Int8 {
+class MainProcess {
+
+    // Hold a reference to our instance of EC so it doesn't deinitialize
+    // You can have more than one of these to run multiple servers/clients
+    var elementalController = ElementalController()
     
-    case brightness = 1
-    case backlight = 2
+    // Element identifiers must be the same as the client side
+    enum ElementIdentifier: Int8 {
+        
+        case brightness = 1
+        case backlight = 2
+        
+    }
+    
+    func start() {
+
+        elementalController.setupForService(serviceName: "screen_control", displayName: "My server")
+        
+        elementalController.service.events.deviceConnected.handler = { _, device in
+                
+                // Attach elements to client device...
+                let brightness = device.attachElement(
+                    Element(identifier: ElementIdentifier.brightness.rawValue,
+                            displayName: "Brightness",
+                            proto: .tcp,
+                            dataType: .Float))
+                
+                let backlight = device.attachElement(
+                    Element(identifier: ElementIdentifier.backlight.rawValue,
+                            displayName: "Backlight",
+                            proto: .tcp,
+                            dataType: .Float))
+                
+                brightness.handler = { element, _ in
+                    logDebug("Server received a brightness element: \(element.value ?? "")")
+                }
+                
+                backlight.handler = { element, _ in
+                    logDebug("Server received a backlight element: \(element.value  ?? "")")
+                }
+                
+        }
+        
+        // Setting this to port "0" will automatically select an available port
+        elementalController.service.publish(onPort: 0)
+    }
+    
     
 }
-    
-var elementalController = ElementalController()
-elementalController.setupForService(serviceName: "screen_control", displayName: "My server")
-    
-elementalController.service.events.onDeviceConnected.addHandler(
-    handler: { _, device in
-        
-        // Attach elements to client device...
-        let brightness = device.attachElement(
-            Element(identifier: ElementIdentifier.brightness.rawValue,
-                    displayName: "Brightness",
-                    proto: .tcp,
-                    dataType: .Float))
-        
-        let backlight = device.attachElement(
-            Element(identifier: ElementIdentifier.backlight.rawValue,
-                    displayName: "Backlight",
-                    proto: .tcp,
-                    dataType: .Float))
-    
-	    brightness.handler = { element, _ in
-	        logDebug("Server received a brightness element: \(element.value)")
-	    }
-	    
-	    backlight.handler = { element, _ in
-	    	logDebug("Server received a backlight element: \(element.value)")
-	    }
-    
-})
-    
-// Setting this to port "0" will automatically select an available port
-elementalController.service.publish(onPort: 0)
+
+var process = MainProcess()
+process.start()
+
+// Prevent our instance of MainProcess from being destroyed
+withExtendedLifetime((process)) {
+    RunLoop.main.run()
+}
 ```
 ## Thanks
 ElementalController depends on the following projects:

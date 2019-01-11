@@ -34,6 +34,15 @@ public class BrowserEvent {
         }
     }
     
+    public var handler: BrowserHandler{
+        set {
+            privateHandler = newValue
+        }
+        get {
+            return privateHandler
+        }
+    }
+    
     public func handler(handler: BrowserHandler) {
         privateHandler = handler
     }
@@ -61,6 +70,7 @@ public class Browser: NSObject, NetServiceDelegate {
     var serverDevice: [String: ServerDevice] = [:]
     var proto: Proto = .tcp
     var resolvingService = false
+    public var isBrowsing = false
     
     public var events = BrowserEventTypes()
     
@@ -80,6 +90,7 @@ public class Browser: NSObject, NetServiceDelegate {
         }
         events = BrowserEventTypes()
         browser.delegate = self
+        isBrowsing = false
     }
     
     public func browseFor(serviceName: String) {
@@ -88,15 +99,24 @@ public class Browser: NSObject, NetServiceDelegate {
     }
     
     public func stopBrowsing() {
-        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Stopping browsing for \(serviceName)")
-        browser.stop()
-        resolvingService = false
+        if isBrowsing == true {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Stopping browsing for \(serviceName)")
+            browser.stop()
+            resolvingService = false
+            isBrowsing = false
+        } else {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Stop browsing called when not browsing")
+        }
     }
     
     func startBrowsing() {
-        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browsing for service of type: \(ElementalController.serviceType(serviceName: serviceName, proto: proto)) in domain: \(ElementalController.serviceDomain)")
-
-        browser.searchForServices(ofType: ElementalController.serviceType(serviceName: serviceName, proto: proto), inDomain: ElementalController.serviceDomain)
+        if isBrowsing {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) startBrowsing called when already browsing for service of type: \(ElementalController.serviceType(serviceName: serviceName, proto: proto)) in domain: \(ElementalController.serviceDomain)")
+        } else {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browsing for service of type: \(ElementalController.serviceType(serviceName: serviceName, proto: proto)) in domain: \(ElementalController.serviceDomain)")
+            isBrowsing = true
+            browser.searchForServices(ofType: ElementalController.serviceType(serviceName: serviceName, proto: proto), inDomain: ElementalController.serviceDomain)
+        }
     }
     
     func setupServerDevicefor(aServiceName: String, withDisplayName: String, atHost: String, onPort: Int) {
@@ -122,20 +142,18 @@ extension Browser: NetServiceBrowserDelegate {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
             netService = service
             netService?.delegate = self
-            netService?.resolve(withTimeout: 5.0) // TODO: Make this value configurable
+            netService?.resolve(withTimeout: NETSERVICE_RESOLVE_TIMEOUT)
         } else {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Not resolving service \(service.type), already resolving a service")
         }
     }
-    
-    // TODO: Need to test this resolvingService guard for scenarios where resolving
-    // is cancelled before completion.
+
     public func netServiceDidResolveAddress(_ sender: NetService) {
         if !resolvingService {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Ignoring resolution of service name \"\(sender.name)\" because resolution was cancelled.")
         } else {
             if let hostName = sender.hostName {
-                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved address: \(hostName): \(sender.port), service name: \"\(sender.name)\"")
+                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved address: \(hostName): \(sender.port), service name: \(serviceName) display name: \"\(sender.name)\"")
             } else {
                 logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser successfully resolved (unknown host name)")
             }
@@ -151,6 +169,7 @@ extension Browser: NetServiceBrowserDelegate {
     
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
         logVerbose("\(formatServiceNameForLogging(serviceName: serviceName)) Browser did stop search")
+
         // ElementalController.events.browsingStopped.executeHandlers(contextInfo: ["serviceName": serviceName])
     }
     
