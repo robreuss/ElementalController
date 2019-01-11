@@ -91,25 +91,24 @@ open class UDPService {
     // Port is passed in based on what port was set or dynamically
     // assigned for TCP.  Both protocols run on the same defined port.
     func listenForConnections(onPort: Int) {
-        // TODO: Expose QOS to user
         let queue = DispatchQueue.global(qos: .userInteractive)
         queue.async { [unowned self] in
             
             do {
                 try self.socket = Socket.create(family: UDPClient.udpProtocolFamily, type: Socket.SocketType.datagram, proto: Socket.SocketProtocol.udp)
-                
-                logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) UDP service listening on port \(onPort)")
-                
+
                 guard let socket = self.socket else {
-                    logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Unable to unwrap socket")
+                    logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Failure to unwrap UDP socket")
                     self.shouldKeepRunning = false
                     (DispatchQueue.main).sync {
-                        // TODO: Need to callback with this information and probably shut TCP down as well.
+                        self.service!.failedToPublish(proto: .udp)
                         return
                     }
                     return // Compiler insists on this
                 }
                 
+                logDebug("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) UDP service listening on port \(onPort)")
+      
                 // See ElementalController for information about the UDP buffer
                 var messageDataBuffer = Data(capacity: ElementalController.UDPBufferSize)
                 
