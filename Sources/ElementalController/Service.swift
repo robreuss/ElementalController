@@ -20,10 +20,10 @@ public class ServiceEvent {
         self.type = type
     }
     
-    public typealias EventHandler = (ServiceEvent, ClientDevice) -> Void
+    public typealias EventHandler = (ServiceEvent, Device) -> Void
     public var handler: EventHandler?
     
-    func executeHandler(device: ClientDevice) {
+    func executeHandler(device: Device) {
         if Thread.isMainThread {
             handler!(self, device)
         } else {
@@ -46,6 +46,7 @@ public class ServiceEventTypes {
         case deviceDisconnected
         case servicePublished
         case serverListening
+        case serviceFailedToPublish
         
         private var description: String {
             switch self {
@@ -53,6 +54,7 @@ public class ServiceEventTypes {
             case .deviceDisconnected: return "Device Disconnected"
             case .servicePublished: return "Service Published"
             case .serverListening: return "Server Listening"
+            case .serviceFailedToPublish: return "Service Failed To Publish"
             }
         }
     }
@@ -60,6 +62,7 @@ public class ServiceEventTypes {
  
     public var deviceConnected = ServiceEvent(type: .deviceConnected)
     public var deviceDisconnected = ServiceEvent(type: .deviceDisconnected)
+    public var serviceFailedToPublish = ServiceEvent(type: .serviceFailedToPublish)
     // TODO: Implement these 2
     public var servicePublished = ServiceEvent(type: .servicePublished)
     public var serverListening = ServiceEvent(type: .serverListening)
@@ -79,6 +82,7 @@ protocol ServiceDelegate {
     var port: Int { get set }
     func deviceConnected(device: ClientDevice)
     func deviceDisconnected(device: ClientDevice)
+    func failedToPublish(proto: Proto)
 }
 
 public class Service: ServiceDelegate {
@@ -96,6 +100,8 @@ public class Service: ServiceDelegate {
     var serviceName: String = ""
     var isPublished: Bool = false
     var displayName: String = ""
+    
+    var serviceActive = true
     
     public var events: ServiceEventTypes
     
@@ -115,6 +121,7 @@ public class Service: ServiceDelegate {
     }
     
     public func stopService() {
+        serviceActive = false
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Shutting down service")
         for device: ClientDevice in devices.values {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Device TCP client being shutdown: \(device.displayName)")
@@ -131,19 +138,22 @@ public class Service: ServiceDelegate {
     
     // Start the TCP service - this will give us an assigned port if passed a zero value
     public func publish(onPort: Int) {
+        serviceActive = true
         tcpService = TCPService(parentServer: self)
         tcpService!.listenForConnections(onPort: onPort)
     }
     
     // Advertise the TCP service
     func publishTCPServiceAdvertisment(onPort: Int) {
-        publisher = Publisher(delegate: self)
-        publisher!.start(serviceName: serviceName, displayName: displayName, proto: .tcp, onPort: onPort)
+        if serviceActive {
+            publisher = Publisher(delegate: self)
+            publisher!.start(serviceName: serviceName, displayName: displayName, proto: .tcp, onPort: onPort)
+        }
     }
     
     // Start up the UDP Service once we have the port (static or dynamic)
     func startUDPService(onPort: Int) {
-        if ElementalController.allowUDPService {
+        if serviceActive && ElementalController.allowUDPService {
             if udpService == nil {
                 udpService = UDPService(service: self)
                 udpService!.listenForConnections(onPort: onPort)
@@ -171,6 +181,12 @@ public class Service: ServiceDelegate {
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device disconnected.")
         devices.removeValue(forKey: device.udpIdentifier)
         events.deviceDisconnected.executeHandler(device: device)
+    }
+    
+    func failedToPublish(proto: Proto) {
+        logDebug("\(prefixForLogging(serviceName: serviceName, proto: proto)) Service failed to publish")
+        stopService()
+        events.serviceFailedToPublish.executeHandler(device: self.udpServiceDevice!)
     }
     
     // Once a device representing the client is created, send the UDP identififer
@@ -264,10 +280,9 @@ class Publisher: NSObject, NetServiceDelegate {
         logVerbose("\(prefixForLogging(serviceName: serviceName, proto: .tcp)) Service did update TXT record: \(sender.type)")
     }
     
-    // TODO: Need to add a handler or notification for this, and/or turn off servers if this happens?  Maybe not,
-    // because a user might not care if they're using static IP addresses?
     public func netService(_ sender: NetService, didNotPublish errorDict: [String: NSNumber]) {
         logError("\(prefixForLogging(serviceName: serviceName, proto: .tcp)) Service did not publish: \(sender.type): \(errorDict)")
+        delegate.failedToPublish(proto: .tcp)
     }
     
     public func netService(_ sender: NetService, didNotResolve errorDict: [String: NSNumber]) {

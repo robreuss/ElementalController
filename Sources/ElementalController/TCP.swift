@@ -166,9 +166,7 @@ class TCPClient {
             do {
                 repeat {
                     let bytesRead = try socket!.read(into: &readData)
-                    
-                    // TODO: Clear elementDataBuffer on disconnect?
-                    // self.elementDataBufferLockQueue.sync {
+
                     messageDataBuffer.append(readData)
                     
                     while messageDataBuffer.count > 0, self.shouldKeepRunning {
