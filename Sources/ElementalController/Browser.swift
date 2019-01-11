@@ -34,6 +34,15 @@ public class BrowserEvent {
         }
     }
     
+    public var handler: BrowserHandler{
+        set {
+            privateHandler = newValue
+        }
+        get {
+            return privateHandler
+        }
+    }
+    
     public func handler(handler: BrowserHandler) {
         privateHandler = handler
     }

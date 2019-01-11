@@ -40,12 +40,14 @@ public class DeviceEventTypes {
         case deviceDisconnected
         case connectFailed
         case connected
+        case serviceFailedToPublish
         
         private var description: String {
             switch self {
-            case .deviceDisconnected: return "Device Disconnected"
-            case .connectFailed: return "Connect Failed"
+            case .deviceDisconnected: return "Device disconnected"
+            case .connectFailed: return "Connect failed"
             case .connected: return "Connected"
+            case .serviceFailedToPublish: return "Service failed to publish"
             }
         }
     }
@@ -53,6 +55,7 @@ public class DeviceEventTypes {
     public var deviceDisconnected = DeviceEvent(type: .deviceDisconnected)
     public var connectFailed = DeviceEvent(type: .connectFailed)
     public var connected = DeviceEvent(type: .connected)
+    public var serviceFailedToPublish = DeviceEvent(type: .serviceFailedToPublish)
     
     deinit {
         logDebug("DeviceEventTypes deinitialized")
@@ -164,7 +167,7 @@ public class Device {
     func processMessageIntoElement(identifier: Int8, valueData: Data) {
         guard let element = getElementWith(identifier: identifier) else { return }
         element.valueAsData = valueData
-        logVerbose("Received element \(element.displayName) with value \(element.value)")
+        logVerbose("Received element \(element.displayName) with value \(element.value ?? "")")
         // Below zero element identifiers refer to system elements
         if element.identifier >= 0 {
             // DispatchQueue.main.sync {
@@ -236,6 +239,13 @@ public class ServiceDevice: Device {
         super.init(serviceName: serviceName, displayName: displayName)
         self.service = service
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Initializing Service Device")
+    }
+    
+    func serviceFailedToPublish() {
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Problem initializing servers")
+        // Clear other connection here
+        connected = false
+        events.serviceFailedToPublish.executeHandler(device: self)
     }
 }
 
