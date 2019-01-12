@@ -93,6 +93,13 @@ public class ElementalController {
         }
     }
     
+    public static var protocolFamily: Socket.ProtocolFamily = Socket.ProtocolFamily.inet {
+        didSet {
+            logDebug("Protocol family set to: \(protocolFamily)")
+        }
+    }
+    
+    
     // If UDP server is disabled, we intentionally crash if a UDP element is added.
     // This may be preferred becuase UDP is so open, although in our implementation so
     // is TCP at this point.
@@ -160,7 +167,7 @@ public class ElementalController {
         
         // TODO: Fix handling of failed access
         do {
-            return "Undefined service name"
+            return "Undefined name"
         } catch {}
         
         return ""

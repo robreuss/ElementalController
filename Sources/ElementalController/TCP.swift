@@ -34,7 +34,7 @@ class TCPService {
             do {
                 // Create a socket...
                 logVerbose("Setting up IPv6 socket")
-                try self.listenerSocket = Socket.create(family: .inet6)
+                try self.listenerSocket = Socket.create(family: ElementalController.protocolFamily)
                 guard let socket = self.listenerSocket else {
                     logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Unable to unwrap socket...")
                     (DispatchQueue.main).sync {
@@ -260,7 +260,7 @@ class TCPClientConnector {
             
             do {
                 do {
-                    self.socket = try Socket.create(family: UDPClient.udpProtocolFamily)
+                    self.socket = try Socket.create(family: ElementalController.protocolFamily)
                 } catch {
                     logError("\(serviceNameForLogging(device: self.device)) TCP Client got error creating socket: \(error)")
                     self.socket?.close()
