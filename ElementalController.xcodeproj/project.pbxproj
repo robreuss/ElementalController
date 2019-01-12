@@ -21,7 +21,7 @@
 
 /* Begin PBXFileReference section */
 		2083572521E532F100D31FCE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		20B9C52921E45A150003EC75 /* ElementalController_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		20B9C52921E45A150003EC75 /* ElementalController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20B9C53621E45A4E0003EC75 /* TCP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCP.swift; sourceTree = "<group>"; };
 		20B9C53721E45A4E0003EC75 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		20B9C53821E45A4E0003EC75 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -32,8 +32,8 @@
 		20B9C53D21E45A4E0003EC75 /* ElementalController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementalController.swift; sourceTree = "<group>"; };
 		20B9C53E21E45A4E0003EC75 /* UDP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDP.swift; sourceTree = "<group>"; };
 		20B9C56721E461660003EC75 /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/iOS/Socket.framework; sourceTree = "<group>"; };
-		20B9C57221E465180003EC75 /* ElementalController_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		20B9C57F21E465410003EC75 /* ElementalController_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		20B9C57221E465180003EC75 /* ElementalController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		20B9C57F21E465410003EC75 /* ElementalController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,9 +74,9 @@
 		20B9C52A21E45A150003EC75 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				20B9C52921E45A150003EC75 /* ElementalController_iOS.framework */,
-				20B9C57221E465180003EC75 /* ElementalController_macOS.framework */,
-				20B9C57F21E465410003EC75 /* ElementalController_tvOS.framework */,
+				20B9C52921E45A150003EC75 /* ElementalController.framework */,
+				20B9C57221E465180003EC75 /* ElementalController.framework */,
+				20B9C57F21E465410003EC75 /* ElementalController.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -156,7 +156,7 @@
 			);
 			name = "ElementalController-iOS";
 			productName = ElementalController;
-			productReference = 20B9C52921E45A150003EC75 /* ElementalController_iOS.framework */;
+			productReference = 20B9C52921E45A150003EC75 /* ElementalController.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		20B9C57121E465180003EC75 /* ElementalController-macOS */ = {
@@ -174,7 +174,7 @@
 			);
 			name = "ElementalController-macOS";
 			productName = "ElementalController macOS";
-			productReference = 20B9C57221E465180003EC75 /* ElementalController_macOS.framework */;
+			productReference = 20B9C57221E465180003EC75 /* ElementalController.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		20B9C57E21E465410003EC75 /* ElementalController-tvOS */ = {
@@ -192,7 +192,7 @@
 			);
 			name = "ElementalController-tvOS";
 			productName = ElementalController;
-			productReference = 20B9C57F21E465410003EC75 /* ElementalController_tvOS.framework */;
+			productReference = 20B9C57F21E465410003EC75 /* ElementalController.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -436,7 +436,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.simplyformed.ElementalController;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = ElementalController;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -465,7 +465,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.simplyformed.ElementalController;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = ElementalController;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -493,7 +493,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.simplyformed.ElementalController-macOS";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = ElementalController;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -521,7 +521,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.simplyformed.ElementalController-macOS";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = ElementalController;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -546,7 +546,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.simplyformed.ElementalController;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = ElementalController;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -573,7 +573,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.simplyformed.ElementalController;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = ElementalController;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
