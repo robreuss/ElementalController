@@ -31,7 +31,7 @@ class UDPClient {
                 logDebug("\(serviceNameForLogging(device: device)) Error while creating UDP socket: \(error.localizedDescription)")
                 return
             }
-            logDebug("\(serviceNameForLogging(device: device)) Error fell through: \(error)")
+            logDebug("\(serviceNameForLogging(device: device)) Error: \(error)")
         }
     }
     
@@ -54,7 +54,7 @@ class UDPClient {
                 logDebug("\(serviceNameForLogging(device: device)) UDP failure to write element \(element.identifier) to socket with remote address \(String(describing: remoteAddress)) with error \(error.localizedDescription)")
                 return false
             }
-            logDebug("\(serviceNameForLogging(device: device)) Fell through: \(error)")
+            logDebug("\(serviceNameForLogging(device: device)) Error: \(error)")
             return false
         }
     }

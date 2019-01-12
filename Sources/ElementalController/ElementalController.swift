@@ -167,7 +167,7 @@ public class ElementalController {
         
         // TODO: Fix handling of failed access
         do {
-            return "Undefined service name"
+            return "Undefined name"
         } catch {}
         
         return ""
