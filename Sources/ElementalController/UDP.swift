@@ -10,7 +10,7 @@ import Foundation
 import Socket
 
 class UDPClient {
-    static var udpProtocolFamily = Socket.ProtocolFamily.inet6
+    static var udpProtocolFamily = Socket.ProtocolFamily.inet
     
     var device: Device?
     
