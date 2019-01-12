@@ -10,8 +10,7 @@ import Foundation
 import Socket
 
 class UDPClient {
-    static var udpProtocolFamily = Socket.ProtocolFamily.inet
-    
+
     var device: Device?
     
     // Once the socket is open, client needs this to send data
@@ -26,7 +25,7 @@ class UDPClient {
         self.remoteAddress = Socket.createAddress(for: device.remoteServerAddress, on: Int32(port))
         
         do {
-            try self.socket = Socket.create(family: UDPClient.udpProtocolFamily, type: Socket.SocketType.datagram, proto: Socket.SocketProtocol.udp)
+            try self.socket = Socket.create(family: ElementController.protocolFamily, type: Socket.SocketType.datagram, proto: Socket.SocketProtocol.udp)
         } catch {
             guard error is Socket.Error else {
                 logDebug("\(serviceNameForLogging(device: device)) Error while creating UDP socket: \(error.localizedDescription)")
@@ -95,7 +94,7 @@ open class UDPService {
         queue.async { [unowned self] in
             
             do {
-                try self.socket = Socket.create(family: UDPClient.udpProtocolFamily, type: Socket.SocketType.datagram, proto: Socket.SocketProtocol.udp)
+                try self.socket = Socket.create(family: ElementController.protocolFamily, type: Socket.SocketType.datagram, proto: Socket.SocketProtocol.udp)
 
                 guard let socket = self.socket else {
                     logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Failure to unwrap UDP socket")

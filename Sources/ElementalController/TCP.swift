@@ -34,7 +34,7 @@ class TCPService {
             do {
                 // Create a socket...
                 logVerbose("Setting up IPv6 socket")
-                try self.listenerSocket = Socket.create(family: .inet)
+                try self.listenerSocket = Socket.create(family: ElementController.protocolFamily)
                 guard let socket = self.listenerSocket else {
                     logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Unable to unwrap socket...")
                     (DispatchQueue.main).sync {
