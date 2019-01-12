@@ -142,7 +142,7 @@ elementalController.browser.events.onFoundServer.handler { serverDevice in
     serverDevice.events.onConnect.handler = {serverDevice in
         
         if let brightness = serverDevice.getElementWith(identifier: ElementIdentifier.brightness.rawValue) {
-            brightness.value = 0.0
+            brightness.value = Float(0.0)
             let sendSuccess = serverDevice.send(element: brightness)
         } else {
             logError("Unable to find brightness element")
