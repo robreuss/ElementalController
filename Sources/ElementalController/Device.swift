@@ -159,7 +159,6 @@ public class Device {
     
     func lostConnection() {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Lost TCP connection to client")
-        // Clear other connection here
         isConnected = false
         events.deviceDisconnected.executeHandler(device: self)
     }
@@ -229,6 +228,11 @@ public class ClientDevice: Device {
         deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (system)", proto: .tcp, dataType: .String))
         shutdownMessageElement = attachElement(Element(identifier: SystemElements.shutdownMessage.rawValue, displayName: "Shutdown Message (system)", proto: .tcp, dataType: .String))
     }
+    
+    override func lostConnection() {
+        super.lostConnection()
+        service?.deviceDisconnected(device: self)
+    }
 }
 
 // Service has two of these, one for TCP and one for UDP
@@ -288,6 +292,11 @@ public class ServerDevice: Device {
     // When the service goes offline
     public func disconnected() {
         events.deviceDisconnected.executeHandler(device: self)
+    }
+    
+    override func lostConnection() {
+        super.lostConnection()
+        disconnected()
     }
     
     func sendUDPElement(element: Element) -> Bool {
