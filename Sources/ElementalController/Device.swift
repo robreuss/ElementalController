@@ -91,7 +91,7 @@ public class Device {
     public var displayName: String = ""
     public var serviceName: String = ""
     
-    public var connected: Bool = false
+    public var isConnected: Bool = false
     public var supportsMotion: Bool = false
     
     private var elements: [Int8: Element] = [:]
@@ -141,7 +141,7 @@ public class Device {
     }
     
     func connectSuccess(proto: Proto) {
-        connected = true
+        isConnected = true
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) [\(proto)] Device received connect success")
         
         // Send device name
@@ -153,14 +153,14 @@ public class Device {
     func connectFailed(proto: Proto) {
         // Clear other connection here
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) connection failed")
-        connected = false
+        isConnected = false
         events.connectFailed.executeHandler(device: self)
     }
     
     func lostConnection() {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Lost TCP connection to client")
         // Clear other connection here
-        connected = false
+        isConnected = false
         events.deviceDisconnected.executeHandler(device: self)
     }
     
@@ -244,7 +244,7 @@ public class ServiceDevice: Device {
     func serviceFailedToPublish() {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Problem initializing servers")
         // Clear other connection here
-        connected = false
+        isConnected = false
         events.serviceFailedToPublish.executeHandler(device: self)
     }
 }
@@ -275,6 +275,14 @@ public class ServerDevice: Device {
         udpClient = UDPClient(device: self, port: remoteServerPort)
         tcpClientConnector = TCPClientConnector(device: self)
         tcpClientConnector?.connectTo(address: remoteServerAddress, port: remoteServerPort)
+    }
+    
+    // Disconnect from service and cleanup
+    public func disconnect() {
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Disconnecting from service")
+        udpClient?.shutdown()
+        tcpClient?.shutdown()
+        disconnected()  
     }
     
     // When the service goes offline
