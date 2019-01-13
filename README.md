@@ -1,4 +1,4 @@
-***This is alpha software and should be utilized at your own risk.  The programmatic interface is subject to change.***
+***I can't emphasize enough that this is alpha software and should be utilized at your own risk.  The programmatic interface, in particular, is subject to change.***
 # Elemental Controller
 
 Intended for Swift developers, this framework impliements a simple application layer protocol over TCP and UDP to provide a lean, low latency, and event-driven approach to controlling devices in a LAN-based environment.  It is designed for use cases such as controlling a Raspberry Pi robot on a LAN rather than managing a large fleet of agricultural sensors across the world.
@@ -54,6 +54,8 @@ When an Elemental Controller service is setup, both a TCP and UDP service are es
 TCP is a connection-oriented protocol and therefore supports bi-directional communication, whereas UDP only supports communication from the client to the server.  
 
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
+## Examples
+[iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux](https://github.com/robreuss/ElementalController_Linux_Sample) sample applications are available to be used as a pair in demonstrating client-server interaction and the basic workflow of ElementalController.  
 ## Installation 
 ### Installation on Linux
 #### Swift Package Manager
