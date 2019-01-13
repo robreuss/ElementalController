@@ -234,6 +234,7 @@ class Publisher: NSObject, NetServiceDelegate {
     var delegate: ServiceDelegate
     var netService: NetService?
     var serviceName: String = ""
+    var isPublished = false
     
     init(delegate: ServiceDelegate) {
         self.delegate = delegate
@@ -257,11 +258,14 @@ class Publisher: NSObject, NetServiceDelegate {
     
     public func netServiceDidPublish(_ sender: NetService) {
         logDebug("Service \(serviceName) is now published")
+        isPublished = true
     }
     
     func stop() {
-        logDebug("\(prefixForLogging(serviceName: serviceName, proto: .tcp)) Shutting down TCP service publisher")
-        netService?.stop()
+        if isPublished {
+            logDebug("\(prefixForLogging(serviceName: serviceName, proto: .tcp)) Shutting down TCP service publisher")
+            netService?.stop()
+        }
     }
     
     public func netServiceWillPublish(_ sender: NetService) {
