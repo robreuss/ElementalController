@@ -56,9 +56,6 @@ TCP is a connection-oriented protocol and therefore supports bi-directional comm
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
 ## Examples
 [iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux](https://github.com/robreuss/ElementalController_Linux_Sample) sample applications are available to be used as a pair in demonstrating client-server interaction and the basic workflow of ElementalController.  
-![Screenshot of iOS sample app for ElementalCOntroller](https://github.com/robreuss/ElementalController_iOS_Sample/blob/master/Simulator%20Screen%20Shot%20-%20iPhone%20X%20-%202019-01-13%20at%2017.57.50.png =250x)
-
-
 ## Installation 
 ### Installation on Linux
 #### Swift Package Manager
