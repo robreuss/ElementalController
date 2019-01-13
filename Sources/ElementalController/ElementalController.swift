@@ -93,7 +93,7 @@ public class ElementalController {
         }
     }
     
-    public static var protocolFamily: Socket.ProtocolFamily = Socket.ProtocolFamily.inet {
+    public static var protocolFamily: Socket.ProtocolFamily = Socket.ProtocolFamily.inet6 {
         didSet {
             logDebug("Protocol family set to: \(protocolFamily)")
         }
