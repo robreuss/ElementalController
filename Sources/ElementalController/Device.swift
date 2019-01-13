@@ -91,7 +91,7 @@ public class Device {
     public var displayName: String = ""
     public var serviceName: String = ""
     
-    public var connected: Bool = false
+    public var isConnected: Bool = false
     public var supportsMotion: Bool = false
     
     private var elements: [Int8: Element] = [:]
@@ -141,7 +141,7 @@ public class Device {
     }
     
     func connectSuccess(proto: Proto) {
-        connected = true
+        isConnected = true
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) [\(proto)] Device received connect success")
         
         // Send device name
@@ -153,14 +153,13 @@ public class Device {
     func connectFailed(proto: Proto) {
         // Clear other connection here
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) connection failed")
-        connected = false
+        isConnected = false
         events.connectFailed.executeHandler(device: self)
     }
     
     func lostConnection() {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Lost TCP connection to client")
-        // Clear other connection here
-        connected = false
+        isConnected = false
         events.deviceDisconnected.executeHandler(device: self)
     }
     
@@ -229,6 +228,11 @@ public class ClientDevice: Device {
         deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (system)", proto: .tcp, dataType: .String))
         shutdownMessageElement = attachElement(Element(identifier: SystemElements.shutdownMessage.rawValue, displayName: "Shutdown Message (system)", proto: .tcp, dataType: .String))
     }
+    
+    override func lostConnection() {
+        super.lostConnection()
+        service?.deviceDisconnected(device: self)
+    }
 }
 
 // Service has two of these, one for TCP and one for UDP
@@ -244,7 +248,7 @@ public class ServiceDevice: Device {
     func serviceFailedToPublish() {
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Problem initializing servers")
         // Clear other connection here
-        connected = false
+        isConnected = false
         events.serviceFailedToPublish.executeHandler(device: self)
     }
 }
@@ -277,9 +281,22 @@ public class ServerDevice: Device {
         tcpClientConnector?.connectTo(address: remoteServerAddress, port: remoteServerPort)
     }
     
+    // Disconnect from service and cleanup
+    public func disconnect() {
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Disconnecting from service")
+        udpClient?.shutdown()
+        tcpClient?.shutdown()
+        disconnected()  
+    }
+    
     // When the service goes offline
     public func disconnected() {
         events.deviceDisconnected.executeHandler(device: self)
+    }
+    
+    override func lostConnection() {
+        super.lostConnection()
+        disconnected()
     }
     
     func sendUDPElement(element: Element) -> Bool {
