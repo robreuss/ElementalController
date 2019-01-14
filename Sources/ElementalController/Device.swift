@@ -165,7 +165,7 @@ public class Device {
     
     func processMessageIntoElement(identifier: Int8, valueData: Data) {
         guard let element = getElementWith(identifier: identifier) else { return }
-        element.valueAsData = valueData
+        element.serialize = valueData
         logVerbose("Received element \(element.displayName) with value \(element.value ?? "")")
         // Below zero element identifiers refer to system elements
         if element.identifier >= 0 {
