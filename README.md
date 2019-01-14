@@ -37,6 +37,9 @@ Compared to MQTT:
 * Dynamic or static port assignment with Zeroconf service discovery
 * Minimal latency 
 * Flexible model that allows a single instance to be both a client and server, supporting a variety of network topologies including relays and P2P.
+## Sample Apps
+[iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux / macOS](https://github.com/robreuss/ElementalController_Linux_Sample) sample applications are available to be used as a pair in demonstrating client-server interaction and the basic workflow of ElementalController. 
+## Details
 ### Latency
 During informal testing, latency was measured by sending a Unix timestamp (64 bits) as a  payload from an iOS device (client) to a Raspberry Pi 3 Model B (server) over TCP and measuring the elapsed time for a round trip.  On my home WiFi, sending 90 messages/second, latency was typically about 15ms for the round trip when averaged over 20,000 messages.  That was equivilent to the ping response times tested during the same session, suggesting little or no overhead beyond underlying network performance.
 ### Throughput
@@ -48,16 +51,14 @@ Messages sent over TCP have a message envelope of 5 bytes which precede the valu
 * **_4 bytes_**: An integer indicating the length in bytes of the value of the element.
 * **_1 byte_**: UDP device identifier, an integer that identifies the device that has sent a UDP message.  _Only used with UDP data._
 * **_Variable_**: The data value itself, which could be a fixed length, in the case of integers, Float or Double, or variable in the case of a String or Data element.
-## TCP and UDP Support
+### TCP and UDP Support
 When an Elemental Controller service is setup, both a TCP and UDP service are established on the same port, which could be a static port you set or a port dynamically allocated by the OS (by specifying a port of "0").  Establishing these dual channels is handled automatically. A setting is available to disable UDP if you wish.  
 
-TCP is a connection-oriented protocol and therefore supports bi-directional communication, whereas UDP only supports communication from the client to the server.  
+Since TCP is a connection-oriented protocol, whereas UDP only supports communication from the client to the server, it supports bi-directional communication, while UDP is unidirectional.  
 
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
-## Examples
-[iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux](https://github.com/robreuss/ElementalController_Linux_Sample) sample applications are available to be used as a pair in demonstrating client-server interaction and the basic workflow of ElementalController. 
 ## Installation 
-### Installation on Linux
+### On Linux and macOS
 #### Swift Package Manager
 A `Package.swift` file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  Your Swift `Package.swift` would look something like this:
 ```swift
@@ -77,9 +78,9 @@ let package = Package(
 )
 ```
 
-#### Swift Version
+#### Server-side Swift Version
 Swift 4.1.3 is recommended and has been tested on Raspbian Stretch, Ubuntu Mate 16.04 and Ubuntu 16.04.  There are links at the top of [this page](https://www.uraimo.com/2018/06/13/A-big-update-on-Swift-4-1-2-for-raspberry-pi-zero-1-2-3/) to download different flavors of Linux and ARM hardware.
-#### Hostname
+#### Use of a .local Host Domain
 Note that your hostname on Linux must end with the local domain, for example:
 
 ```myhostname.local```
@@ -91,18 +92,16 @@ You will need to install Avahi with the following Apt command to support publish
 ### CocoaPods
 Coming soon.  For now use Carthage to intgrate the iOS/macOS/tvOS frameworks, or just clone the repo and add the files to your project directly.
 ### Carthage
-Using a Cartfile, you can get the ElementalController framework for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile:
+Using a Cartfile, you get the ElementalController framework automatically compiled for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile, which must be located in your project directory:
 
 `github "robreuss/ElementalController" ~> 0.0.4`
 
-Once you run the command `carthage update` you'll find the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+Then you run the command `carthage update` and you'll find the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
 
 Learn more about [Carthage](https://github.com/Carthage/Carthage).
-
-
-
-
-## Usage
+## Basic Use
+### Sample Applications
+The sample applications for [iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux / macOS](https://github.com/robreuss/ElementalController_Linux_Sample) are the best way to get to know how to use ElementalController. 
 ### Client-Side 
 Here's an example of setting up the framework with a few elements on the client side.  This is not a complete representation of available functionality.  
 
