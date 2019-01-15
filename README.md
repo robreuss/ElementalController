@@ -1,11 +1,11 @@
-***I can't emphasize enough that this is alpha software and should be utilized at your own risk.  The programmatic interface, in particular, is subject to change.***
 # Elemental Controller
+**_This software is in active development and should be considered at an alpha stage.  Use with care and anticipate changes._**
 
-Intended for Swift developers, this framework impliements a simple application layer protocol over TCP and UDP to provide a lean, low latency, and event-driven approach to controlling devices in a LAN-based environment.  It is designed for use cases such as controlling a Raspberry Pi robot on a LAN rather than managing a large fleet of agricultural sensors across the world.
+Intended for Swift developers, this framework impliements a simple application layer protocol over TCP and UDP to provide a lean, low latency, and event-driven approach to controlling devices in a LAN-based environment.  It is designed for use cases such as controlling a Raspberry Pi robot on a LAN rather than managing a large fleet of agricultural sensors across the world.  
 
 It runs on iOS, MacOS, tvOS and Linux.
 
-Conceptually, the framework is built up around the notion of a set of type-specific control "elements" which are defined at compile time. A reference ID and element definition common to both endpoints provides the basis for the exchange of element data, within a tiny message envelope.  At the end-point, a message is decoded and a handler block triggered by the event. 
+Conceptually, the framework is built up around the notion of a set of type-specific control "elements" which are defined at compile time. A reference ID and element definition common to both endpoints provides the basis for the exchange of element data, within a tiny message envelope.  At the end-point, a message is decoded and a handler block triggered by the event. This occurs over TCP and UDP services that are managed by the framework.
 
 It is a single codebase for both client and server.
 
@@ -17,26 +17,38 @@ An alternative to utilizing raw TCP or UDP, it offers:
 * Application-level event-driven model
 * Strongly-typed approach
 
-Compared to MQTT:
-
-* Less complexity, no broker
-* Architectural simplicity of request/response versus pub/sub
-* Low latency is supportive of "firm" real-time implementations
-* Tight coupling for uses that require that
-* Single codebase for client and server
-* Bias toward performance over scalability
-* No security yet, coming soon (SSL/TLS)
-
-### Features:
+## Features
 * Works on iOS, tvOS, macOS and Linux (tvOS not tested yet)
 * Tested on Ubuntu, Ubuntu Mate and Raspberian
 * Tested on the Raspberry Pi and Raspberry Pi Zero
-* Linux can act as client or server as can iOS, tvOS and macOS
+* Any instance can be a client or server or both, enabling a variety of network topologies
+* Any instance can connect to or publish multiple services
 * Support for the selective use of TCP or UDP per element
+* Performance benefits of UDP for certain applications
+* Open, persistent, bi-drectional connections using TCP
 * Event-oriented handling of incoming elements (block-based)  
 * Dynamic or static port assignment with Zeroconf service discovery
-* Minimal latency 
-* Flexible model that allows a single instance to be both a client and server, supporting a variety of network topologies including relays and P2P.
+
+## Limitations (esp. compared to MQTT and HTTP/WebSockets)
+* More focused on LAN than on WAN or Internet 
+* Not really designed with low power in mind
+* Different approach to QoS than pub/sub approach (MQTT)
+* No security yet (coming soon, SSL/TLS)
+* Lacks industry standardization and focused instead on Swift, Linux and iOS integrations
+
+## Use cases
+### Sensors
+Any simple sensor-based application where you want to send information from a Raspberry Pi to another Linux device/machine or to an iOS device.  For example, a set of atmospheric sensors can be easily intefaced with by defining an element for each data source (temp, humidity, barometric pressure), and setting up timers to send the data.  ElementalController makes it easy to set up the services, channels and client to make something like that work quickly, in a few lines of code.
+### Robotics
+Controlling a robot that has a Raspberry Pi on-board using an iPhone.  Motion data can be sent from the iPhone at it's highest sampling rates (~100 Hz), providing precision control.  And accelerometer data from the Pi can be sent back to the phone based on the robot's motion, along with proximity sensing data, collision-detection and imaging data.  
+### Sound Synthesis
+The iPhone or iPad can make an excellent input device for a sound synthesizer project where it is critical to minimize latency and maximize throughput when using motion data or rapid-motion touch at 120 Hz to generate and shape sound.  The ease with which elements can be setup make it trivial to define a large number of controls and to write block-based code to implement the element-specific functionality on the receiving end.
+### Coordinating an Array or Cluster
+It's easy to setup multiple services or handle connections from multiple clients, so in scenarios where a set of Raspberry Pi's are used in a simple array or cluster, the framework can be a useful tool to control nodes and receive status information from them.
+
+## Sample Apps
+[iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux / macOS](https://github.com/robreuss/ElementalController_Linux_Sample) sample applications are available to be used as a pair in demonstrating client-server interaction and the basic workflow of ElementalController. 
+## Details
 ### Latency
 During informal testing, latency was measured by sending a Unix timestamp (64 bits) as a  payload from an iOS device (client) to a Raspberry Pi 3 Model B (server) over TCP and measuring the elapsed time for a round trip.  On my home WiFi, sending 90 messages/second, latency was typically about 15ms for the round trip when averaged over 20,000 messages.  That was equivilent to the ping response times tested during the same session, suggesting little or no overhead beyond underlying network performance.
 ### Throughput
@@ -48,16 +60,14 @@ Messages sent over TCP have a message envelope of 5 bytes which precede the valu
 * **_4 bytes_**: An integer indicating the length in bytes of the value of the element.
 * **_1 byte_**: UDP device identifier, an integer that identifies the device that has sent a UDP message.  _Only used with UDP data._
 * **_Variable_**: The data value itself, which could be a fixed length, in the case of integers, Float or Double, or variable in the case of a String or Data element.
-## TCP and UDP Support
+### TCP and UDP Support
 When an Elemental Controller service is setup, both a TCP and UDP service are established on the same port, which could be a static port you set or a port dynamically allocated by the OS (by specifying a port of "0").  Establishing these dual channels is handled automatically. A setting is available to disable UDP if you wish.  
 
-TCP is a connection-oriented protocol and therefore supports bi-directional communication, whereas UDP only supports communication from the client to the server.  
+Since TCP is a connection-oriented protocol, whereas UDP only supports communication from the client to the server, it supports bi-directional communication, while UDP is unidirectional.  
 
 Each individual element has a prototype property, either TCP and UDP. You can mix and match protocols on the elements that compose your set on the basis of whether you need reliability (TCP) or performance (UDP) per element.  You should prefer TCP if you need to transfer larger messages, such as files, whereas UDP is more appropriate to streaming large numbers of small messages quickly.    
-## Examples
-[iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux](https://github.com/robreuss/ElementalController_Linux_Sample) sample applications are available to be used as a pair in demonstrating client-server interaction and the basic workflow of ElementalController. 
 ## Installation 
-### Installation on Linux
+### On Linux and macOS
 #### Swift Package Manager
 A `Package.swift` file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  Your Swift `Package.swift` would look something like this:
 ```swift
@@ -77,9 +87,9 @@ let package = Package(
 )
 ```
 
-#### Swift Version
+#### Server-side Swift Version
 Swift 4.1.3 is recommended and has been tested on Raspbian Stretch, Ubuntu Mate 16.04 and Ubuntu 16.04.  There are links at the top of [this page](https://www.uraimo.com/2018/06/13/A-big-update-on-Swift-4-1-2-for-raspberry-pi-zero-1-2-3/) to download different flavors of Linux and ARM hardware.
-#### Hostname
+#### Use of a .local Host Domain
 Note that your hostname on Linux must end with the local domain, for example:
 
 ```myhostname.local```
@@ -91,18 +101,16 @@ You will need to install Avahi with the following Apt command to support publish
 ### CocoaPods
 Coming soon.  For now use Carthage to intgrate the iOS/macOS/tvOS frameworks, or just clone the repo and add the files to your project directly.
 ### Carthage
-Using a Cartfile, you can get the ElementalController framework for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile:
+Using a Cartfile, you get the ElementalController framework automatically compiled for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile, which must be located in your project directory:
 
 `github "robreuss/ElementalController" ~> 0.0.4`
 
-Once you run the command `carthage update` you'll find the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+Then you run the command `carthage update` and you'll find the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
 
 Learn more about [Carthage](https://github.com/Carthage/Carthage).
-
-
-
-
-## Usage
+## Basic Use
+### Sample Applications
+The sample applications for [iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux / macOS](https://github.com/robreuss/ElementalController_Linux_Sample) are the best way to get to know how to use ElementalController. 
 ### Client-Side 
 Here's an example of setting up the framework with a few elements on the client side.  This is not a complete representation of available functionality.  
 
