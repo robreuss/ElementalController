@@ -39,13 +39,18 @@ public enum ElementDataType: Int {
 // is transmitted as a message by the framework.
 public class Element {
     
-    let elementReadWriteLock = DispatchQueue(label: "net.simplyformed.elementReadWriteLock")
+    let readWriteLock = DispatchQueue(label: "net.simplyformed.elementWriteLock")
     
     public typealias ElementHandler = ((Element, Device) -> Void)?
     public var handler: ElementHandler
 
     public var identifier: Int8 = 0
     public var displayName: String
+    
+    // Behind the generic "value" property, we have two different
+    // stores for the value in order to avoid race conditions when
+    // rapidly reading a value and then re-using the element for a
+    // write/send.  A lock is used when writing.
     var readValue = "" as Any
     var writeValue = "" as Any
     public var proto: Proto = .tcp
@@ -93,7 +98,7 @@ public class Element {
         var identifierAsUInt8: Int8 = Int8(identifier)
         let identifierAsData = Data(bytes: &identifierAsUInt8, count: MemoryLayout<Int8>.size)
         
-        var lengthAsUInt32: UInt32 = UInt32(valueAsData.count)
+        var lengthAsUInt32: UInt32 = UInt32(serialize.count)
         let lengthAsData = Data(bytes: &lengthAsUInt32, count: MemoryLayout<UInt32>.size)
         
         var messageData = Data()
@@ -111,7 +116,7 @@ public class Element {
             messageData.append(udpIdentifierData) // 2 bytes:  Central this element is destined for
         }
         
-        messageData.append(valueAsData)
+        messageData.append(serialize)
 
         return messageData
     }
@@ -152,7 +157,7 @@ public class Element {
 
         }
         set {
-            elementReadWriteLock.sync {
+            readWriteLock.sync {
                 writeValue = newValue as Any
             }
 
@@ -162,126 +167,127 @@ public class Element {
 
     // MARK: -
     
-    var valueAsData: Data {
+    var serialize: Data {
         
         get {
-            let error = "\(displayName) (\(identifier)) nil encountered when encoding value as data (possible type error)."
 
-            switch dataType {
-            case .Int8:
-                if var value = writeValue as? Int8 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode Int8 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
+                let error = "\(displayName) (\(identifier)) nil encountered when encoding value as data (possible type error)."
                 
-            case .UInt8:
-                if var value = writeValue as? UInt8 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode UInt8 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .Int16:
-                
-                if var value = writeValue as? Int16 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode Int16 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .UInt16:
-                
-                if var value = writeValue as? UInt16 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode UInt16 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .Int32:
-                
-                if var value = writeValue as? Int32 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode Int32 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .UInt32:
-                
-                if var value = writeValue as? UInt32 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode UInt32 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .Int64:
-                
-                if var value = writeValue as? Int64 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode Int64 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .UInt64:
-                
-                if var value = writeValue as? UInt64 {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode UInt64 element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .Float:
-                
-                if var value = writeValue as? Float {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode Float element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .Double:
-                
-                if var value = writeValue as? Double {
-                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                } else {
-                    logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .Data:
-                
-                if var value = writeValue as? Data {
-                    return writeValue as! Data
-                } else {
-                    logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
-                    fatalError()
-                }
-                
-            case .String:
-                
-                var returnData = Data()
-                elementReadWriteLock.sync {
-                    if let myData = (writeValue as! String).data(using: String.Encoding.utf8) {
-                        returnData = myData
+                switch dataType {
+                case .Int8:
+                    if var value = writeValue as? Int8 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Element got nil when expecting string data")
-                        returnData = Data()
+                        logError("Attempted to encode Int8 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
                     }
+                    
+                case .UInt8:
+                    if var value = writeValue as? UInt8 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode UInt8 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .Int16:
+                    
+                    if var value = writeValue as? Int16 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode Int16 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .UInt16:
+                    
+                    if var value = writeValue as? UInt16 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode UInt16 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .Int32:
+                    
+                    if var value = writeValue as? Int32 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode Int32 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .UInt32:
+                    
+                    if var value = writeValue as? UInt32 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode UInt32 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .Int64:
+                    
+                    if var value = writeValue as? Int64 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode Int64 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .UInt64:
+                    
+                    if var value = writeValue as? UInt64 {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode UInt64 element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .Float:
+                    
+                    if var value = writeValue as? Float {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode Float element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .Double:
+                    
+                    if var value = writeValue as? Double {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .Data:
+                    
+                    if var value = writeValue as? Data {
+                        return writeValue as! Data
+                    } else {
+                        logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
+                        fatalError()
+                    }
+                    
+                case .String:
+                    
+                    var returnData = Data()
+                    readWriteLock.sync {
+                        if let myData = (writeValue as! String).data(using: String.Encoding.utf8) {
+                            returnData = myData
+                        } else {
+                            logError("Element got nil when expecting string data")
+                            returnData = Data()
+                        }
+                    }
+                    return returnData
                 }
-                return returnData
-            }
         }
         
         set {
-            elementReadWriteLock.sync {
+            readWriteLock.sync {
                 
                 switch dataType {
                 case .Int8:

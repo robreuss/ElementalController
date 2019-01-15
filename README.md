@@ -1,4 +1,5 @@
 # Elemental Controller
+**_This software is in active development and should be considered at an alpha stage.  Use with care and anticipate changes._**
 
 Intended for Swift developers, this framework impliements a simple application layer protocol over TCP and UDP to provide a lean, low latency, and event-driven approach to controlling devices in a LAN-based environment.  It is designed for use cases such as controlling a Raspberry Pi robot on a LAN rather than managing a large fleet of agricultural sensors across the world.  
 
