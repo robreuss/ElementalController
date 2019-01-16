@@ -21,6 +21,7 @@ public class DeviceEvent {
     
     func executeHandler(device: Device) {
         guard let h = handler else { return }
+        guard
         if Thread.isMainThread {
             h!(device)
         } else {
@@ -197,8 +198,12 @@ public class Device {
             case SystemElements.shutdownMessage.rawValue:
                 logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Received shutdown message")
                 tcpClient?.shutdown()
-                (self as! ServerDevice).udpClient!.shutdown()
-                
+                if ElementalController.allowUDPService {
+                    guard let u =  (self as! ServerDevice).udpClient else {
+                        logError("UDPClient not initialized")
+                    }
+                    u.shutdown()
+                }
             default:
                 logError("Received undefined system element")
             }
@@ -300,6 +305,14 @@ public class ServerDevice: Device {
     }
     
     func sendUDPElement(element: Element) -> Bool {
-        return (udpClient?.sendElement(element: element))!
+        if ElementalController.allowUDPService {
+            guard let u =  self.udpClient else {
+                logError("Attempt to send UDP message without initialized UDP client")
+                return false
+            }
+            return u.sendElement(element: element)
+        } else {
+            logError("Attempt to send UDP message when UDP is disabled")
+        }
     }
 }
