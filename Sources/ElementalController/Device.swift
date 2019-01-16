@@ -21,7 +21,6 @@ public class DeviceEvent {
     
     func executeHandler(device: Device) {
         guard let h = handler else { return }
-        guard
         if Thread.isMainThread {
             h!(device)
         } else {
@@ -115,8 +114,6 @@ public class Device {
             } else {
                 preconditionFailure("Attempt to send UDP element when UDP disallowed in ElementalController or attempt to send element with server identity.")
             }
-        default:
-            return false
         }
     }
     
@@ -201,6 +198,7 @@ public class Device {
                 if ElementalController.allowUDPService {
                     guard let u =  (self as! ServerDevice).udpClient else {
                         logError("UDPClient not initialized")
+                        return
                     }
                     u.shutdown()
                 }
@@ -313,6 +311,7 @@ public class ServerDevice: Device {
             return u.sendElement(element: element)
         } else {
             logError("Attempt to send UDP message when UDP is disabled")
+            return false
         }
     }
 }
