@@ -178,7 +178,7 @@ public class Element {
                     if var value = writeValue as? Int8 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode Int8 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode Int8 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -186,7 +186,7 @@ public class Element {
                     if var value = writeValue as? UInt8 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode UInt8 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode UInt8 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -195,7 +195,7 @@ public class Element {
                     if var value = writeValue as? Int16 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode Int16 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode Int16 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -204,7 +204,7 @@ public class Element {
                     if var value = writeValue as? UInt16 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode UInt16 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode UInt16 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -213,7 +213,7 @@ public class Element {
                     if var value = writeValue as? Int32 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode Int32 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode Int32 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -222,7 +222,7 @@ public class Element {
                     if var value = writeValue as? UInt32 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode UInt32 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode UInt32 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -231,7 +231,7 @@ public class Element {
                     if var value = writeValue as? Int64 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode Int64 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode Int64 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -240,7 +240,7 @@ public class Element {
                     if var value = writeValue as? UInt64 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode UInt64 element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode UInt64 element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -249,7 +249,7 @@ public class Element {
                     if var value = writeValue as? Float {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode Float element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode Float element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -258,7 +258,7 @@ public class Element {
                     if var value = writeValue as? Double {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                     } else {
-                        logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
@@ -267,7 +267,7 @@ public class Element {
                     if var value = writeValue as? Data {
                         return writeValue as! Data
                     } else {
-                        logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type")
+                        logError("Attempted to encode Double element \"\(displayName)\" failed - wrong type?")
                         fatalError()
                     }
                     
