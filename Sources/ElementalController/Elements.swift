@@ -159,6 +159,7 @@ public class Element {
         set {
             readWriteLock.sync {
                 writeValue = newValue as Any
+                readValue = newValue as Any
             }
 
         }
