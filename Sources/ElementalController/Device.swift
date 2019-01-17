@@ -102,17 +102,19 @@ public class Device {
         deviceName = "Got service device name"
     }
     
-    public func send(element: Element) -> Bool {
+    public func send(element: Element) throws {
         switch element.proto {
         case .tcp:
-            guard let c = tcpClient else { return false }
-            return c.send(element: element)
-            
+            guard let c = tcpClient else {
+                throw ElementSendError.attemptToSendNoTCPClient
+            }
+            try c.send(element: element)
         case .udp:
             if ElementalController.allowUDPService, self is ServerDevice {
-                return (self as! ServerDevice).sendUDPElement(element: element)
+                try (self as! ServerDevice).sendUDPElement(element: element)
             } else {
-                preconditionFailure("Attempt to send UDP element when UDP disallowed in ElementalController or attempt to send element with server identity.")
+                logError("Attempt to send UDP element when UDP disallowed in ElementalController or attempt to send element with server identity.")
+                throw ElementSendError.attemptToDisallowUDP
             }
         }
     }
@@ -138,14 +140,14 @@ public class Device {
         return element
     }
     
-    func connectSuccess(proto: Proto) {
+    func connectSuccess(proto: Proto) throws {
         isConnected = true
         logDebug("\(prefixForLoggingServiceNameUsing(device: self)) [\(proto)] Device received connect success")
         
         // Send device name
         let deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (SYSTEM ELEMENT)", proto: .tcp, dataType: .String))
         deviceNameElement.value = deviceName
-        _ = send(element: deviceNameElement)
+        try send(element: deviceNameElement)
     }
     
     func connectFailed(proto: Proto) {
@@ -302,16 +304,16 @@ public class ServerDevice: Device {
         disconnected()
     }
     
-    func sendUDPElement(element: Element) -> Bool {
+    func sendUDPElement(element: Element) throws -> Bool {
         if ElementalController.allowUDPService {
             guard let u =  self.udpClient else {
                 logError("Attempt to send UDP message without initialized UDP client")
-                return false
+                throw ElementSendError.attemptToSendNoUDPClient
             }
             return u.sendElement(element: element)
         } else {
             logError("Attempt to send UDP message when UDP is disabled")
-            return false
+            throw ElementSendError.attemptToDisallowUDP
         }
     }
 }

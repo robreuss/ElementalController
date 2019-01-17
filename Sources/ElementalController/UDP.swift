@@ -89,7 +89,7 @@ open class UDPService {
     
     // Port is passed in based on what port was set or dynamically
     // assigned for TCP.  Both protocols run on the same defined port.
-    func listenForConnections(onPort: Int) {
+    func listenForConnections(onPort: Int) throws {
         let queue = DispatchQueue.global(qos: .userInteractive)
         queue.async { [unowned self] in
             
@@ -99,8 +99,8 @@ open class UDPService {
                 guard let socket = self.socket else {
                     logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Failure to unwrap UDP socket")
                     self.shouldKeepRunning = false
-                    (DispatchQueue.main).sync {
-                        self.service!.failedToPublish(proto: .udp)
+                    try (DispatchQueue.main).sync {
+                        try self.service!.failedToPublish(proto: .udp)
                         return
                     }
                     return // Compiler insists on this
