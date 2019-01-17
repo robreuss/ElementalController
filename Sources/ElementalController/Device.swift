@@ -106,11 +106,16 @@ public class Device {
         switch element.proto {
         case .tcp:
             guard let c = tcpClient else {
+                logError("Attempt to send with no TCP client")
                 throw ElementSendError.attemptToSendNoTCPClient
             }
             try c.send(element: element)
         case .udp:
             if ElementalController.allowUDPService, self is ServerDevice {
+                if self.udpIdentifier == 0 {
+                    logError("Attempt to send UDP message with no UDP ID")
+                    throw ElementSendError.attemptToSendNoUDPID
+                }
                 try (self as! ServerDevice).sendUDPElement(element: element)
             } else {
                 logError("Attempt to send UDP element when UDP disallowed in ElementalController or attempt to send element with server identity.")
@@ -304,13 +309,13 @@ public class ServerDevice: Device {
         disconnected()
     }
     
-    func sendUDPElement(element: Element) throws -> Bool {
+    func sendUDPElement(element: Element) throws {
         if ElementalController.allowUDPService {
             guard let u =  self.udpClient else {
                 logError("Attempt to send UDP message without initialized UDP client")
                 throw ElementSendError.attemptToSendNoUDPClient
             }
-            return u.sendElement(element: element)
+            try u.sendElement(element: element)
         } else {
             logError("Attempt to send UDP message when UDP is disabled")
             throw ElementSendError.attemptToDisallowUDP

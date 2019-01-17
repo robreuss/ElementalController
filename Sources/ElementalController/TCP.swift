@@ -166,19 +166,11 @@ class TCPClient {
             let device = self.device
             var messageDataBuffer = Data()
             var readData = Data(capacity: ElementalController.TCPBufferSize)
-            var bytesRead: Int = 0
+            
+            do {
                 repeat {
-                    do {
-                        bytesRead = try socket!.read(into: &readData)
-                    } catch {
-                        guard let _ = error as? Socket.Error else {
-                            logDebug("\(prefixForLoggingDevice(device: device)) Unexpected error by connection at \(socket!.remoteHostname):\(socket!.remotePort)")
-                            self.connected = false
-                            (DispatchQueue.main).sync {
-                                return
-                        }
-                        return
-                    }
+                    let bytesRead = try socket!.read(into: &readData)
+
                     messageDataBuffer.append(readData)
                     
                     while messageDataBuffer.count > 0, self.shouldKeepRunning {
@@ -193,7 +185,8 @@ class TCPClient {
                         }
                     }
                     
-                    // Disconnect.  If there's anything left in the buffer finish processing it
+                    // If there's anything left in the buffer after a disconnect, finish
+                    // processing it
                     if bytesRead == 0 {
                         logDebug("\(prefixForLoggingDevice(device: device)) Got disconnect.  Processing buffer (\(messageDataBuffer.count)).")
                         if messageDataBuffer.count == 0 {
@@ -204,8 +197,17 @@ class TCPClient {
                     }
                     
                     readData.count = 0
+                } while self.shouldKeepRunning
+            } catch {
+                guard let socketError = error as? Socket.Error else {
+                    logDebug("\(prefixForLoggingDevice(device: device)) Unexpected error by connection at \(socket!.remoteHostname):\(socket!.remotePort)")
+                    self.connected = false
+                    (DispatchQueue.main).sync {
+                        return
+                    }
+                    return
                 }
-            } while self.shouldKeepRunning
+            }
         }
     }
 }

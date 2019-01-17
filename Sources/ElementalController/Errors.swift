@@ -13,8 +13,10 @@ public enum ElementSendError: Error {
     case attemptToSendNoConnection
     case attemptToSendNoUDPClient
     case attemptToSendNoTCPClient
+    case attemptToSendNoUDPID
     case attemptToSendWithNoUDPSocket
     case attemptToSendWithNoTCPSocket
     case attemptToSendWithUDPError
     case attemptToSendTCPServiceIsStopped
+    case attemptToSendUnknownError
 }
