@@ -40,22 +40,21 @@ class UDPClient {
         socket!.close()
     }
     
-    func sendElement(element: Element) -> Bool {
+    func sendElement(element: Element) throws {
         do {
             if let s = socket {
                 _ = try s.write(from: element.encodeAsMessage(udpIdentifier: (device?.udpIdentifier)!), to: remoteAddress!)
-                return true
             } else {
-                logDebug("\(serviceNameForLogging(device: device)) UDP Attempt to write against nil UDP socket")
-                return false
+                logError("\(serviceNameForLogging(device: device)) UDP Attempt to write against nil UDP socket")
+                throw ElementSendError.attemptToSendWithNoUDPSocket
             }
         } catch {
             guard error is Socket.Error else {
                 logDebug("\(serviceNameForLogging(device: device)) UDP failure to write element \(element.identifier) to socket with remote address \(String(describing: remoteAddress)) with error \(error.localizedDescription)")
-                return false
+                throw ElementSendError.attemptToSendUnknownError
             }
-            logDebug("\(serviceNameForLogging(device: device)) Error: \(error)")
-            return false
+            logError("\(serviceNameForLogging(device: device)) UDP send error: \(error)")
+            throw ElementSendError.attemptToSendUnknownError
         }
     }
 }
@@ -89,7 +88,7 @@ open class UDPService {
     
     // Port is passed in based on what port was set or dynamically
     // assigned for TCP.  Both protocols run on the same defined port.
-    func listenForConnections(onPort: Int) {
+    func listenForConnections(onPort: Int) throws {
         let queue = DispatchQueue.global(qos: .userInteractive)
         queue.async { [unowned self] in
             
@@ -99,8 +98,8 @@ open class UDPService {
                 guard let socket = self.socket else {
                     logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Failure to unwrap UDP socket")
                     self.shouldKeepRunning = false
-                    (DispatchQueue.main).sync {
-                        self.service!.failedToPublish(proto: .udp)
+                    try (DispatchQueue.main).sync {
+                        try self.service!.failedToPublish(proto: .udp)
                         return
                     }
                     return // Compiler insists on this

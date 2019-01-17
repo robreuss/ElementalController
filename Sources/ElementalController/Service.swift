@@ -77,8 +77,8 @@ public class ServiceEventTypes {
 // TODO: Add a "how this works" to the header area!
 
 protocol ServiceDelegate {
-    func startUDPService(onPort: Int)
-    func sendUDPIdentififerToDevice(device: ClientDevice)
+    func startUDPService(onPort: Int) throws
+    func sendUDPIdentififerToDevice(device: ClientDevice) throws
     var port: Int { get set }
     func deviceConnected(device: ClientDevice)
     func deviceDisconnected(device: ClientDevice)
@@ -86,6 +86,7 @@ protocol ServiceDelegate {
 }
 
 public class Service: ServiceDelegate {
+
     var udpService: UDPService?
     var tcpService: TCPService?
     var publisher: Publisher?
@@ -126,8 +127,12 @@ public class Service: ServiceDelegate {
         for device: ClientDevice in devices.values {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Device TCP client being shutdown: \(device.displayName)")
             device.shutdownMessageElement.value = "Shutting down services"
-            _ = device.send(element: (device.shutdownMessageElement))
-            device.tcpClient?.shutdown()
+            do {
+                try device.send(element: (device.shutdownMessageElement))
+                device.tcpClient?.shutdown()
+            } catch {
+                logError("Unable to send shutdown message to client because send failed: \(error)")
+            }
         }
         usleep(1000) // Let the shutdown messages get processed
         
@@ -153,10 +158,10 @@ public class Service: ServiceDelegate {
     }
     
     // Start the TCP service - this will give us an assigned port if passed a zero value
-    public func publish(onPort: Int) {
+    public func publish(onPort: Int) throws {
         serviceActive = true
         tcpService = TCPService(parentServer: self)
-        tcpService!.listenForConnections(onPort: onPort)
+        try tcpService!.listenForConnections(onPort: onPort)
     }
     
     // Advertise the TCP service
@@ -168,23 +173,23 @@ public class Service: ServiceDelegate {
     }
     
     // Start up the UDP Service once we have the port (static or dynamic)
-    func startUDPService(onPort: Int) {
+    func startUDPService(onPort: Int) throws {
         if serviceActive && ElementalController.allowUDPService {
             if udpService == nil {
                 udpService = UDPService(service: self)
-                udpService!.listenForConnections(onPort: onPort)
+                try udpService!.listenForConnections(onPort: onPort)
             }
         }
     }
     
-    func clientDeviceConnectedOn(socket: Socket) {
+    func clientDeviceConnectedOn(socket: Socket) throws {
         let device = ClientDevice(service: self, serviceName: serviceName, displayName: displayName)
         device.tcpClient = TCPClient(device: device, socket: socket)
         device.address = socket.remoteHostname
         device.tcpClient!.run()
         device.serviceName = serviceName
         addDevice(device: device)
-        sendUDPIdentififerToDevice(device: device)
+        try sendUDPIdentififerToDevice(device: device)
         deviceConnected(device: device)
     }
     
@@ -206,10 +211,10 @@ public class Service: ServiceDelegate {
     }
     
     // Once a device representing the client is created, send the UDP identififer
-    func sendUDPIdentififerToDevice(device: ClientDevice) {
+    func sendUDPIdentififerToDevice(device: ClientDevice) throws {
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Sending UDP identifier: \(device.udpIdentifier)")
         device.udpIdentifierElement.value = device.udpIdentifier
-        _ = device.send(element: device.udpIdentifierElement)
+        try device.send(element: device.udpIdentifierElement)
     }
     
     // All devices kept here for use by the UDP Server in
