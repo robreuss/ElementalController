@@ -102,7 +102,7 @@ class TCPClient {
     var message: Message?
     let elementDataBufferLockQueue = DispatchQueue(label: "elementDataBufferLockQueue")
     var shouldKeepRunning = true
-    
+
     init(device: Device, socket: Socket) {
         self.device = device
         connected = true
@@ -182,6 +182,12 @@ class TCPClient {
                         if identifier == MALFORMED_MESSAGE_IDENTIFIER {
                             break
                         } else if identifier == MORE_COMING_IDENTIFIER {
+                            // We may be caught in a large message we'll never get the rest of, so just exit regardless
+                            // of buffered data
+                            if bytesRead == 0 {
+                                messageDataBuffer = Data()
+                                self.shouldKeepRunning = false
+                            }
                             break
                         } else {
                             device.processMessageIntoElement(identifier: identifier, valueData: valueData)
