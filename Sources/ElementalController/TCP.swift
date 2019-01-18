@@ -173,7 +173,7 @@ class TCPClient {
                     logDebug("Bytes read: \(bytesRead)")
                     messageDataBuffer.append(readData)
                     
-                    while messageDataBuffer.count > 0, self.shouldKeepRunning {
+                    while messageDataBuffer.count > 0 && self.shouldKeepRunning {
                         let (identifier, _, valueData, remainingData) = device.tcpMessage.process(data: messageDataBuffer, proto: .tcp, device: device)
                         messageDataBuffer = remainingData
                         if identifier == MALFORMED_MESSAGE_IDENTIFIER {
