@@ -139,19 +139,19 @@ public class Service: ServiceDelegate {
         if let udp = udpService {
             udp.shutdown()
         } else {
-            logDebug("Attempted to shutdown UDP service but already shutdown")
+            logDebug("Attempted to shutdown UDP service but was already shutdown")
         }
         
         if let tcp = tcpService {
             tcp.shutdown()
         } else {
-            logDebug("Attempted to shutdown TCP service but already shutdown")
+            logDebug("Attempted to shutdown TCP service but was already shutdown")
         }
         
         if let pub = publisher {
             pub.stop()
         } else {
-            logDebug("Attempted to shutdown publisher service but already shutdown")
+            logDebug("Attempted to shutdown publisher service but was already shutdown")
         }
 
         devices.removeAll() // Clear out the dictionary of devices used for UDP ids
