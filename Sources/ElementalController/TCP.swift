@@ -115,6 +115,7 @@ class TCPClient {
     }
     
     func send(element: Element) throws {
+        logDebug("In TCPClient send")
         if connected == false {
             logDebug("\(prefixForLoggingDevice(device: device)) Ignoring send element request because have no connection")
             logDebug("\(prefixForLoggingDevice(device: device)) Shutting down TCP client")
@@ -130,7 +131,7 @@ class TCPClient {
                 return false
             }
  */
-            //logVerbose("\(prefixForLoggingDevice(device: device)) Sending element message: \(element.encodeAsMessage) over \(element.proto) with value: \(String(describing: element.value))")
+            logDebug("\(prefixForLoggingDevice(device: device)) Sending element message: \(element.encodeAsMessage) over \(element.proto) with value: \(String(describing: element.value))")
             try socket!.write(from: element.encodeAsMessage(udpIdentifier: (device.udpIdentifier)))
         } catch {
             logError("\(prefixForLoggingDevice(device: device)) TCP send failure: \(error)")
