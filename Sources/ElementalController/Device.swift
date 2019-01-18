@@ -103,7 +103,6 @@ public class Device {
     }
     
     public func send(element: Element) throws {
-        logError("In device send")
         switch element.proto {
         case .tcp:
             guard let c = tcpClient else {
