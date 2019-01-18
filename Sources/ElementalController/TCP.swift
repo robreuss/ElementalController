@@ -120,7 +120,6 @@ class TCPClient {
             logDebug("\(prefixForLoggingDevice(device: device)) Shutting down TCP client")
             shouldKeepRunning = false
             socket!.close()
-            connected = false
             throw ElementSendError.attemptToSendNoConnection
         }
         do {

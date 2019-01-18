@@ -109,7 +109,11 @@ public class Device {
                 logError("Attempt to send with no TCP client")
                 throw ElementSendError.attemptToSendNoTCPClient
             }
-            try c.send(element: element)
+            do {
+                try c.send(element: element)
+            } catch {
+                logError("Received send error: \(error)")
+            }
         case .udp:
             if ElementalController.allowUDPService, self is ServerDevice {
                 if self.udpIdentifier == 0 {
