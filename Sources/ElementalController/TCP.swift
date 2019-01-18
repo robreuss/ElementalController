@@ -170,7 +170,7 @@ class TCPClient {
             do {
                 repeat {
                     let bytesRead = try socket!.read(into: &readData)
-
+                    logDebug("Bytes read: \(bytesRead)")
                     messageDataBuffer.append(readData)
                     
                     while messageDataBuffer.count > 0, self.shouldKeepRunning {
