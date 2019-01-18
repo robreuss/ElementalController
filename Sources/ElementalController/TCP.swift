@@ -174,8 +174,10 @@ class TCPClient {
                     messageDataBuffer.append(readData)
                     
                     while messageDataBuffer.count > 0 && self.shouldKeepRunning {
+                        logDebug("Processing buffer: \(messageDataBuffer.count)")
                         let (identifier, _, valueData, remainingData) = device.tcpMessage.process(data: messageDataBuffer, proto: .tcp, device: device)
                         messageDataBuffer = remainingData
+                        logDebug("Remaining buffer: \(messageDataBuffer.count)")
                         if identifier == MALFORMED_MESSAGE_IDENTIFIER {
                             break
                         } else if identifier == MORE_COMING_IDENTIFIER {
@@ -188,7 +190,7 @@ class TCPClient {
                     // If there's anything left in the buffer after a disconnect, finish
                     // processing it
                     if bytesRead == 0 {
-                        logDebug("\(prefixForLoggingDevice(device: device)) Got disconnect.  Processing buffer (\(messageDataBuffer.count)).")
+                        logDebug("\(prefixForLoggingDevice(device: device)) Got disconnect.  Processing buffer (\(messageDataBuffer.count)).  Should keep running: \(self.shouldKeepRunning)")
                         if messageDataBuffer.count == 0 {
                             logDebug("\(prefixForLoggingDevice(device: device)) Buffer clear.")
                             self.disconnected()
