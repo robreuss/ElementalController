@@ -169,7 +169,6 @@ class TCPClient {
             do {
                 repeat {
                     let bytesRead = try socket!.read(into: &readData)
-                    logDebug("Bytes read: \(bytesRead)")
                     messageDataBuffer.append(readData)
                     
                     while messageDataBuffer.count > 0 && self.shouldKeepRunning {
@@ -185,7 +184,7 @@ class TCPClient {
                                 self.shouldKeepRunning = false
                             }
                             break
-                        } else {
+                        } else {  // TODO: Add constant for no identifier (because TCP) here
                             device.processMessageIntoElement(identifier: identifier, valueData: valueData)
                         }
                     }
