@@ -110,6 +110,7 @@ class Message {
         // Test for a enough data for a header (plus one byte for at least a byte of data)
         if data.count < expectedHeaderLength(proto: proto) {
             performanceVars.incompleteMessages += 1
+            logVerbose("\(formatProtoForLogging(proto: proto)) Data short of expected header = \(data.count)")
             return (MORE_COMING_IDENTIFIER, udpIdentifier, Data(), data)
             // return malformedMessageResponse(details: "Message processor found too little data for a header. ", proto: proto, device: device)
         }
