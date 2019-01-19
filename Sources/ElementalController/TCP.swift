@@ -135,8 +135,7 @@ class TCPClient {
         } catch {
             logError("\(prefixForLoggingDevice(device: device)) TCP send failure: \(error)")
             connected = false
-            logError("\(prefixForLoggingDevice(device: device)) TCP service seems to have stopped unexpectedly.")
-            disconnected()
+            return false
         }
     }
     
