@@ -117,9 +117,6 @@ class TCPClient {
     func send(element: Element) throws {
         if connected == false {
             logDebug("\(prefixForLoggingDevice(device: device)) Ignoring send element request because have no connection")
-            logDebug("\(prefixForLoggingDevice(device: device)) Shutting down TCP client")
-            shouldKeepRunning = false
-            socket!.close()
             throw ElementSendError.attemptToSendNoConnection
         }
         do {
@@ -134,16 +131,21 @@ class TCPClient {
             try socket!.write(from: element.encodeAsMessage(udpIdentifier: (device.udpIdentifier)))
         } catch {
             logError("\(prefixForLoggingDevice(device: device)) TCP send failure: \(error)")
-            connected = false
-            return false
+            disconnect()
         }
-    }
+    }   
     
-    func disconnected() {
-        if device is ServerDevice {
-            (device as! ServerDevice).disconnected()
-        } else {
-            device.lostConnection()
+    // TODO: Consolidate the naming of these methods
+    func disconnect() {
+        if connected {
+            socket!.close()
+            connected = false
+            shouldKeepRunning = false
+            if device is ServerDevice {
+                (device as! ServerDevice).disconnected()
+            } else {
+                device.lostConnection()
+            }
         }
     }
     
@@ -194,8 +196,7 @@ class TCPClient {
                         logDebug("\(prefixForLoggingDevice(device: device)) Got disconnect.  Processing buffer (\(messageDataBuffer.count)).  Should keep running: \(self.shouldKeepRunning)")
                         if messageDataBuffer.count == 0 {
                             logDebug("\(prefixForLoggingDevice(device: device)) Buffer clear.")
-                            self.disconnected()
-                            self.shouldKeepRunning = false
+                            self.disconnect()
                         }
                     }
                     
