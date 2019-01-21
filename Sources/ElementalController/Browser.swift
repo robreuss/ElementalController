@@ -137,7 +137,7 @@ extension Browser: NetServiceBrowserDelegate {
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
         
-        if !resolvingService {
+        if resolvingService == false  {
             resolvingService = true
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
             netService = service
@@ -149,7 +149,7 @@ extension Browser: NetServiceBrowserDelegate {
     }
 
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        if !resolvingService {
+        if resolvingService == false {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Ignoring resolution of service name \"\(sender.name)\" because resolution was cancelled.")
         } else {
             if let hostName = sender.hostName {

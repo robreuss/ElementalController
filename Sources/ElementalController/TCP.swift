@@ -27,7 +27,7 @@ class TCPService {
         listenerSocket?.close()
     }
     
-    func listenForConnections(onPort: Int) {
+    func listenForConnections(onPort: Int) throws {
         let queue = DispatchQueue.global(qos: .userInteractive)
         
         queue.async {
@@ -51,7 +51,7 @@ class TCPService {
                 logDebug("\(prefixForLogging(serviceName: self.parentService!.serviceName, proto: .tcp)) TCP service listening on port \(socket.listeningPort)")
                 //logDebug("*************************************************************************")
 
-                self.parentService!.startUDPService(onPort: Int(socket.listeningPort))
+                try self.parentService!.startUDPService(onPort: Int(socket.listeningPort))
                 sleep(1) // Give UDP a second to startup before we advertise
                 self.parentService!.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
 
@@ -60,7 +60,7 @@ class TCPService {
 
                     do {
                         let newSocket = try socket.acceptClientConnection()
-                        self.parentService!.clientDeviceConnectedOn(socket: newSocket)
+                        try self.parentService!.clientDeviceConnectedOn(socket: newSocket)
                     }
                     catch {
                         logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Failure accepting client connection: \(error)")
@@ -102,7 +102,7 @@ class TCPClient {
     var message: Message?
     let elementDataBufferLockQueue = DispatchQueue(label: "elementDataBufferLockQueue")
     var shouldKeepRunning = true
-    
+
     init(device: Device, socket: Socket) {
         self.device = device
         connected = true
@@ -114,14 +114,10 @@ class TCPClient {
         logDebug("\(prefixForLoggingDevice(device: device)) TCP server shutdown")
     }
     
-    func send(element: Element) -> Bool {
+    func send(element: Element) throws {
         if connected == false {
             logDebug("\(prefixForLoggingDevice(device: device)) Ignoring send element request because have no connection")
-            logDebug("\(prefixForLoggingDevice(device: device)) Shutting down TCP client")
-            shouldKeepRunning = false
-            socket!.close()
-            connected = false
-            return false
+            throw ElementSendError.attemptToSendNoConnection
         }
         do {
             /* Removed this - it needs to be updated for read/write elements
@@ -131,21 +127,25 @@ class TCPClient {
                 return false
             }
  */
-            //logVerbose("\(prefixForLoggingDevice(device: device)) Sending element message: \(element.encodeAsMessage) over \(element.proto) with value: \(String(describing: element.value))")
+            //logDebug("\(prefixForLoggingDevice(device: device)) Sending element message: \(element.encodeAsMessage) over \(element.proto) with value: \(String(describing: element.value))")
             try socket!.write(from: element.encodeAsMessage(udpIdentifier: (device.udpIdentifier)))
-            return true
         } catch {
             logError("\(prefixForLoggingDevice(device: device)) TCP send failure: \(error)")
-            connected = false
-            return false
+            disconnect()
         }
-    }
+    }   
     
-    func disconnected() {
-        if device is ServerDevice {
-            (device as! ServerDevice).disconnected()
-        } else {
-            device.lostConnection()
+    // TODO: Consolidate the naming of these methods
+    func disconnect() {
+        if connected {
+            socket!.close()
+            connected = false
+            shouldKeepRunning = false
+            if device is ServerDevice {
+                (device as! ServerDevice).disconnected()
+            } else {
+                device.lostConnection()
+            }
         }
     }
     
@@ -170,17 +170,22 @@ class TCPClient {
             do {
                 repeat {
                     let bytesRead = try socket!.read(into: &readData)
-
                     messageDataBuffer.append(readData)
                     
-                    while messageDataBuffer.count > 0, self.shouldKeepRunning {
-                        let (identifier, udpIdentifier, valueData, remainingData) = device.tcpMessage.process(data: messageDataBuffer, proto: .tcp, device: device)
+                    while messageDataBuffer.count > 0 && self.shouldKeepRunning {
+                        let (identifier, _, valueData, remainingData) = device.tcpMessage.process(data: messageDataBuffer, proto: .tcp, device: device)
                         messageDataBuffer = remainingData
                         if identifier == MALFORMED_MESSAGE_IDENTIFIER {
                             break
                         } else if identifier == MORE_COMING_IDENTIFIER {
+                            // We may be caught in a large message we'll never get the rest of, so just exit regardless
+                            // of buffered data
+                            if bytesRead == 0 {
+                                messageDataBuffer = Data()
+                                self.shouldKeepRunning = false
+                            }
                             break
-                        } else {
+                        } else {  // TODO: Add constant for no identifier (because TCP) here
                             device.processMessageIntoElement(identifier: identifier, valueData: valueData)
                         }
                     }
@@ -188,11 +193,10 @@ class TCPClient {
                     // If there's anything left in the buffer after a disconnect, finish
                     // processing it
                     if bytesRead == 0 {
-                        logDebug("\(prefixForLoggingDevice(device: device)) Got disconnect.  Processing buffer (\(messageDataBuffer.count)).")
+                        logDebug("\(prefixForLoggingDevice(device: device)) Got disconnect.  Processing buffer (\(messageDataBuffer.count)).  Should keep running: \(self.shouldKeepRunning)")
                         if messageDataBuffer.count == 0 {
                             logDebug("\(prefixForLoggingDevice(device: device)) Buffer clear.")
-                            self.disconnected()
-                            self.shouldKeepRunning = false
+                            self.disconnect()
                         }
                     }
                     
@@ -239,8 +243,8 @@ class TCPClientConnector {
         logDebug("TCP Client deinit")
     }
     
-    func send(element: Element) {
-        _ = connection?.send(element: element)
+    func send(element: Element) throws {
+        try connection?.send(element: element)
     }
     
     var connected: Bool {
@@ -275,10 +279,10 @@ class TCPClientConnector {
                 self.device!.tcpClient = TCPClient(device: self.device!, socket: self.socket!)
                 self.device!.tcpClient!.run()
                 if Thread.isMainThread {
-                    self.device?.connectSuccess(proto: .tcp)
+                    try self.device?.connectSuccess(proto: .tcp)
                 } else {
-                    (DispatchQueue.main).sync {
-                        self.device?.connectSuccess(proto: .tcp)
+                    try (DispatchQueue.main).sync {
+                        try self.device?.connectSuccess(proto: .tcp)
                     }
                 }
             } catch {
