@@ -124,6 +124,21 @@ public class Element {
     
     // MARK: -
 
+    public var floatValue: Float {
+        
+        get {
+            if self.dataType == .Float {
+                return value as! Float
+            } else {
+                logError("Attempt to read value using incorrect type method: floatValue")
+            }
+        }
+        
+        set {
+            value = newValue as Any
+        }
+    }
+    
     // We keep a private version to test for type before returning
     public var value: Any? {
         get {
