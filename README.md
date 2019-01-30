@@ -107,9 +107,9 @@ Using a Cartfile, you get the ElementalController framework automatically compil
 
 Then you run the command `carthage update`.
 
-Once the frameworks are compiled, you'll find *ElementalController.framework* and *Socket.framework* available in your project folder under "Carthage/Build". Add both to the Embedded Binaries section of your target settings. 
+Once the frameworks are compiled, you'll find *ElementalController.framework* and *Socket.framework* available in your project folder under "Carthage/Build". Add both to the Embedded Binaries section of your target settings.
 
-Learn more about [Carthage](https://github.com/Carthage/Carthage).
+Additional important steps described [here](https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application).
 ## Basic Use
 ### Sample Applications
 The sample applications for [iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux / macOS](https://github.com/robreuss/ElementalController_Linux_Sample) are the best way to get to know how to use ElementalController. 
