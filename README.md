@@ -101,11 +101,13 @@ You will need to install Avahi with the following Apt command to support publish
 ### CocoaPods
 Coming soon.  For now use Carthage to intgrate the iOS/macOS/tvOS frameworks, or just clone the repo and add the files to your project directly.
 ### Carthage
-Using a Cartfile, you get the ElementalController framework automatically compiled for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile, which must be located in your project directory:
+Using a Cartfile, you get the ElementalController framework automatically compiled for iOS, tvOS, and macOS.  Here's what you need to add to your Cartfile, which must be located in your project directory:
 
 `github "robreuss/ElementalController" ~> 0.0.4`
 
-Then you run the command `carthage update` and you'll find the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+Then you run the command `carthage update`.
+
+Once the frameworks are compiled, you'll find *ElementalController.framework* and *Socket.framework* available in your project folder under "Carthage/Build". Add both to the Embedded Binaries section of your target settings. 
 
 Learn more about [Carthage](https://github.com/Carthage/Carthage).
 ## Basic Use
