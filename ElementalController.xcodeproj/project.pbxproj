@@ -17,9 +17,9 @@
 		20B9C54621E45A4E0003EC75 /* ElementalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B9C53D21E45A4E0003EC75 /* ElementalController.swift */; };
 		20B9C54721E45A4E0003EC75 /* UDP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B9C53E21E45A4E0003EC75 /* UDP.swift */; };
 		20B9C56821E461660003EC75 /* Socket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20B9C56721E461660003EC75 /* Socket.framework */; };
-		20C9957921F592D900F565EA /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9957821F592D900F565EA /* Errors.swift */; };
-		20C9957A21F592D900F565EA /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9957821F592D900F565EA /* Errors.swift */; };
-		20C9957B21F592D900F565EA /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9957821F592D900F565EA /* Errors.swift */; };
+		20F238272202767500DC7511 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F238262202767400DC7511 /* Errors.swift */; };
+		20F238282202767500DC7511 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F238262202767400DC7511 /* Errors.swift */; };
+		20F238292202767500DC7511 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F238262202767400DC7511 /* Errors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,7 +37,7 @@
 		20B9C56721E461660003EC75 /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/iOS/Socket.framework; sourceTree = "<group>"; };
 		20B9C57221E465180003EC75 /* ElementalController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20B9C57F21E465410003EC75 /* ElementalController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementalController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		20C9957821F592D900F565EA /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		20F238262202767400DC7511 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +101,7 @@
 				20B9C53621E45A4E0003EC75 /* TCP.swift */,
 				20B9C53721E45A4E0003EC75 /* Service.swift */,
 				20B9C53821E45A4E0003EC75 /* Logger.swift */,
+				20F238262202767400DC7511 /* Errors.swift */,
 				20B9C53921E45A4E0003EC75 /* Message.swift */,
 				20B9C53A21E45A4E0003EC75 /* Elements.swift */,
 				20B9C53B21E45A4E0003EC75 /* Browser.swift */,
@@ -276,7 +277,7 @@
 				20B9C54421E45A4E0003EC75 /* Browser.swift in Sources */,
 				20B9C54121E45A4E0003EC75 /* Logger.swift in Sources */,
 				20B9C54021E45A4E0003EC75 /* Service.swift in Sources */,
-				20C9957921F592D900F565EA /* Errors.swift in Sources */,
+				20F238272202767500DC7511 /* Errors.swift in Sources */,
 				20B9C54521E45A4E0003EC75 /* Device.swift in Sources */,
 				20B9C54321E45A4E0003EC75 /* Elements.swift in Sources */,
 				20B9C54621E45A4E0003EC75 /* ElementalController.swift in Sources */,
@@ -287,7 +288,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20C9957A21F592D900F565EA /* Errors.swift in Sources */,
+				20F238282202767500DC7511 /* Errors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,7 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20C9957B21F592D900F565EA /* Errors.swift in Sources */,
+				20F238292202767500DC7511 /* Errors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

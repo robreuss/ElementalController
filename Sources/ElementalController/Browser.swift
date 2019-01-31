@@ -5,6 +5,7 @@
 //  Created by Rob Reuss on 12/6/18.
 //  Copyright © 2019 Rob Reuss. All rights reserved.
 //
+//  Classes related to service discovery
 
 import Dispatch
 import Foundation
@@ -12,6 +13,8 @@ import Foundation
 #if os(Linux)
 import NetService
 #endif
+
+// Event handling for the browser
 
 public class BrowserEvent {
     var type: BrowserEventTypes.EventType
@@ -62,14 +65,33 @@ public class BrowserEventTypes {
     public var foundServer = BrowserEvent(type: .foundServer)
 }
 
+
+// Provide user with the ability to find advertised services
 public class Browser: NSObject, NetServiceDelegate {
     var serviceName: String = ""
+    
+    // References to the underlying frameworks for service discovery.
+    // Note that "NetService" is either the Apple framework or the
+    // third-party Linux module that provides the same interface.
     var browser = NetServiceBrowser()
     var netService: NetService?
+    
+    // Set on the client side, it is sent to the server once
+    // a connection is established in case the server needs
+    // to display it
     var browserName: String = ElementalController.machineName
+    
+    // Created when a connection established, this is the main
+    // interface to the server for the client
     var serverDevice: [String: ServerDevice] = [:]
+    
+    // Used for logging purposes
     var proto: Proto = .tcp
+    
+    // Used to prevent multiple attempts to resolve the same service
     var resolvingService = false
+    
+    // Used to prevent needlessly starting/stopping the browsing service
     public var isBrowsing = false
     
     public var events = BrowserEventTypes()
@@ -81,7 +103,10 @@ public class Browser: NSObject, NetServiceDelegate {
     deinit {
         logDebug("Browser deinitialized")
     }
-    
+
+    // Called by the user via a property on Elemental Controller prior
+    // to setting up handlers
+    // TODO: Give same signature os the EC version
     func setup(named: String) {
         if named.count > 0 {
             browserName = named
@@ -93,11 +118,14 @@ public class Browser: NSObject, NetServiceDelegate {
         isBrowsing = false
     }
     
+    // Kick off the browsing process
     public func browseFor(serviceName: String) {
         self.serviceName = serviceName
         startBrowsing()
     }
     
+    // It is not necessary for the user to call this during the
+    // normal flow - it's called automatically when a connection is made
     public func stopBrowsing() {
         if isBrowsing == true {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Stopping browsing for \(serviceName)")
@@ -109,6 +137,8 @@ public class Browser: NSObject, NetServiceDelegate {
         }
     }
     
+    // Private function for starting browsing process
+    // TODO: should just be integrated into the browseFor method above
     func startBrowsing() {
         if isBrowsing {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) startBrowsing called when already browsing for service of type: \(ElementalController.serviceType(serviceName: serviceName, proto: proto)) in domain: \(ElementalController.serviceDomain)")
@@ -119,6 +149,7 @@ public class Browser: NSObject, NetServiceDelegate {
         }
     }
     
+    // Called when a connection is made, executes the foundServer handler
     func setupServerDevicefor(aServiceName: String, withDisplayName: String, atHost: String, onPort: Int) {
         serverDevice[aServiceName] = ServerDevice(serviceName: aServiceName, displayName: withDisplayName)
         if let serverDevice = serverDevice[aServiceName] {
@@ -132,8 +163,11 @@ public class Browser: NSObject, NetServiceDelegate {
 
 }
 
+// These are the standard NetServiceBrowser callbacks (for both the Apple
+// and Linux versions
 extension Browser: NetServiceBrowserDelegate {
     
+    // Found a service, start resolving...
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
         
@@ -148,6 +182,7 @@ extension Browser: NetServiceBrowserDelegate {
         }
     }
 
+    // Resolved a service, execute foundServer handler above
     public func netServiceDidResolveAddress(_ sender: NetService) {
         if resolvingService == false {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Ignoring resolution of service name \"\(sender.name)\" because resolution was cancelled.")
