@@ -140,14 +140,18 @@ public class Element {
     
     
     // MARK: -
+    
+    func typeError(usingFunction: String, shouldUseFunction: String) -> String {
+        return "Attempt to read value using incorrect type method: using \(usingFunction), should use \(shouldUseFunction)"
+    }
 
     public var int8Value: Int8 {
         get {
             if self.dataType == .Int8 {
                 return value as! Int8
             }
-            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
-            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
         }
         set {
             value = newValue as Any
@@ -159,21 +163,100 @@ public class Element {
             if self.dataType == .UInt8 {
                 return value as! UInt8
             }
-            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
-            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
         }
         set {
             value = newValue as Any
         }
     }
     
+    public var int16Value: Int16 {
+        get {
+            if self.dataType == .Int16 {
+                return value as! Int16
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var uint16Value: UInt16 {
+        get {
+            if self.dataType == .UInt16 {
+                return value as! UInt16
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var int32Value: Int32 {
+        get {
+            if self.dataType == .Int32 {
+                return value as! Int32
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var uint32Value: UInt32 {
+        get {
+            if self.dataType == .UInt32 {
+                return value as! UInt32
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var int64Value: Int64 {
+        get {
+            if self.dataType == .Int64 {
+                return value as! Int64
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var uint64Value: UInt64 {
+        get {
+            if self.dataType == .UInt64 {
+                return value as! UInt64
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    
     public var floatValue: Float {
         get {
             if self.dataType == .Float {
                 return value as! Float
             }
-            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
-            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
         }
         set {
             value = newValue as Any
@@ -185,8 +268,34 @@ public class Element {
             if self.dataType == .Double {
                 return value as! Double
             }
-            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
-            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var stringValue: String {
+        get {
+            if self.dataType == .String {
+                return value as! String
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var dataValue: Data {
+        get {
+            if self.dataType == .Data {
+                return value as! Data
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
         }
         set {
             value = newValue as Any
