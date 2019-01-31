@@ -1,5 +1,5 @@
 # Elemental Controller
-> **_This software is in active development and should be considered at an alpha stage.  Use with care and anticipate changes._**
+> **_This software is in active development and should be considered at an beta stage.  The interface is pretty set in stone now, but could change._**
 
 Intended for Swift developers, this framework implements a simple application layer protocol over TCP and UDP to provide a lean, low latency, and event-driven approach to controlling devices in a LAN-based environment.  It is designed for use cases such as controlling a Raspberry Pi robot on a LAN rather than managing a large fleet of agricultural sensors across the world.  
 
@@ -72,16 +72,18 @@ Each individual element has a prototype property, either TCP and UDP. You can mi
 A `Package.swift` file is provided in the respository and usage is typical of SPM.  On Linux, it will add both [BlueSocket](https://github.com/IBM-Swift/BlueSocket) and [NetService](https://github.com/Bouke/NetService).  Your Swift `Package.swift` would look something like this:
 ```swift
 // swift-tools-version:4.1
+// The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
 let package = Package(
-    name: "EC_ElementTests",
+    name: "ElementalController_Linux_Sample",
     dependencies: [
-        .package(url: "https://github.com/robreuss/ElementalController.git", .branch("develop")),
+        .package(url: "https://github.com/robreuss/ElementalController.git", from: "0.0.100")
+        //.package(url: "https://github.com/robreuss/ElementalController.git", .branch("develop")),
     ],
     targets: [
         .target(
-            name: "EC_ElementTests",
+            name: "ElementalController_Linux_Sample",
             dependencies: ["ElementalController"]),
     ]
 )
@@ -113,7 +115,7 @@ Additional important steps described [here](https://github.com/Carthage/Carthage
 ## Basic Use
 ### Sample Applications
 The sample applications for [iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux / macOS](https://github.com/robreuss/ElementalController_Linux_Sample) are the best way to get to know how to use ElementalController. 
-### Client-Side 
+### Simple Client-Side Example 
 Here's an example of setting up the framework with a few elements on the client side.  This is not a complete representation of available functionality.  
 
 Counter-intuitively, elements and their handlers are defined first, and the command to connect follows that.
@@ -169,7 +171,7 @@ elementalController.browser.events.onFoundServer.handler { serverDevice in
 elementalController.browser.browse(serviceName: "screen_control")
 
 ```
-### Server-Side 
+### Simple Server-Side Example
 Code for the server side follows a similar pattern as the client side, with element and handler definition first and publishing only once those are done:
 ```swift
 import ElementalController
