@@ -144,6 +144,8 @@ public class Element {
     
     // MARK: -
     
+    // Properties that provide type-specific versions of the underlying Any typed value
+    
     func typeError(usingFunction: String, shouldUseFunction: String) -> String {
         return "Attempt to read value using incorrect type method: using \(usingFunction), should use \(shouldUseFunction)"
     }
@@ -318,13 +320,14 @@ public class Element {
         }
     }
     
+    // Just a public interface to the underlying value with a type of Any
     public var anyValue: Any? {
         
         return value
         
     }
     
-    // We keep a private version to test for type before returning
+    // This is the backing store for the various type-specific properties
    var value: Any? {
         get {
 
