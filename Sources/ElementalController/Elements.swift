@@ -318,8 +318,14 @@ public class Element {
         }
     }
     
+    public var anyValue: Any? {
+        
+        return value
+        
+    }
+    
     // We keep a private version to test for type before returning
-    public var value: Any? {
+   var value: Any? {
         get {
 
             switch dataType {
