@@ -33,6 +33,23 @@ public enum ElementDataType: Int {
     case Double = 9
     case String = 10
     case Data = 11
+    public var description: String {
+        switch self {
+
+        case .Int8: return "int8Value"
+        case .UInt8: return "uint8Value"
+        case .Int16: return "int16Value"
+        case .UInt16: return "uint16Value"
+        case .Int32: return "int32Value"
+        case .UInt32: return "uint32Value"
+        case .Int64: return "int64Value"
+        case .UInt64: return "uint64Value"
+        case .Float: return "floatValue"
+        case .Double: return "doubleValue"
+        case .String: return "stringValue"
+        case .Data: return "dataValue"
+        }
+    }
 }
 
 // Core data structure class representing a real-world control or sensor, that
@@ -124,16 +141,53 @@ public class Element {
     
     // MARK: -
 
+    public var int8Value: Int8 {
+        get {
+            if self.dataType == .Int8 {
+                return value as! Int8
+            }
+            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var int8Value: UInt8 {
+        get {
+            if self.dataType == .UInt8 {
+                return value as! UInt8
+            }
+            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
     public var floatValue: Float {
-        
         get {
             if self.dataType == .Float {
                 return value as! Float
-            } else {
-                logError("Attempt to read value using incorrect type method: floatValue")
             }
+            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
         }
-        
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var doubleValue: Double {
+        get {
+            if self.dataType == .Double {
+                return value as! Double
+            }
+            logError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+            fatalError("Attempt to read value using incorrect type method: using \(#function), should use \(self.dataType.description)")
+        }
         set {
             value = newValue as Any
         }
