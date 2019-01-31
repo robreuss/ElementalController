@@ -154,7 +154,7 @@ public class Element {
         }
     }
     
-    public var int8Value: UInt8 {
+    public var uint8Value: UInt8 {
         get {
             if self.dataType == .UInt8 {
                 return value as! UInt8
