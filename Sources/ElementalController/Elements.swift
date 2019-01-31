@@ -33,9 +33,12 @@ public enum ElementDataType: Int {
     case Double = 9
     case String = 10
     case Data = 11
+    case Bool = 12
+    
     public var description: String {
         switch self {
 
+        case .Bool: return "boolValue"
         case .Int8: return "int8Value"
         case .UInt8: return "uint8Value"
         case .Int16: return "int16Value"
@@ -143,6 +146,19 @@ public class Element {
     
     func typeError(usingFunction: String, shouldUseFunction: String) -> String {
         return "Attempt to read value using incorrect type method: using \(usingFunction), should use \(shouldUseFunction)"
+    }
+    
+    public var boolValue: Bool {
+        get {
+            if self.dataType == .Bool {
+                return value as! Bool
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
     }
 
     public var int8Value: Int8 {
@@ -307,6 +323,8 @@ public class Element {
         get {
 
             switch dataType {
+            case .Bool:
+                return readValue is Bool ? readValue : nil
             case .Int8:
                 return readValue is Int8 ? readValue : nil
             case .UInt8:
@@ -353,6 +371,14 @@ public class Element {
                 let error = "\(displayName) (\(identifier)) nil encountered when encoding value as data (possible type error)."
                 
                 switch dataType {
+                case .Bool:
+                    if var value = writeValue as? Bool {
+                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                    } else {
+                        logError("Type error encoding Bool element: \"\(displayName)\"")
+                        fatalError()
+                    }
+                    
                 case .Int8:
                     if var value = writeValue as? Int8 {
                         return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
@@ -469,6 +495,10 @@ public class Element {
             readWriteLock.sync {
                 
                 switch dataType {
+                case .Bool:
+                    let int = Element.boolValue(data: newValue)
+                    readValue = int as Any
+                    
                 case .Int8:
                     let int = Element.int8Value(data: newValue)
                     readValue = int as Any
@@ -536,6 +566,12 @@ public class Element {
     // MARK: -
     // MARK: Convert Data to typed values
 
+    static func boolValue(data: Data) -> Bool {
+        return data.withUnsafeBytes { (ptr: UnsafePointer<Bool>) -> Bool in
+            ptr.pointee
+        }
+    }
+    
     static func int8Value(data: Data) -> Int8 {
         return Int8(bitPattern: UInt8(littleEndian: data.withUnsafeBytes { $0.pointee }))
     }
