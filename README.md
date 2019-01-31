@@ -101,13 +101,15 @@ You will need to install Avahi with the following Apt command to support publish
 ### CocoaPods
 Coming soon.  For now use Carthage to intgrate the iOS/macOS/tvOS frameworks, or just clone the repo and add the files to your project directly.
 ### Carthage
-Using a Cartfile, you get the ElementalController framework automatically compiled for iOS, tvOS, and macOS, without needing to worry about it's dependency on [BlueSocket](https://github.com/IBM-Swift/BlueSocket).  Here's what you need to add to your Cartfile, which must be located in your project directory:
+Using a Cartfile, you get the ElementalController framework automatically compiled for iOS, tvOS, and macOS.  Here's what you need to add to your Cartfile, which must be located in your project directory:
 
 `github "robreuss/ElementalController" ~> 0.0.4`
 
-Then you run the command `carthage update` and you'll find the frameworks available in your project folder under "Carthage/Build".  You should only need to add ElementalController by dragging it from there to the Embedded Binaries section of your target, but not BlueSocket.
+Then you run the command `carthage update`.
 
-Learn more about [Carthage](https://github.com/Carthage/Carthage).
+Once the frameworks are compiled, you'll find *ElementalController.framework* and *Socket.framework* available in your project folder under "Carthage/Build". Add both to the Embedded Binaries section of your target settings.
+
+Additional important steps described [here](https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application).
 ## Basic Use
 ### Sample Applications
 The sample applications for [iOS](https://github.com/robreuss/ElementalController_iOS_Sample) and [Linux / macOS](https://github.com/robreuss/ElementalController_Linux_Sample) are the best way to get to know how to use ElementalController. 
@@ -152,7 +154,7 @@ elementalController.browser.events.onFoundServer.handler { serverDevice in
     serverDevice.events.onConnect.handler = {serverDevice in
         
         if let brightness = serverDevice.getElementWith(identifier: ElementIdentifier.brightness.rawValue) {
-            brightness.value = Float(0.0)
+            brightness.floatValue = Float(0.0)
             let sendSuccess = serverDevice.send(element: brightness)
         } else {
             logError("Unable to find brightness element")
@@ -209,11 +211,11 @@ class MainProcess {
                             dataType: .Float))
                 
                 brightness.handler = { element, _ in
-                    logDebug("Server received a brightness element: \(element.value ?? "")")
+                    logDebug("Server received a brightness element: \(element.floatValue ?? "")")
                 }
                 
                 backlight.handler = { element, _ in
-                    logDebug("Server received a backlight element: \(element.value  ?? "")")
+                    logDebug("Server received a backlight element: \(element.floatValue  ?? "")")
                 }
                 
         }
