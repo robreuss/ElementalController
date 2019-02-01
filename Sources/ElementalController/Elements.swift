@@ -153,7 +153,7 @@ public class Element {
     public var boolValue: Bool? {
         get {
             if self.dataType == .Bool {
-                return value as! Bool
+                return value as? Bool
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -166,7 +166,7 @@ public class Element {
     public var int8Value: Int8? {
         get {
             if self.dataType == .Int8 {
-                return value as! Int8
+                return value as? Int8
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -179,7 +179,7 @@ public class Element {
     public var uint8Value: UInt8? {
         get {
             if self.dataType == .UInt8 {
-                return value as! UInt8
+                return value as? UInt8
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -192,7 +192,7 @@ public class Element {
     public var int16Value: Int16? {
         get {
             if self.dataType == .Int16 {
-                return value as! Int16
+                return value as? Int16
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -205,7 +205,7 @@ public class Element {
     public var uint16Value: UInt16? {
         get {
             if self.dataType == .UInt16 {
-                return value as! UInt16
+                return value as? UInt16
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -218,7 +218,7 @@ public class Element {
     public var int32Value: Int32? {
         get {
             if self.dataType == .Int32 {
-                return value as! Int32
+                return value as? Int32
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -231,7 +231,7 @@ public class Element {
     public var uint32Value: UInt32? {
         get {
             if self.dataType == .UInt32 {
-                return value as! UInt32
+                return value as? UInt32
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -244,7 +244,7 @@ public class Element {
     public var int64Value: Int64? {
         get {
             if self.dataType == .Int64 {
-                return value as! Int64
+                return value as? Int64
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -257,7 +257,7 @@ public class Element {
     public var uint64Value: UInt64? {
         get {
             if self.dataType == .UInt64 {
-                return value as! UInt64
+                return value as? UInt64
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -271,7 +271,7 @@ public class Element {
     public var floatValue: Float? {
         get {
             if self.dataType == .Float {
-                return value as! Float
+                return value as? Float
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -297,7 +297,7 @@ public class Element {
     public var stringValue: String? {
         get {
             if self.dataType == .String {
-                return value as! String
+                return value as? String
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -310,7 +310,7 @@ public class Element {
     public var dataValue: Data? {
         get {
             if self.dataType == .Data {
-                return value as! Data
+                return value as? Data
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
