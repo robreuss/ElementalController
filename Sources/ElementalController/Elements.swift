@@ -478,8 +478,8 @@ public class Element {
                     
                 case .Data:
                     
-                    if var value = writeValue as? Data {
-                        return writeValue as! Data
+                    if let value = writeValue as? Data {
+                        return value
                     } else {
                         logError("Type error encoding Data element: \"\(displayName)\"")
                         fatalError()
