@@ -481,7 +481,7 @@ public class Element {
                     if var value = writeValue as? Data {
                         return writeValue as! Data
                     } else {
-                        logError("Type error encoding Double element: \"\(displayName)\"")
+                        logError("Type error encoding Data element: \"\(displayName)\"")
                         fatalError()
                     }
                     
