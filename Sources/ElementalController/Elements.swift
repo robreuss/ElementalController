@@ -150,7 +150,7 @@ public class Element {
         return "Attempt to read value using incorrect type method: using \(usingFunction), should use \(shouldUseFunction)"
     }
     
-    public var boolValue: Bool {
+    public var boolValue: Bool? {
         get {
             if self.dataType == .Bool {
                 return value as! Bool
@@ -163,7 +163,7 @@ public class Element {
         }
     }
 
-    public var int8Value: Int8 {
+    public var int8Value: Int8? {
         get {
             if self.dataType == .Int8 {
                 return value as! Int8
@@ -176,7 +176,7 @@ public class Element {
         }
     }
     
-    public var uint8Value: UInt8 {
+    public var uint8Value: UInt8? {
         get {
             if self.dataType == .UInt8 {
                 return value as! UInt8
@@ -189,7 +189,7 @@ public class Element {
         }
     }
     
-    public var int16Value: Int16 {
+    public var int16Value: Int16? {
         get {
             if self.dataType == .Int16 {
                 return value as! Int16
@@ -202,7 +202,7 @@ public class Element {
         }
     }
     
-    public var uint16Value: UInt16 {
+    public var uint16Value: UInt16? {
         get {
             if self.dataType == .UInt16 {
                 return value as! UInt16
@@ -215,7 +215,7 @@ public class Element {
         }
     }
     
-    public var int32Value: Int32 {
+    public var int32Value: Int32? {
         get {
             if self.dataType == .Int32 {
                 return value as! Int32
@@ -228,7 +228,7 @@ public class Element {
         }
     }
     
-    public var uint32Value: UInt32 {
+    public var uint32Value: UInt32? {
         get {
             if self.dataType == .UInt32 {
                 return value as! UInt32
@@ -241,7 +241,7 @@ public class Element {
         }
     }
     
-    public var int64Value: Int64 {
+    public var int64Value: Int64? {
         get {
             if self.dataType == .Int64 {
                 return value as! Int64
@@ -254,7 +254,7 @@ public class Element {
         }
     }
     
-    public var uint64Value: UInt64 {
+    public var uint64Value: UInt64? {
         get {
             if self.dataType == .UInt64 {
                 return value as! UInt64
@@ -268,7 +268,7 @@ public class Element {
     }
     
     
-    public var floatValue: Float {
+    public var floatValue: Float? {
         get {
             if self.dataType == .Float {
                 return value as! Float
@@ -281,7 +281,7 @@ public class Element {
         }
     }
     
-    public var doubleValue: Double {
+    public var doubleValue: Double? {
         get {
             if self.dataType == .Double {
                 return value as! Double
@@ -294,7 +294,7 @@ public class Element {
         }
     }
     
-    public var stringValue: String {
+    public var stringValue: String? {
         get {
             if self.dataType == .String {
                 return value as! String
@@ -307,7 +307,7 @@ public class Element {
         }
     }
     
-    public var dataValue: Data {
+    public var dataValue: Data? {
         get {
             if self.dataType == .Data {
                 return value as! Data
