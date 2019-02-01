@@ -284,7 +284,7 @@ public class Element {
     public var doubleValue: Double? {
         get {
             if self.dataType == .Double {
-                return value as Double
+                return value as? Double
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
