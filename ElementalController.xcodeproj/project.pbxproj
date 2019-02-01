@@ -97,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				2083572521E532F100D31FCE /* Info.plist */,
+				20C9957821F592D900F565EA /* Errors.swift */,
 				20B9C53621E45A4E0003EC75 /* TCP.swift */,
 				20B9C53721E45A4E0003EC75 /* Service.swift */,
 				20B9C53821E45A4E0003EC75 /* Logger.swift */,
