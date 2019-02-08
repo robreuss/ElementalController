@@ -11,7 +11,7 @@ import Socket
 
 class UDPClient {
 
-    var device: Device?
+    var device: Device
     
     // Once the socket is open, client needs this to send data
     var remoteAddress: Socket.Address?
@@ -37,13 +37,18 @@ class UDPClient {
     
     func shutdown() {
         logDebug("\(serviceNameForLogging(device: device)) UDP client shutting down at server request")
-        socket!.close()
+        if let s = socket {
+            s.close()
+        } else {
+            logError("\(serviceNameForLogging(device: device)) Could not close UDP socket because socket was nil")
+        }
+
     }
     
     func sendElement(element: Element) throws {
         do {
             if let s = socket {
-                _ = try s.write(from: element.encodeAsMessage(udpIdentifier: (device?.udpIdentifier)!), to: remoteAddress!)
+                _ = try s.write(from: element.encodeAsMessage(udpIdentifier: device.udpIdentifier), to: remoteAddress!)
             } else {
                 logError("\(serviceNameForLogging(device: device)) UDP Attempt to write against nil UDP socket")
                 throw ElementSendError.attemptToSendWithNoUDPSocket
@@ -69,7 +74,7 @@ open class UDPService {
     var serviceName = "" // For logging purposes
     var socket: Socket?
     var shouldKeepRunning = true
-    weak var service: Service? // Delegate
+    var service: Service // Delegate
     
     init(service: Service) {
         self.service = service
@@ -99,7 +104,7 @@ open class UDPService {
                     logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Failure to unwrap UDP socket")
                     self.shouldKeepRunning = false
                     try (DispatchQueue.main).sync {
-                        try self.service!.failedToPublish(proto: .udp)
+                        try self.service.failedToPublish(proto: .udp)
                         return
                     }
                     return // Compiler insists on this
@@ -133,12 +138,10 @@ open class UDPService {
                             let udpIdentifier = UInt8(Element.uint8Value(data: udpIdentifierData))
                             
                             // Get the device that's sending data, presumably
-                            let device = self.service!.getDeviceForUDPIdentififer(udpIdentifier: udpIdentifier)
-                            if device == nil {
-                                logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Unable to find device for processing UDP message.")
-                            } else {
+                            let device = self.service.getDeviceForUDPIdentififer(udpIdentifier: udpIdentifier)
+                            if let d = device {
                                 // Extract the identifier and value data from the message
-                                let (identifier, _, valueData, remainingData) = device!.udpMessage.process(data: messageDataBuffer, proto: Proto.udp, device: device!) // Extract identifier and value from the raw Data
+                                let (identifier, _, valueData, remainingData) = d.udpMessage.process(data: messageDataBuffer, proto: Proto.udp, device: d) // Extract identifier and value from the raw Data
                                 messageDataBuffer = remainingData
                                 if identifier == MALFORMED_MESSAGE_IDENTIFIER {
                                     break
@@ -147,8 +150,10 @@ open class UDPService {
                                 } else {
                                     // Process the identity and value of the element, and in turn, call handlers
                                     // Execution won't be put back on the main thread until the handlers are called
-                                    device!.processMessageIntoElement(identifier: identifier, valueData: valueData)
+                                    d.processMessageIntoElement(identifier: identifier, valueData: valueData)
                                 }
+                            } else {
+                                logError("\(prefixForLogging(serviceName: self.serviceName, proto: .udp)) Unable to find device for processing UDP message.")
                             }
                         }
                     }
