@@ -60,6 +60,7 @@ class TCPService {
 
                     do {
                         let newSocket = try socket.acceptClientConnection()
+                        usleep(10000) // Wait to permit the server side to get fully configured in terms of elements and handlers
                         try self.parentService.clientDeviceConnectedOn(socket: newSocket)
                     }
                     catch {
