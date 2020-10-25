@@ -19,8 +19,8 @@ import NetService
 public class BrowserEvent {
     var type: BrowserEventTypes.EventType
     
-    public typealias BrowserHandler = ((ServerDevice) -> Void)?
-    private var privateHandler: BrowserHandler
+    public typealias BrowserHandler = ((ServerDevice) -> Void)
+    private var privateHandler: BrowserHandler?
     
     init(type: BrowserEventTypes.EventType) {
         self.type = type
@@ -37,7 +37,7 @@ public class BrowserEvent {
         }
     }
     
-    public var handler: BrowserHandler{
+    public var handler: BrowserHandler? {
         set {
             privateHandler = newValue
         }
@@ -46,7 +46,7 @@ public class BrowserEvent {
         }
     }
     
-    public func handler(handler: BrowserHandler) {
+    public func handler(handler: @escaping BrowserHandler) {
         privateHandler = handler
     }
 }
