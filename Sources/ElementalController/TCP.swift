@@ -10,7 +10,7 @@ import Foundation
 import Socket
 
 class TCPService {
-    var parentService: Service?
+    var parentService: Service
     var listenerSocket: Socket?
     var isListening: Bool = false
     var continueRunning = true
@@ -18,11 +18,11 @@ class TCPService {
     
     init(parentServer: Service) {
         parentService = parentServer
-        logDebug("\(prefixForLogging(serviceName: (parentService?.serviceName)!, proto: .tcp)) Initializing TCPServer")
+        logDebug("\(prefixForLogging(serviceName: parentService.serviceName, proto: .tcp)) Initializing TCPServer")
     }
     
     deinit {
-        logDebug("\(prefixForLogging(serviceName: (parentService?.serviceName)!, proto: .tcp)) Deinit TCPServer, closing socket")
+        logDebug("\(prefixForLogging(serviceName: parentService.serviceName, proto: .tcp)) Deinit TCPServer, closing socket")
         
         listenerSocket?.close()
     }
@@ -36,7 +36,7 @@ class TCPService {
                 logVerbose("Setting up IPv6 socket")
                 try self.listenerSocket = Socket.create(family: ElementalController.protocolFamily)
                 guard let socket = self.listenerSocket else {
-                    logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Unable to unwrap socket...")
+                    logDebug("\(prefixForLogging(serviceName: self.parentService.serviceName, proto: .tcp)) Unable to unwrap socket...")
                     (DispatchQueue.main).sync {
                         return
                     }
@@ -48,29 +48,30 @@ class TCPService {
                 self.isListening = true
                 
                 //logDebug("*************************************************************************")
-                logDebug("\(prefixForLogging(serviceName: self.parentService!.serviceName, proto: .tcp)) TCP service listening on port \(socket.listeningPort)")
+                logDebug("\(prefixForLogging(serviceName: self.parentService.serviceName, proto: .tcp)) TCP service listening on port \(socket.listeningPort)")
                 //logDebug("*************************************************************************")
 
-                try self.parentService!.startUDPService(onPort: Int(socket.listeningPort))
+                try self.parentService.startUDPService(onPort: Int(socket.listeningPort))
                 sleep(1) // Give UDP a second to startup before we advertise
-                self.parentService!.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
+                self.parentService.publishTCPServiceAdvertisment(onPort: Int(socket.listeningPort))
 
                 
                 repeat {
 
                     do {
                         let newSocket = try socket.acceptClientConnection()
-                        try self.parentService!.clientDeviceConnectedOn(socket: newSocket)
+
+                        try self.parentService.clientDeviceConnectedOn(socket: newSocket)
                     }
                     catch {
-                        logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) Failure accepting client connection: \(error)")
+                        logDebug("\(prefixForLogging(serviceName: self.parentService.serviceName, proto: .tcp)) Failure accepting client connection: \(error)")
                     }
 
                     
                 } while self.continueRunning
                 
             } catch {
-                guard let socketError = error as? Socket.Error else { logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) TCPServer: Unexpected error...")
+                guard let socketError = error as? Socket.Error else { logDebug("\(prefixForLogging(serviceName: self.parentService.serviceName, proto: .tcp)) TCPServer: Unexpected error...")
                     self.isListening = false
                     (DispatchQueue.main).sync {
                         return
@@ -79,7 +80,7 @@ class TCPService {
                 }
                 
                 if self.continueRunning {
-                    logDebug("\(prefixForLogging(serviceName: (self.parentService?.serviceName)!, proto: .tcp)) TCPServer: Error reported: \(socketError.description)")
+                    logDebug("\(prefixForLogging(serviceName: self.parentService.serviceName, proto: .tcp)) TCPServer: Error reported: \(socketError.description)")
                     self.isListening = false
                 }
             }
@@ -87,9 +88,14 @@ class TCPService {
     }
     
     func shutdown() {
-        logDebug("\(prefixForLogging(serviceName: (parentService?.serviceName)!, proto: .tcp)) Shutting down TCP server listener")
+        logDebug("\(prefixForLogging(serviceName: parentService.serviceName, proto: .tcp)) Shutting down TCP server listener")
         continueRunning = false
-        listenerSocket!.close()
+        if let ls = listenerSocket {
+            ls.close()
+        } else {
+            logError("\(prefixForLogging(serviceName: parentService.serviceName, proto: .tcp)) Nil listenerSocket, unable to close")
+        }
+
     }
 }
 
@@ -97,7 +103,7 @@ class TCPService {
 
 class TCPClient {
     var device: Device
-    var socket: Socket?
+    var socket: Socket
     var connected = false
     var message: Message?
     let elementDataBufferLockQueue = DispatchQueue(label: "elementDataBufferLockQueue")
@@ -128,7 +134,7 @@ class TCPClient {
             }
  */
             //logDebug("\(prefixForLoggingDevice(device: device)) Sending element message: \(element.encodeAsMessage) over \(element.proto) with value: \(String(describing: element.value))")
-            try socket!.write(from: element.encodeAsMessage(udpIdentifier: (device.udpIdentifier)))
+            try socket.write(from: element.encodeAsMessage(udpIdentifier: (device.udpIdentifier)))
         } catch {
             logError("\(prefixForLoggingDevice(device: device)) TCP send failure: \(error)")
             disconnect()
@@ -138,7 +144,7 @@ class TCPClient {
     // TODO: Consolidate the naming of these methods
     func disconnect() {
         if connected {
-            socket!.close()
+            socket.close()
             connected = false
             shouldKeepRunning = false
             if device is ServerDevice {
@@ -152,7 +158,7 @@ class TCPClient {
     func shutdown() {
         logDebug("\(prefixForLoggingDevice(device: device)) Shutting down TCP service")
         shouldKeepRunning = false
-        socket!.close()
+        socket.close()
         connected = false
     }
     
@@ -166,10 +172,10 @@ class TCPClient {
             let device = self.device
             var messageDataBuffer = Data()
             var readData = Data(capacity: ElementalController.TCPBufferSize)
-            
+
             do {
                 repeat {
-                    let bytesRead = try socket!.read(into: &readData)
+                    let bytesRead = try socket.read(into: &readData)
                     messageDataBuffer.append(readData)
                     
                     while messageDataBuffer.count > 0 && self.shouldKeepRunning {
@@ -204,7 +210,7 @@ class TCPClient {
                 } while self.shouldKeepRunning
             } catch {
                 guard let socketError = error as? Socket.Error else {
-                    logDebug("\(prefixForLoggingDevice(device: device)) Unexpected error by connection at \(socket!.remoteHostname):\(socket!.remotePort)")
+                    logDebug("\(prefixForLoggingDevice(device: device)) Unexpected error by connection at \(socket.remoteHostname):\(socket.remotePort)")
                     self.connected = false
                     (DispatchQueue.main).sync {
                         return
