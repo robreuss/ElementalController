@@ -195,6 +195,9 @@ public class Device {
                 
                 logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Connected to server.")
                 
+                // Take a brief pause before notifying the user so the server can
+                // get fully configured
+                usleep(750000) 
                 events.connected.executeHandler(device: self)
                 
             // The client sends the server a device name, which will typically be their
