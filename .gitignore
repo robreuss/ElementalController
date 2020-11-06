@@ -43,3 +43,5 @@ Carthage/Checkouts
 Carthage/Build
 
 Package\.resolved
+
+Sources/.DS_Store
