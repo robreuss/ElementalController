@@ -12,7 +12,7 @@ let package = Package(
         ],
     dependencies: [
         .package(url: "https://github.com/IBM-Swift/BlueSocket.git",.upToNextMajor(from: "1.0.0")),
-        .package(url: "https://github.com/Bouke/NetService.git",.upToNextMajor(from: "0.5.0"))
+        .package(url: "https://github.com/Bouke/NetService.git",.upToNextMajor(from: "0.7.0"))
         
     ],
     targets: [
