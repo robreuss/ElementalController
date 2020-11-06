@@ -14,6 +14,8 @@ import Foundation
 import NetService
 #endif
 
+// Test comment
+
 // Event handling for the browser
 
 public class BrowserEvent {
