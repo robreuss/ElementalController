@@ -8,6 +8,9 @@
 
 import Foundation
 
+public typealias LoglineHandler = ((String) -> Void)?
+public var loglineHandler: LoglineHandler?
+
 @objc public enum LogLevel: Int, CustomStringConvertible {
     case Error = 0
     case Debug = 1
@@ -37,6 +40,11 @@ func logAtLevel(_ priority: LogLevel, logLine: String) {
         } else {
             print("[\(ElementalController.loggerPrefix)] \(logLine)")
         }
+        
+        if let handler = loglineHandler {
+            handler!("[\(ElementalController.loggerPrefix)] \(logLine)")
+        }
+        
     }
 }
 
