@@ -11,7 +11,7 @@ import Foundation
 public typealias LoglineHandler = ((String) -> Void)?
 public var loglineHandler: LoglineHandler?
 
-@objc public enum LogLevel: Int, CustomStringConvertible {
+@objc public enum LogLevel: Int, CustomStringConvertible, Codable {
     case Error = 0
     case Debug = 1
     case Verbose = 2
