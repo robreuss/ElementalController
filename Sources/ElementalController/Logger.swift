@@ -47,7 +47,7 @@ func logAtLevel(_ priority: LogLevel, logLine: String) {
         }
         
         if let handler = remoteLoggerHandler {
-            let logLineEnc = LogLine(text: "logLine", logLevel: priority)
+            let logLineEnc = LogLine(text: logLine, logLevel: priority)
             handler!(logLineEnc)
         }
         
