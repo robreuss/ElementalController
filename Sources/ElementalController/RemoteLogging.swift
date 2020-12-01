@@ -9,6 +9,8 @@ public struct LogLine: Codable {
 
 public class RemoteLogging {
     
+    static let shared = RemoteLogging()
+    
     var elementalController = ElementalController()
     var serverDevice: ServerDevice?
     var clientDevice: Device?
