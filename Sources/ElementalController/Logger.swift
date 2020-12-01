@@ -11,8 +11,6 @@ import Foundation
 public typealias RemoteLoggerHandler = ((LogLine) -> Void)?
 public var remoteLoggerHandler: RemoteLoggerHandler?
 
-var remoteLogging = RemoteLogging.shared
-
 @objc public enum LogLevel: Int, CustomStringConvertible, Codable {
     case Error = 0
     case Debug = 1
