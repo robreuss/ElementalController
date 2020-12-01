@@ -172,14 +172,13 @@ extension Browser: NetServiceBrowserDelegate {
     // Found a service, start resolving...
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
-        
+        resolvingService = false
         if resolvingService == false  {
             resolvingService = true
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
             netService = service
             netService?.delegate = self
             netService?.resolve(withTimeout: NETSERVICE_RESOLVE_TIMEOUT)
-            sleep(5)
         } else {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Not resolving service \(service.type), already resolving a service")
         }
@@ -223,7 +222,7 @@ extension Browser: NetServiceBrowserDelegate {
     // can restart the search
     public func netService(_ sender: NetService, didNotResolve errorDict: [String: NSNumber]) {
         logVerbose("\(formatServiceNameForLogging(serviceName: serviceName)) Browser did not resolve: \(errorDict)")
-        //stopBrowsing()
+        stopBrowsing()
         // self.events.browsingError.executeHandlers(contextInfo: ["serviceName": serviceName, "error": errorDict])
     }
     
