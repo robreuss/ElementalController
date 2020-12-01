@@ -35,6 +35,12 @@ public enum Proto {
 }
 
 public class ElementalController {
+    
+    // For remote logging
+    public struct LogLine: Codable {
+        public var text = ""
+        public var logLevel: LogLevel
+    }
     // User confirmation options
     
     // Currently framework is only tested for private LAN use so this shouldn't be changed unless you're daring
