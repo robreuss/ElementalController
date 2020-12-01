@@ -119,7 +119,7 @@ public class ElementalController {
     // Provides a remote logging functionality, where the EC instance can be either a
     // logging server or client.
     
-    public var remoteLogger = RemoteLogging()
+    public var remoteLogging = RemoteLogging()
 
     public init() {}
     
