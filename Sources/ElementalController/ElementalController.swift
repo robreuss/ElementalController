@@ -115,11 +115,6 @@ public class ElementalController {
     // Service provides the basis of server functionality
     public var browser = Browser()
     public var service = Service()
-    
-    // Provides a remote logging functionality, where the EC instance can be either a
-    // logging server or client.
-    
-    public var remoteLogging = RemoteLogging()
 
     public init() {}
     
