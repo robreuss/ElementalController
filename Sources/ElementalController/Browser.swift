@@ -179,6 +179,7 @@ extension Browser: NetServiceBrowserDelegate {
             netService = service
             netService?.delegate = self
             netService?.resolve(withTimeout: NETSERVICE_RESOLVE_TIMEOUT)
+            sleep(5)
         } else {
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Not resolving service \(service.type), already resolving a service")
         }
