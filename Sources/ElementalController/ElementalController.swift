@@ -36,7 +36,8 @@ public enum Proto {
 
 public class ElementalController {
     
-    // User confirmation options
+    // Remote Logging
+    public static var remoteLogging = RemoteLogging()
     
     // Currently framework is only tested for private LAN use so this shouldn't be changed unless you're daring
     public static var serviceDomain = "local." {
