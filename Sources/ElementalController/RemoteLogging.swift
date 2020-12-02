@@ -27,7 +27,7 @@ public class RemoteLogging {
     public func setupAsServer(serviceName: String, deviceName: String) {
         
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Setting up as remote logging server...")
-        
+
         elementalController.setupForService(serviceName: serviceName, displayName: deviceName)
         
         elementalController.service.events.deviceDisconnected.handler =  { _, _ in
