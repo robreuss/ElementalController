@@ -27,6 +27,12 @@ public class RemoteLogging {
         
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Setting up as remote logging server...")
         
+        incomingLogLineHandler = { [self] logLine in
+            
+            self.sendLogLineToServer(logLine: logLine)
+            
+        }
+        
         elementalController.setupForService(serviceName: serviceName, displayName: deviceName)
         
         elementalController.service.events.deviceDisconnected.handler =  { _, _ in
