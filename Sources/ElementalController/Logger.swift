@@ -8,9 +8,6 @@
 
 import Foundation
 
-public typealias RemoteLoggerHandler = ((LogLine) -> Void)?
-public var remoteLoggerHandler: RemoteLoggerHandler?
-
 @objc public enum LogLevel: Int, CustomStringConvertible, Codable {
     case Error = 0
     case Debug = 1
@@ -41,9 +38,9 @@ func logAtLevel(_ priority: LogLevel, logLine: String) {
             print("[\(ElementalController.loggerPrefix)] \(logLine)")
         }
         
-        if let handler = remoteLoggerHandler {
+        if let handler = RemoteLogging.outgoingLogLineHandler {
             let logLineEnc = LogLine(text: logLine, logLevel: priority)
-            handler!(logLineEnc)
+            handler(logLineEnc)
         }
         
     }

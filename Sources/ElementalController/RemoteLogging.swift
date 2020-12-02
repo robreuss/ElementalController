@@ -19,7 +19,8 @@ public class RemoteLogging {
     var isConnected: Bool = false
     
     public typealias LogLineHandler = ((LogLine) -> Void)
-    public var incomingLogLineHandler: LogLineHandler?
+    static public var incomingLogLineHandler: LogLineHandler?
+    static public var outgoingLogLineHandler: LogLineHandler?
 
     public init() {}
     
@@ -27,7 +28,7 @@ public class RemoteLogging {
         
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Setting up as remote logging server...")
         
-        incomingLogLineHandler = { [self] logLine in
+        RemoteLogging.incomingLogLineHandler = { [self] logLine in
             
             self.sendLogLineToServer(logLine: logLine)
             
@@ -58,7 +59,7 @@ public class RemoteLogging {
                     do {
                         if let logLine = element.dataValue {
                             let decodedLogLine = try jsonDecoder.decode(LogLine.self, from: logLine)
-                            if let handler = self.incomingLogLineHandler {
+                            if let handler = RemoteLogging.incomingLogLineHandler {
                                 
                                 handler(decodedLogLine)
                                 
@@ -97,6 +98,12 @@ public class RemoteLogging {
         elementalController.browser.events.foundServer.handler { serverDevice in
             
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Found remote logging server: \(serverDevice.deviceName)")
+            
+            RemoteLogging.outgoingLogLineHandler = { [self] logLine in
+                
+                self.sendLogLineToServer(logLine: logLine)
+                
+            }
             
             self.serverDevice = serverDevice
             
