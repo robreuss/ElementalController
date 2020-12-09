@@ -77,9 +77,8 @@ public class Element {
     public var useFilter: Bool = false
     public var dataType: ElementDataType = .String
 
-    // TODO: Reconsider the need for two initializers here
-    // Need this initializing udpIdentifierElement in Device
-    init() {
+    // Used to avoid unwrapping
+    public init() {
         self.identifier = 0
         self.displayName = "None"
         self.proto = .tcp
