@@ -222,6 +222,7 @@ extension Browser: NetServiceBrowserDelegate {
     // can restart the search
     public func netService(_ sender: NetService, didNotResolve errorDict: [String: NSNumber]) {
         logVerbose("\(formatServiceNameForLogging(serviceName: serviceName)) Browser did not resolve: \(errorDict)")
+        print(Thread.callStackSymbols.joined(separator: "\n"))
         stopBrowsing()
         // self.events.browsingError.executeHandlers(contextInfo: ["serviceName": serviceName, "error": errorDict])
     }
