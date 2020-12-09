@@ -172,7 +172,6 @@ extension Browser: NetServiceBrowserDelegate {
     // Found a service, start resolving...
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
-        resolvingService = false
         if resolvingService == false  {
             resolvingService = true
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
