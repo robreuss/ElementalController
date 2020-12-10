@@ -172,6 +172,10 @@ extension Browser: NetServiceBrowserDelegate {
     // Found a service, start resolving...
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Browser found service of type \(service.type)")
+        if moreComing {
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Ignoring \(service.type) because more services coming (prefer IPV6...")
+            return
+        }
         if resolvingService == false  {
             resolvingService = true
             logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Resolving service \(service.type)...")
