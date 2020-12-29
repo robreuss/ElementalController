@@ -95,7 +95,7 @@ public class RemoteLogging {
             
             RemoteLogging.outgoingLogLineHandler = { [self] logLine in
                 
-                self.sendLogLineToServer(logLine: logLine)
+               self.sendLogLineToServer(logLine: logLine)
                 
             }
             
@@ -139,7 +139,7 @@ public class RemoteLogging {
     
     public func sendLogLineToServer(logLine: LogLine) {
 
-        if !self.isConnected { return }
+        if isConnected == false { return }
         
         let jsonEncoder = JSONEncoder()
         do {
