@@ -123,7 +123,7 @@ public class RemoteLogging {
                 self.isConnected = false
                 logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Disconnected from remote logging server \(serverDevice.deviceName)")
                 //self.statusBar.text = "Searching for \(self.roverMotorsServiceName)..."
-                sleep(5) // Don't rush or we might get a reconnect to a disappearing server
+                //sleep(5) // Don't rush or we might get a reconnect to a disappearing server
                 self.elementalController.browser.browseFor(serviceName: self.serviceName)
             }
             
