@@ -139,7 +139,10 @@ public class RemoteLogging {
     
     public func sendLogLineToServer(logLine: LogLine) {
 
-        if isConnected == false { return }
+        if isConnected == false {
+            print("Refusing to remote log beacause of no connection")
+            return
+        }
         
         let jsonEncoder = JSONEncoder()
         do {
