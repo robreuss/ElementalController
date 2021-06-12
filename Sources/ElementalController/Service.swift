@@ -24,11 +24,14 @@ public class ServiceEvent {
     public var handler: EventHandler?
     
     func executeHandler(device: Device) {
-        if Thread.isMainThread {
-            handler!(self, device)
-        } else {
-            (DispatchQueue.main).sync {
-                handler!(self, device)
+        
+        if let h = handler {
+            if Thread.isMainThread {
+                h!(self, device)
+            } else {
+                (DispatchQueue.main).sync {
+                    h!(self, device)
+                }
             }
         }
     }
