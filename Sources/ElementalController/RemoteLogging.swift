@@ -11,6 +11,7 @@ public class RemoteLogging {
     
     static let shared = RemoteLogging()
     
+    var enabled = true
     var elementalController = ElementalController()
     var serverDevice: ServerDevice?
     var clientDevice: Device?
@@ -139,7 +140,7 @@ public class RemoteLogging {
     
     public func sendLogLineToServer(logLine: LogLine) {
 
-        if isConnected == false {
+        if isConnected == false || enabled == false {
             return
         }
         
