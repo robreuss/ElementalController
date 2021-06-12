@@ -27,10 +27,10 @@ public class ServiceEvent {
         
         if let h = handler {
             if Thread.isMainThread {
-                h!(self, device)
+                h(self, device)
             } else {
                 (DispatchQueue.main).sync {
-                    h!(self, device)
+                    h(self, device)
                 }
             }
         }
