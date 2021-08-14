@@ -12,12 +12,14 @@ public enum LogLevel: Int, CustomStringConvertible, Codable {
     case Error = 0
     case Debug = 1
     case Verbose = 2
+    case Alert = 3
 
     public var description: String {
         switch self {
             case .Error: return "Error"
             case .Debug: return "Debug"
             case .Verbose: return "Verbose"
+            case .Alert: return "Alert"
         }
     }
 }
@@ -88,5 +90,10 @@ public func logDebug(_ logLine: String) {
 }
 
 public func logError(_ logLine: String) {
-    logAtLevel(.Error, logLine: "<<< ERROR >>> \(logLine)")
+    logAtLevel(.Error, logLine: "<Error> \(logLine)")
+}
+
+public func logAlert(_ logLine: String) {
+    logAtLevel(.Alert, logLine: logLine)
+    logAtLevel(.Error, logLine: "<Alert> \(logLine)")
 }
