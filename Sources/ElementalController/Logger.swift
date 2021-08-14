@@ -94,5 +94,5 @@ public func logError(_ logLine: String) {
 }
 
 public func logAlert(_ logLine: String) {
-    logAtLevel(.Error, logLine: "<Alert> \(logLine)")
+    logAtLevel(.Alert, logLine: "<Alert> \(logLine)")
 }
