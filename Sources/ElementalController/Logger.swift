@@ -17,9 +17,9 @@ public enum LogLevel: Int, CustomStringConvertible, Codable {
     public var description: String {
         switch self {
             case .Error: return "Error"
+            case .Alert: return "Alert"
             case .Debug: return "Debug"
             case .Verbose: return "Verbose"
-            case .Alert: return "Alert"
         }
     }
 }
