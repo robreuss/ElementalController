@@ -90,9 +90,9 @@ public func logDebug(_ logLine: String) {
 }
 
 public func logError(_ logLine: String) {
-    logAtLevel(.Error, logLine: "<Error> \(logLine)")
+    logAtLevel(.Error, logLine: "Error| \(logLine)")
 }
 
 public func logAlert(_ logLine: String) {
-    logAtLevel(.Alert, logLine: "<Alert> \(logLine)")
+    logAtLevel(.Alert, logLine: "Alert| \(logLine)")
 }
