@@ -10,9 +10,9 @@ import Foundation
 
 public enum LogLevel: Int, CustomStringConvertible, Codable {
     case Error = 0
-    case Debug = 1
-    case Verbose = 2
-    case Alert = 3
+    case Alert = 1
+    case Debug = 2
+    case Verbose = 3
 
     public var description: String {
         switch self {
