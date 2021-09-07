@@ -26,6 +26,7 @@ public class BrowserEvent {
     
     init(type: BrowserEventTypes.EventType) {
         self.type = type
+        self.privateHandler = nil
     }
     
     func executeHandler(serverDevice: ServerDevice) {
