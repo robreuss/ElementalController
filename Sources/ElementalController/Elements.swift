@@ -62,7 +62,7 @@ public class Element {
     let readWriteLock = DispatchQueue(label: "net.simplyformed.elementWriteLock")
     
     public typealias ElementHandler = ((Element, Device) -> Void)
-    public var handler: ElementHandler?
+    public var handler: ElementHandler? = nil
 
     public var identifier: Int8 = 0
     public var displayName: String = ""
