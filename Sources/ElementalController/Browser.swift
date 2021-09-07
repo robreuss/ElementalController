@@ -17,7 +17,7 @@ import NetService
 // Test comment
 
 // Event handling for the browser
-
+  
 public class BrowserEvent {
     var type: BrowserEventTypes.EventType
     
