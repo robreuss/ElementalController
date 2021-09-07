@@ -83,6 +83,7 @@ public class Element {
         self.displayName = "None"
         self.proto = .tcp
         self.dataType = .Int16
+        self.handler = nil
     }
     
     public init(identifier: Int8, displayName: String, proto: Proto, dataType: ElementDataType) {
@@ -90,6 +91,7 @@ public class Element {
         self.displayName = displayName
         self.proto = proto
         self.dataType = dataType
+        self.handler = nil
     }
     
     // Should almost always execute throwing back onto the main thread,
