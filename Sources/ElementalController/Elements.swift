@@ -65,7 +65,7 @@ public class Element {
     public var handler: ElementHandler?
 
     public var identifier: Int8 = 0
-    public var displayName: String
+    public var displayName: String = ""
     
     // Behind the generic "value" property, we have two different
     // stores for the value in order to avoid race conditions when
