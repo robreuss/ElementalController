@@ -8,17 +8,16 @@
 
 import Foundation
 
-public typealias RemoteLoggerHandler = ((LogLine) -> Void)?
-public var remoteLoggerHandler: RemoteLoggerHandler?
-
-@objc public enum LogLevel: Int, CustomStringConvertible, Codable {
+public enum LogLevel: Int, CustomStringConvertible, Codable {
     case Error = 0
-    case Debug = 1
-    case Verbose = 2
+    case Alert = 1
+    case Debug = 2
+    case Verbose = 3
 
     public var description: String {
         switch self {
             case .Error: return "Error"
+            case .Alert: return "Alert"
             case .Debug: return "Debug"
             case .Verbose: return "Verbose"
         }
@@ -41,9 +40,9 @@ func logAtLevel(_ priority: LogLevel, logLine: String) {
             print("[\(ElementalController.loggerPrefix)] \(logLine)")
         }
         
-        if let handler = remoteLoggerHandler {
+        if let handler = RemoteLogging.outgoingLogLineHandler {
             let logLineEnc = LogLine(text: logLine, logLevel: priority)
-            handler!(logLineEnc)
+            handler(logLineEnc)
         }
         
     }
@@ -91,5 +90,9 @@ public func logDebug(_ logLine: String) {
 }
 
 public func logError(_ logLine: String) {
-    logAtLevel(.Error, logLine: "<<< ERROR >>> \(logLine)")
+    logAtLevel(.Error, logLine: "Error | \(logLine)")
+}
+
+public func logAlert(_ logLine: String) {
+    logAtLevel(.Alert, logLine: "Alert | \(logLine)")
 }

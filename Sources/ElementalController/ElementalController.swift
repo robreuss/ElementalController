@@ -36,7 +36,8 @@ public enum Proto {
 
 public class ElementalController {
     
-    // User confirmation options
+    // Remote Logging
+    public static var remoteLogging = RemoteLogging()
     
     // Currently framework is only tested for private LAN use so this shouldn't be changed unless you're daring
     public static var serviceDomain = "local." {
@@ -94,7 +95,7 @@ public class ElementalController {
         }
     }
     
-    public static var protocolFamily: Socket.ProtocolFamily = Socket.ProtocolFamily.inet6 {
+    public static var protocolFamily: Socket.ProtocolFamily = Socket.ProtocolFamily.inet {
         didSet {
             logDebug("Protocol family set to: \(protocolFamily)")
         }
@@ -115,11 +116,6 @@ public class ElementalController {
     // Service provides the basis of server functionality
     public var browser = Browser()
     public var service = Service()
-    
-    // Provides a remote logging functionality, where the EC instance can be either a
-    // logging server or client.
-    
-    public var remoteLogging = RemoteLogging()
 
     public init() {}
     

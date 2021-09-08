@@ -65,7 +65,7 @@ public class Element {
     public var handler: ElementHandler?
 
     public var identifier: Int8 = 0
-    public var displayName: String
+    public var displayName: String = ""
     
     // Behind the generic "value" property, we have two different
     // stores for the value in order to avoid race conditions when
@@ -77,13 +77,13 @@ public class Element {
     public var useFilter: Bool = false
     public var dataType: ElementDataType = .String
 
-    // TODO: Reconsider the need for two initializers here
-    // Need this initializing udpIdentifierElement in Device
-    init() {
+    // Used to avoid unwrapping
+    public init() {
         self.identifier = 0
         self.displayName = "None"
         self.proto = .tcp
         self.dataType = .Int16
+        self.handler = nil
     }
     
     public init(identifier: Int8, displayName: String, proto: Proto, dataType: ElementDataType) {
@@ -91,6 +91,7 @@ public class Element {
         self.displayName = displayName
         self.proto = proto
         self.dataType = dataType
+        self.handler = nil
     }
     
     // Should almost always execute throwing back onto the main thread,

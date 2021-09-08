@@ -9,6 +9,9 @@ public struct LogLine: Codable {
 
 public class RemoteLogging {
     
+    static let shared = RemoteLogging()
+    
+    public var enabled = true
     var elementalController = ElementalController()
     var serverDevice: ServerDevice?
     var clientDevice: Device?
@@ -17,22 +20,28 @@ public class RemoteLogging {
     var isConnected: Bool = false
     
     public typealias LogLineHandler = ((LogLine) -> Void)
-    public var incomingLogLineHandler: LogLineHandler?
+    static public var incomingLogLineHandler: LogLineHandler?
+    static public var outgoingLogLineHandler: LogLineHandler?
 
     public init() {}
     
     public func setupAsServer(serviceName: String, deviceName: String) {
         
+        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Setting up as remote logging server...")
+        
         elementalController.setupForService(serviceName: serviceName, displayName: deviceName)
         
         elementalController.service.events.deviceDisconnected.handler =  { _, _ in
             
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName))  Remote logging client device disconnected...")
             self.isConnected = false
             
         }
         
         elementalController.service.events.deviceConnected.handler =
             { _, device in
+                
+                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Remote logging client device connected...")
                 
                 self.isConnected = true
 
@@ -45,7 +54,7 @@ public class RemoteLogging {
                     do {
                         if let logLine = element.dataValue {
                             let decodedLogLine = try jsonDecoder.decode(LogLine.self, from: logLine)
-                            if let handler = self.incomingLogLineHandler {
+                            if let handler = RemoteLogging.incomingLogLineHandler {
                                 
                                 handler(decodedLogLine)
                                 
@@ -65,12 +74,14 @@ public class RemoteLogging {
         do {
             try elementalController.service.publish(onPort: 0)
         } catch {
-            logDebug("Could not publish: \(error)")
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Attempt to publish remote logging server failed")
         }
 
     }
 
     public func setupAsClient(serviceName: String, deviceName: String) {
+        
+        logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Setting up as remote logging client...")
         
         self.serviceName = serviceName
         
@@ -81,7 +92,13 @@ public class RemoteLogging {
         
         elementalController.browser.events.foundServer.handler { serverDevice in
             
-            print("FOUND SERVER")
+            logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Found remote logging server: \(serverDevice.deviceName)")
+            
+            RemoteLogging.outgoingLogLineHandler = { [self] logLine in
+                
+               self.sendLogLineToServer(logLine: logLine)
+                
+            }
             
             self.serverDevice = serverDevice
             
@@ -99,15 +116,15 @@ public class RemoteLogging {
             //self.statusBar.text = "Connecting..."
             
             serverDevice.events.connected.handler = { _ in
-                print("CONNECTED TO SERVICE")
+                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Connected to remote logging server \(serverDevice.deviceName)")
                 self.isConnected = true
             }
             
             serverDevice.events.deviceDisconnected.handler = { _ in
                 self.isConnected = false
-                print("DISCONNECTED FROM SERVICE")
+                logDebug("\(formatServiceNameForLogging(serviceName: serviceName)) Disconnected from remote logging server \(serverDevice.deviceName)")
                 //self.statusBar.text = "Searching for \(self.roverMotorsServiceName)..."
-                sleep(5) // Don't rush or we might get a reconnect to a disappearing server
+                //sleep(5) // Don't rush or we might get a reconnect to a disappearing server
                 self.elementalController.browser.browseFor(serviceName: self.serviceName)
             }
             
@@ -123,7 +140,9 @@ public class RemoteLogging {
     
     public func sendLogLineToServer(logLine: LogLine) {
 
-        if !self.isConnected { return }
+        if isConnected == false || enabled == false {
+            return
+        }
         
         let jsonEncoder = JSONEncoder()
         do {
