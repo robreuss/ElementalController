@@ -8,13 +8,13 @@ let package = Package(
     products: [
         .library(
             name: "ElementalController",
-            targets: ["ElementalController"]),
+            targets: ["ElementalController"]), 
         ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/BlueSocket.git",.exact("1.0.0")),
+        .package(url: "https://github.com/IBM-Swift/BlueSocket.git",.exact("2.0.1")),
         //.package(url: "https://github.com/Bouke/NetService.git",.upToNextMajor(from: "0.6.0")),
         //.package(url: "https://github.com/Bouke/NetService.git",.exact("0.8.1")),
-        .package(url: "https://github.com/Bouke/NetService.git", "0.8.0"..<"0.9.0")
+            .package(url: "https://github.com/Bouke/NetService.git",.exact("0.8.1"))
         //.package(url: "https://github.com/robreuss/NetService.git",.upToNextMajor(from: "0.8.2")),
         
     ],
