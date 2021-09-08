@@ -21,7 +21,7 @@ let package = Package(
     targets: [
         .target(
             name: "ElementalController",
-            dependencies: ["Socket", "NetService"],
+            dependencies: ["NetService", "Socket"],
             path: ".",
             sources: ["Sources/ElementalController"]),
         ]
