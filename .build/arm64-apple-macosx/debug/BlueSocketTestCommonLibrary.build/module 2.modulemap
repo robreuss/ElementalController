@@ -1,0 +1,4 @@
+module BlueSocketTestCommonLibrary {
+    header "/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/BlueSocketTestCommonLibrary-Swift.h"
+    requires objc
+}

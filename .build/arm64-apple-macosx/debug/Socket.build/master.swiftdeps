@@ -1,0 +1,10 @@
+version: "Apple Swift version 5.5 (swiftlang-1300.0.31.1 clang-1300.0.29.1)"
+options: "8f91f5c080ee05dfa082fbbdc06113a444cc9a4781f02ab54a8aa8fd08142ceb"
+build_start_time: [1631726135, 382915019]
+build_end_time: [1631726140, 449547052]
+inputs:
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/BlueSocket/Sources/Socket/Socket+Equatable.swift": [1631726135, 180416584]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/BlueSocket/Sources/Socket/Socket+Hashable.swift": [1631726135, 180497646]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/BlueSocket/Sources/Socket/Socket.swift": [1631726135, 180988311]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/BlueSocket/Sources/Socket/SocketProtocols.swift": [1631726135, 181104898]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/BlueSocket/Sources/Socket/SocketUtils.swift": [1631726135, 181232452]

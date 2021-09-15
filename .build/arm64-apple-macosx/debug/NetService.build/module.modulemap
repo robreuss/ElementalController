@@ -1,0 +1,4 @@
+module NetService {
+    header "/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/NetService.build/NetService-Swift.h"
+    requires objc
+}

@@ -1,0 +1,4 @@
+module ElementalController {
+    header "/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ElementalController.build/ElementalController-Swift.h"
+    requires objc
+}

@@ -1,0 +1,16 @@
+version: "Apple Swift version 5.5 (swiftlang-1300.0.31.1 clang-1300.0.29.1)"
+options: "b63d882b95d5d1f6e6a3e449e2316458a0d269e7c180249f9ee635c6e1227c57"
+build_start_time: [1631726140, 495841979]
+build_end_time: [1631726141, 82769870]
+inputs:
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/Browser.swift": [1631116353, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/Device.swift": [1604629257, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/ElementalController.swift": [1631116353, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/Elements.swift": [1631116353, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/Errors.swift": [1604629257, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/Logger.swift": [1631116353, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/Message.swift": [1604629257, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/RemoteLogging.swift": [1631116353, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/Service.swift": [1631116353, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/TCP.swift": [1604629257, 0]
+  "/Users/robreuss/Documents/Development/ElementalController/Sources/ElementalController/UDP.swift": [1604629257, 0]

@@ -1,0 +1,52 @@
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Completions/BashCompletionsGenerator.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Completions/CompletionsGenerator.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Completions/FishCompletionsGenerator.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Completions/ZshCompletionsGenerator.swift.o
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/Argument.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/ArgumentHelp.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/CompletionKind.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/Errors.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/Flag.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/NameSpecification.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/Option.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Properties/OptionGroup.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Types/CommandConfiguration.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Types/EnumerableFlag.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Types/ExpressibleByArgument.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Types/ParsableArguments.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Types/ParsableArgumentsValidation.swift.o'
+'/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsable Types/ParsableCommand.swift.o'
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/ArgumentDecoder.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/ArgumentDefinition.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/ArgumentSet.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/CommandParser.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/InputOrigin.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/Name.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/Parsed.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/ParsedValues.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/ParserError.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Parsing/SplitArguments.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Usage/DumpHelpGenerator.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Usage/HelpCommand.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Usage/HelpGenerator.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Usage/MessageInfo.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Usage/UsageGenerator.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Utilities/CollectionExtensions.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Utilities/SequenceExtensions.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Utilities/StringExtensions.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParser.build/Utilities/Tree.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/ArgumentParserToolInfo.build/ToolInfo.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestClient.build/main.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/Array+ClientController.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/Array+SocketHandler.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/ClientController.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/ClientHandler.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/Common.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/ServerHandler.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/ServerOperation.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/BlueSocketTestCommonLibrary.build/SocketHandler.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/Socket.build/Socket+Equatable.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/Socket.build/Socket+Hashable.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/Socket.build/Socket.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/Socket.build/SocketProtocols.swift.o
+/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/Socket.build/SocketUtils.swift.o

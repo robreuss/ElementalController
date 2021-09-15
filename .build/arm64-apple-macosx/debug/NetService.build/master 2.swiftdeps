@@ -1,0 +1,14 @@
+version: "Apple Swift version 5.5 (swiftlang-1300.0.31.1 clang-1300.0.29.1)"
+options: "b63d882b95d5d1f6e6a3e449e2316458a0d269e7c180249f9ee635c6e1227c57"
+build_start_time: [1631725790, 128599166]
+build_end_time: [1631725795, 124650001]
+inputs:
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/NetService/Sources/NetService/FoundationCompat.swift": [1631725789, 930512905]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/NetService/Sources/NetService/NetService.swift": [1631725789, 930659532]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/NetService/Sources/NetService/NetServiceBrowser.swift": [1631725789, 930769443]
+  ? "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/NetService/Sources/NetService/NetServiceBrowserDelegate.swift"
+  : [1631725789, 930860996]
+  ? "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/NetService/Sources/NetService/NetServiceDelegate.swift"
+  : [1631725789, 930937528]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/NetService/Sources/NetService/ServiceFlags.swift": [1631725789, 930998325]
+  "/Users/robreuss/Documents/Development/ElementalController/.build/checkouts/NetService/Sources/NetService/Utils.swift": [1631725789, 931061267]
