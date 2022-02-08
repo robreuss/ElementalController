@@ -1,4 +1,0 @@
-module Socket {
-    header "/Users/robreuss/Documents/Development/ElementalController/.build/arm64-apple-macosx/debug/Socket.build/Socket-Swift.h"
-    requires objc
-}
