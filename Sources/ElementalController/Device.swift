@@ -62,7 +62,18 @@ public class DeviceEventTypes {
     }
 }
 
-public class Device {
+public class Device: Hashable, Equatable {
+    // Hashable conformance
+    var id = UUID()
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    // Equatable Conformance
+    public static func == (lhs: Device, rhs: Device) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     // Uniquely identifies a UDP client for the server so we know who are the
     // message is coming from, and supplies a client with the ID they need to
     // send to the UDP server to identify themselves.
