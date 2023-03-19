@@ -157,7 +157,7 @@ public class ElementalController {
     
     // TODO: Fix the Linux side of this
     public static var machineName: String {
-        #if os(iOS)
+        #if os(iOS) || os(tvOS)
         return UIDevice.current.name
         #endif
         

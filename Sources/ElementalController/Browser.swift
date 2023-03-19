@@ -11,7 +11,7 @@ import Dispatch
 import Foundation
 
 #if os(Linux)
-import NetService
+import NetService  
 #endif
 
 // Test comment

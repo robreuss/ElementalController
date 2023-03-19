@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum LogLevel: Int, CustomStringConvertible, Codable {
+@objc public enum LogLevel: Int, CustomStringConvertible, Codable {
     case Error = 0
     case Alert = 1
     case Debug = 2
