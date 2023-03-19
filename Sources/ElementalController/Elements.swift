@@ -754,26 +754,22 @@ public class Element {
     }
 
     static func tuple2Value(data: Data) -> (Float, Float) {
-        return data.withUnsafeBytes { (ptr: UnsafePointer<(Float, Float)>) -> (Float, Float) in
-            ptr.pointee
+        return data.withUnsafeBytes { $0.load(as: (Float, Float).self)
         }
     }
-    
+        
     static func tuple3Value(data: Data) -> (Float, Float, Float) {
-        return data.withUnsafeBytes { (ptr: UnsafePointer< (Float, Float, Float)>) ->  (Float, Float, Float) in
-            ptr.pointee
+        return data.withUnsafeBytes { $0.load(as: (Float, Float, Float).self)
         }
     }
-    
+
     static func tuple4Value(data: Data) -> (Float, Float, Float, Float) {
-        return data.withUnsafeBytes { (ptr: UnsafePointer<(Float, Float, Float, Float)>) -> (Float, Float, Float, Float) in
-            ptr.pointee
+        return data.withUnsafeBytes { $0.load(as: (Float, Float, Float, Float).self)
         }
     }
     
     static func tuple4x4Value(data: Data) -> (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float) {
-        return data.withUnsafeBytes { (ptr: UnsafePointer< (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float)>) -> (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float) in
-            ptr.pointee
+        return data.withUnsafeBytes { $0.load(as: (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float).self)
         }
     }
 
