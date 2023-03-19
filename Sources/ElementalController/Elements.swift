@@ -679,11 +679,11 @@ public class Element {
                     readValue = tuple as Any
                     
                 case .Tuple3Float:
-                    let tuple = Element.tuple2Value(data: newValue)
+                    let tuple = Element.tuple3Value(data: newValue)
                     readValue = tuple as Any
                     
                 case .Tuple4Float:
-                    let tuple = Element.tuple2Value(data: newValue)
+                    let tuple = Element.tuple4Value(data: newValue)
                     readValue = tuple as Any
                     
                 case .Tuple4x4Float:
