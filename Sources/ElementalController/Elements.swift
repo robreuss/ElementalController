@@ -11,7 +11,6 @@
 
 import Foundation
 import Dispatch
-import simd
 
 var udpIdentifier: Int32 = 0
 
@@ -35,10 +34,10 @@ public enum ElementDataType: Int {
     case String = 10
     case Data = 11
     case Bool = 12
-    case SIMD2 = 13
-    case SIMD3 = 14
-    case SIMD4 = 15
-    case SIMD4x4 = 16
+    case Tuple2Float = 13
+    case Tuple3Float = 14
+    case Tuple4Float = 15
+    case Tuple4x4Float = 16
     
     public var description: String {
         switch self {
@@ -56,10 +55,10 @@ public enum ElementDataType: Int {
         case .Double: return "doubleValue"
         case .String: return "stringValue"
         case .Data: return "dataValue"
-        case .SIMD2: return "simd2Value"
-        case .SIMD3: return "simd3Value"
-        case .SIMD4: return "simd4Value"
-        case .SIMD4x4: return "simd4x4Value"
+        case .Tuple2Float: return "Tuple2Float"
+        case .Tuple3Float: return "Tuple3Float"
+        case .Tuple4Float: return "Tuple4Float"
+        case .Tuple4x4Float: return "Tuple4x4Float"
         }
     }
 }
@@ -330,10 +329,10 @@ public class Element {
         }
     }
     
-    public var simd2Value: SIMD2<Float>? {
+    public var tuple2Value: (Float, Float)? {
         get {
-            if self.dataType == .SIMD2 {
-                return value as? SIMD2<Float>
+            if self.dataType == .Tuple2Float {
+                return value as? (Float, Float)
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -343,10 +342,10 @@ public class Element {
         }
     }
     
-    public var simd3Value: SIMD3<Float>? {
+    public var tuple3Value: (Float, Float, Float)? {
         get {
-            if self.dataType == .SIMD3 {
-                return value as? SIMD3<Float>
+            if self.dataType == .Tuple3Float {
+                return value as? (Float, Float, Float)
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -356,10 +355,10 @@ public class Element {
         }
     }
     
-    public var simd4Value: SIMD4<Float>? {
+    public var tuple4Value: (Float, Float, Float, Float)? {
         get {
-            if self.dataType == .SIMD4 {
-                return value as? SIMD4<Float>
+            if self.dataType == .Tuple4Float {
+                return value as? (Float, Float, Float, Float)
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -369,10 +368,10 @@ public class Element {
         }
     }
     
-    public var simd4x4Value: simd_float4x4? {
+    public var tuple4x4Value: (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float)? {
         get {
-            if self.dataType == .SIMD4x4 {
-                return value as? simd_float4x4
+            if self.dataType == .Tuple4x4Float {
+                return value as? (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float)
             }
             logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
             fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
@@ -420,14 +419,14 @@ public class Element {
                 return readValue is String ? readValue : nil
             case .Data:
                 return readValue is Data ? readValue : nil
-            case .SIMD2:
-                return readValue is SIMD2<Float> ? readValue : nil
-            case .SIMD3:
-                return readValue is SIMD3<Float> ? readValue : nil
-            case .SIMD4:
-                return readValue is SIMD4<Float> ? readValue : nil
-            case .SIMD4x4:
-                return readValue is simd_float4x4 ? readValue : nil
+            case .Tuple2Float:
+                return readValue is (Float, Float) ? readValue : nil
+            case .Tuple3Float:
+                return readValue is (Float, Float, Float) ? readValue : nil
+            case .Tuple4Float:
+                return readValue is (Float, Float, Float, Float) ? readValue : nil
+            case .Tuple4x4Float:
+                return readValue is (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float) ? readValue : nil
             }
         }
         set {
@@ -568,7 +567,7 @@ public class Element {
                 }
                 return returnData
                 
-            case .SIMD2:
+            case .Tuple2Float:
                 
                 if let value = writeValue as? Data {
                     return value
@@ -577,17 +576,7 @@ public class Element {
                     fatalError()
                 }
                 
-            case .SIMD3:
-                
-                if let value = writeValue as? Data {
-                    return value
-                } else {
-                    logError("Type error encoding Data element: \"\(displayName)\"")
-                    fatalError()
-                }
-                
-                
-            case .SIMD4:
+            case .Tuple3Float:
                 
                 if let value = writeValue as? Data {
                     return value
@@ -597,7 +586,17 @@ public class Element {
                 }
                 
                 
-            case .SIMD4x4:
+            case .Tuple4Float:
+                
+                if let value = writeValue as? Data {
+                    return value
+                } else {
+                    logError("Type error encoding Data element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+                
+            case .Tuple4x4Float:
                 
                 if let value = writeValue as? Data {
                     return value
@@ -675,21 +674,21 @@ public class Element {
                         logError("\(displayName) (\(identifier)) Element of type \(dataType) got nil while encoding to bytes")
                         
                     }
-                case .SIMD2:
-                    let float = Element.simd2Value(data: newValue)
-                    readValue = simd2Value as Any
+                case .Tuple2Float:
+                    let tuple = Element.tuple2Value(data: newValue)
+                    readValue = tuple as Any
                     
-                case .SIMD3:
-                    let float = Element.simd3Value(data: newValue)
-                    readValue = simd3Value as Any
+                case .Tuple3Float:
+                    let tuple = Element.tuple2Value(data: newValue)
+                    readValue = tuple as Any
                     
-                case .SIMD4:
-                    let float = Element.simd4Value(data: newValue)
-                    readValue = simd4Value as Any
+                case .Tuple4Float:
+                    let tuple = Element.tuple2Value(data: newValue)
+                    readValue = tuple as Any
                     
-                case .SIMD4x4:
-                    let float = Element.simd4x4Value(data: newValue)
-                    readValue = simd4x4Value as Any
+                case .Tuple4x4Float:
+                    let tuple = Element.tuple4x4Value(data: newValue)
+                    readValue = tuple as Any
                 }
             }
         }
@@ -754,27 +753,28 @@ public class Element {
         return Double(bitPattern: UInt64(littleEndian: data.withUnsafeBytes { $0.pointee }))
     }
 
-    static func simd2Value(data: Data) -> SIMD2<Float> {
-        return data.withUnsafeBytes { (ptr: UnsafePointer<SIMD2<Float>>) -> SIMD2<Float> in
+    static func tuple2Value(data: Data) -> (Float, Float) {
+        return data.withUnsafeBytes { (ptr: UnsafePointer<(Float, Float)>) -> (Float, Float) in
             ptr.pointee
         }
     }
     
-    static func simd3Value(data: Data) -> SIMD3<Float> {
-        return data.withUnsafeBytes { (ptr: UnsafePointer<SIMD3<Float>>) -> SIMD3<Float> in
+    static func tuple3Value(data: Data) -> (Float, Float, Float) {
+        return data.withUnsafeBytes { (ptr: UnsafePointer< (Float, Float, Float)>) ->  (Float, Float, Float) in
             ptr.pointee
         }
     }
     
-    static func simd4Value(data: Data) -> SIMD4<Float> {
-        return data.withUnsafeBytes { (ptr: UnsafePointer<SIMD4<Float>>) -> SIMD4<Float> in
+    static func tuple4Value(data: Data) -> (Float, Float, Float, Float) {
+        return data.withUnsafeBytes { (ptr: UnsafePointer<(Float, Float, Float, Float)>) -> (Float, Float, Float, Float) in
             ptr.pointee
         }
     }
     
-    static func simd4x4Value(data: Data) -> simd_float4x4 {
-        return data.withUnsafeBytes { (ptr: UnsafePointer<simd_float4x4>) -> simd_float4x4 in
+    static func tuple4x4Value(data: Data) -> (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float) {
+        return data.withUnsafeBytes { (ptr: UnsafePointer< (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float)>) -> (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float) in
             ptr.pointee
         }
     }
+
 }
