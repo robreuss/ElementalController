@@ -11,6 +11,7 @@
 
 import Foundation
 import Dispatch
+import simd
 
 var udpIdentifier: Int32 = 0
 
@@ -34,10 +35,14 @@ public enum ElementDataType: Int {
     case String = 10
     case Data = 11
     case Bool = 12
+    case SIMD2 = 13
+    case SIMD3 = 14
+    case SIMD4 = 15
+    case SIMD4x4 = 16
     
     public var description: String {
         switch self {
-
+            
         case .Bool: return "boolValue"
         case .Int8: return "int8Value"
         case .UInt8: return "uint8Value"
@@ -51,6 +56,10 @@ public enum ElementDataType: Int {
         case .Double: return "doubleValue"
         case .String: return "stringValue"
         case .Data: return "dataValue"
+        case .SIMD2: return "simd2Value"
+        case .SIMD3: return "simd3Value"
+        case .SIMD4: return "simd4Value"
+        case .SIMD4x4: return "simd4x4Value"
         }
     }
 }
@@ -63,7 +72,7 @@ public class Element {
     
     public typealias ElementHandler = ((Element, Device) -> Void)
     public var handler: ElementHandler?
-
+    
     public var identifier: Int8 = 0
     public var displayName: String = ""
     
@@ -76,7 +85,7 @@ public class Element {
     public var proto: Proto = .tcp
     public var useFilter: Bool = false
     public var dataType: ElementDataType = .String
-
+    
     // Used to avoid unwrapping
     public init() {
         self.identifier = 0
@@ -98,19 +107,19 @@ public class Element {
     // but just in case, we test for current execution context.
     func executeHandlers(element: Element, device: Device) {
         guard let h = handler else { return }
-            if Thread.isMainThread {
+        if Thread.isMainThread {
+            h(self, device)
+        } else {
+            (DispatchQueue.main).sync {
                 h(self, device)
-            } else {
-                (DispatchQueue.main).sync {
-                    h(self, device)
-                }
             }
+        }
     }
     
     //public func handler(_ : ElementHandler) {
-     //   privateHandler = handler
+    //   privateHandler = handler
     //}
-
+    
     
     // MARK: -
     
@@ -138,7 +147,7 @@ public class Element {
         }
         
         messageData.append(serialize)
-
+        
         return messageData
     }
     
@@ -163,7 +172,7 @@ public class Element {
             value = newValue as Any
         }
     }
-
+    
     public var int8Value: Int8? {
         get {
             if self.dataType == .Int8 {
@@ -321,6 +330,58 @@ public class Element {
         }
     }
     
+    public var simd2Value: SIMD2<Float>? {
+        get {
+            if self.dataType == .SIMD2 {
+                return value as? SIMD2<Float>
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var simd3Value: SIMD3<Float>? {
+        get {
+            if self.dataType == .SIMD3 {
+                return value as? SIMD3<Float>
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var simd4Value: SIMD4<Float>? {
+        get {
+            if self.dataType == .SIMD4 {
+                return value as? SIMD4<Float>
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
+    public var simd4x4Value: simd_float4x4? {
+        get {
+            if self.dataType == .SIMD4x4 {
+                return value as? simd_float4x4
+            }
+            logError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+            fatalError(typeError(usingFunction: #function, shouldUseFunction: self.dataType.description))
+        }
+        set {
+            value = newValue as Any
+        }
+    }
+    
     // Just a public interface to the underlying value with a type of Any
     public var anyValue: Any? {
         
@@ -329,9 +390,9 @@ public class Element {
     }
     
     // This is the backing store for the various type-specific properties
-   var value: Any? {
+    var value: Any? {
         get {
-
+            
             switch dataType {
             case .Bool:
                 return readValue is Bool ? readValue : nil
@@ -359,146 +420,193 @@ public class Element {
                 return readValue is String ? readValue : nil
             case .Data:
                 return readValue is Data ? readValue : nil
+            case .SIMD2:
+                return readValue is SIMD2<Float> ? readValue : nil
+            case .SIMD3:
+                return readValue is SIMD3<Float> ? readValue : nil
+            case .SIMD4:
+                return readValue is SIMD4<Float> ? readValue : nil
+            case .SIMD4x4:
+                return readValue is simd_float4x4 ? readValue : nil
             }
-
         }
         set {
             readWriteLock.sync {
                 writeValue = newValue as Any
                 readValue = newValue as Any
             }
-
+            
         }
     }
-
-
+    
+    
     // MARK: -
     
     var serialize: Data {
         
         get {
-
-                let error = "\(displayName) (\(identifier)) nil encountered when encoding value as data (possible type error)."
+            
+            let error = "\(displayName) (\(identifier)) nil encountered when encoding value as data (possible type error)."
+            
+            switch dataType {
                 
-                switch dataType {
-                case .Bool:
-                    if var value = writeValue as? Bool {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding Bool element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .Int8:
-                    if var value = writeValue as? Int8 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding Int8 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .UInt8:
-                    if var value = writeValue as? UInt8 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding UInt8 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .Int16:
-                    
-                    if var value = writeValue as? Int16 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding Int16 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .UInt16:
-                    
-                    if var value = writeValue as? UInt16 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding UInt16 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .Int32:
-                    
-                    if var value = writeValue as? Int32 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding Int32 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .UInt32:
-                    
-                    if var value = writeValue as? UInt32 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding UInt32 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .Int64:
-                    
-                    if var value = writeValue as? Int64 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding Int64 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .UInt64:
-                    
-                    if var value = writeValue as? UInt64 {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding UInt64 element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .Float:
-                    
-                    if var value = writeValue as? Float {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding Float element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .Double:
-                    
-                    if var value = writeValue as? Double {
-                        return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
-                    } else {
-                        logError("Type error encoding Double element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .Data:
-                    
-                    if let value = writeValue as? Data {
-                        return value
-                    } else {
-                        logError("Type error encoding Data element: \"\(displayName)\"")
-                        fatalError()
-                    }
-                    
-                case .String:
-                    
-                    var returnData = Data()
-                    readWriteLock.sync {
-                        if let myData = (writeValue as! String).data(using: String.Encoding.utf8) {
-                            returnData = myData
-                        } else {
-                            logError("Element got nil when expecting string data")
-                            returnData = Data()
-                        }
-                    }
-                    return returnData
+            case .Bool:
+                if var value = writeValue as? Bool {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding Bool element: \"\(displayName)\"")
+                    fatalError()
                 }
+                
+            case .Int8:
+                if var value = writeValue as? Int8 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding Int8 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .UInt8:
+                if var value = writeValue as? UInt8 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding UInt8 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .Int16:
+                
+                if var value = writeValue as? Int16 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding Int16 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .UInt16:
+                
+                if var value = writeValue as? UInt16 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding UInt16 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .Int32:
+                
+                if var value = writeValue as? Int32 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding Int32 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .UInt32:
+                
+                if var value = writeValue as? UInt32 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding UInt32 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .Int64:
+                
+                if var value = writeValue as? Int64 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding Int64 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .UInt64:
+                
+                if var value = writeValue as? UInt64 {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding UInt64 element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .Float:
+                
+                if var value = writeValue as? Float {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding Float element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .Double:
+                
+                if var value = writeValue as? Double {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
+                } else {
+                    logError("Type error encoding Double element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .Data:
+                
+                if let value = writeValue as? Data {
+                    return value
+                } else {
+                    logError("Type error encoding Data element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .String:
+                
+                var returnData = Data()
+                readWriteLock.sync {
+                    if let myData = (writeValue as! String).data(using: String.Encoding.utf8) {
+                        returnData = myData
+                    } else {
+                        logError("Element got nil when expecting string data")
+                        returnData = Data()
+                    }
+                }
+                return returnData
+                
+            case .SIMD2:
+                
+                if let value = writeValue as? Data {
+                    return value
+                } else {
+                    logError("Type error encoding Data element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            case .SIMD3:
+                
+                if let value = writeValue as? Data {
+                    return value
+                } else {
+                    logError("Type error encoding Data element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+                
+            case .SIMD4:
+                
+                if let value = writeValue as? Data {
+                    return value
+                } else {
+                    logError("Type error encoding Data element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+                
+            case .SIMD4x4:
+                
+                if let value = writeValue as? Data {
+                    return value
+                } else {
+                    logError("Type error encoding Data element: \"\(displayName)\"")
+                    fatalError()
+                }
+                
+            }
         }
         
         set {
@@ -553,7 +661,7 @@ public class Element {
                     readValue = float as Any
                     
                 case .Double:
-
+                    
                     let double = Element.doubleValue(data: newValue)
                     readValue = double as Any
                     
@@ -567,6 +675,21 @@ public class Element {
                         logError("\(displayName) (\(identifier)) Element of type \(dataType) got nil while encoding to bytes")
                         
                     }
+                case .SIMD2:
+                    let float = Element.simd2Value(data: newValue)
+                    readValue = simd2Value as Any
+                    
+                case .SIMD3:
+                    let float = Element.simd3Value(data: newValue)
+                    readValue = simd3Value as Any
+                    
+                case .SIMD4:
+                    let float = Element.simd4Value(data: newValue)
+                    readValue = simd4Value as Any
+                    
+                case .SIMD4x4:
+                    let float = Element.simd4x4Value(data: newValue)
+                    readValue = simd4x4Value as Any
                 }
             }
         }
@@ -575,7 +698,7 @@ public class Element {
     
     // MARK: -
     // MARK: Convert Data to typed values
-
+    
     static func boolValue(data: Data) -> Bool {
         return data.withUnsafeBytes { (ptr: UnsafePointer<Bool>) -> Bool in
             ptr.pointee
@@ -629,5 +752,29 @@ public class Element {
     
     static func doubleValue(data: Data) -> Double {
         return Double(bitPattern: UInt64(littleEndian: data.withUnsafeBytes { $0.pointee }))
+    }
+
+    static func simd2Value(data: Data) -> SIMD2<Float> {
+        return data.withUnsafeBytes { (ptr: UnsafePointer<SIMD2<Float>>) -> SIMD2<Float> in
+            ptr.pointee
+        }
+    }
+    
+    static func simd3Value(data: Data) -> SIMD3<Float> {
+        return data.withUnsafeBytes { (ptr: UnsafePointer<SIMD3<Float>>) -> SIMD3<Float> in
+            ptr.pointee
+        }
+    }
+    
+    static func simd4Value(data: Data) -> SIMD4<Float> {
+        return data.withUnsafeBytes { (ptr: UnsafePointer<SIMD4<Float>>) -> SIMD4<Float> in
+            ptr.pointee
+        }
+    }
+    
+    static func simd4x4Value(data: Data) -> simd_float4x4 {
+        return data.withUnsafeBytes { (ptr: UnsafePointer<simd_float4x4>) -> simd_float4x4 in
+            ptr.pointee
+        }
     }
 }
