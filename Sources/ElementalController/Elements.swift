@@ -569,8 +569,8 @@ public class Element {
                 
             case .Tuple2Float:
                 
-                if let value = writeValue as? Data {
-                    return value
+                if var value = writeValue as? (Float, Float) {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
                     logError("Type error encoding Data element: \"\(displayName)\"")
                     fatalError()
@@ -578,8 +578,8 @@ public class Element {
                 
             case .Tuple3Float:
                 
-                if let value = writeValue as? Data {
-                    return value
+                if var value = writeValue as? (Float, Float, Float) {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
                     logError("Type error encoding Data element: \"\(displayName)\"")
                     fatalError()
@@ -588,8 +588,8 @@ public class Element {
                 
             case .Tuple4Float:
                 
-                if let value = writeValue as? Data {
-                    return value
+                if var value = writeValue as? (Float, Float, Float, Float) {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
                     logError("Type error encoding Data element: \"\(displayName)\"")
                     fatalError()
@@ -598,8 +598,8 @@ public class Element {
                 
             case .Tuple4x4Float:
                 
-                if let value = writeValue as? Data {
-                    return value
+                if var value = writeValue as? (Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float, Float) {
+                    return Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
                 } else {
                     logError("Type error encoding Data element: \"\(displayName)\"")
                     fatalError()
