@@ -191,6 +191,7 @@ public class Service: ServiceDelegate {
         device.address = socket.remoteHostname
         device.tcpClient!.run()
         device.serviceName = serviceName
+        device.isConnected = true
         addDevice(device: device)
         try sendUDPIdentififerToDevice(device: device)
         deviceConnected(device: device)
@@ -202,6 +203,7 @@ public class Service: ServiceDelegate {
     }
     
     func deviceDisconnected(device: ClientDevice) {
+        device.isConnected = false
         logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device disconnected.")
         devices.removeValue(forKey: device.udpIdentifier)
         events.deviceDisconnected.executeHandler(device: device)
