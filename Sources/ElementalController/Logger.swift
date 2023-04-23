@@ -48,36 +48,36 @@ func logAtLevel(_ priority: LogLevel, logLine: String) {
     }
 }
 
-func formatProtoForLogging(proto: Proto) -> String {
+public func formatProtoForLogging(proto: Proto) -> String {
     return "[\(proto)]"
 }
 
-func formatServiceNameForLogging(serviceName: String) -> String {
+public func formatServiceNameForLogging(serviceName: String) -> String {
     return "{\(serviceName)}"
 }
 
-func formatDeviceNameForLogging(deviceName: String) -> String {
+public func formatDeviceNameForLogging(deviceName: String) -> String {
     return "<\(deviceName)>"
 }
 
-func serviceNameForLogging(device: Device?) -> String {
+public func serviceNameForLogging(device: Device?) -> String {
     guard let d = device else { return "{No Service}" }
     return formatServiceNameForLogging(serviceName: d.serviceName)
 }
 
-func prefixForLogging(serviceName: String, proto: Proto) -> String {
+public func prefixForLogging(serviceName: String, proto: Proto) -> String {
     return "\(formatServiceNameForLogging(serviceName: serviceName)) \(formatProtoForLogging(proto: proto))"
 }
 
-func prefixForLogging(device: Device?, proto: Proto) -> String {
+public func prefixForLogging(device: Device?, proto: Proto) -> String {
     return "\(serviceNameForLogging(device: device)) \(formatProtoForLogging(proto: proto))"
 }
 
-func prefixForLoggingServiceNameUsing(device: Device?) -> String {
+public func prefixForLoggingServiceNameUsing(device: Device?) -> String {
     return "\(serviceNameForLogging(device: device))"
 }
 
-func prefixForLoggingDevice(device: Device?) -> String {
+public func prefixForLoggingDevice(device: Device?) -> String {
     return "\(serviceNameForLogging(device: device)) \(formatDeviceNameForLogging(deviceName: (device?.displayName)!))"
 }
 
