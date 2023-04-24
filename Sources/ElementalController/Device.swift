@@ -144,7 +144,7 @@ public class Device: Hashable, Equatable {
             preconditionFailure("Attempt to add UDP element but UDP service disallowed in ElementalController")
         } else {
             elements[element.identifier] = element
-            logDebug("\(prefixForLogging(serviceName: serviceName, proto: element.proto)) Element added: \(element.displayName) (\(element.dataType))")
+            logDebug("\(prefixForLogging(serviceName: serviceName, proto: element.proto)) \(formatDeviceNameForLogging(deviceName: displayName)) Element added: \(element.displayName) (\(element.dataType))")
             return element
         }
     }
@@ -162,7 +162,7 @@ public class Device: Hashable, Equatable {
     
     func connectSuccess(proto: Proto) throws {
         isConnected = true
-        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) [\(proto)] Device received connect success")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) [\(proto)] \(formatDeviceNameForLogging(deviceName: displayName)) Device received connect success")
         
         // Send device name
         let deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (SYSTEM ELEMENT)", proto: .tcp, dataType: .String))
@@ -172,13 +172,13 @@ public class Device: Hashable, Equatable {
     
     func connectFailed(proto: Proto) {
         // Clear other connection here
-        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) connection failed")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(proto) \(formatDeviceNameForLogging(deviceName: displayName)) connection failed")
         isConnected = false
         events.connectFailed.executeHandler(device: self)
     }
     
     func lostConnection() {
-        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Lost TCP connection to client")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(formatDeviceNameForLogging(deviceName: displayName)) Lost TCP connection to client")
         isConnected = false
         events.deviceDisconnected.executeHandler(device: self)
     }
@@ -204,7 +204,7 @@ public class Device: Hashable, Equatable {
                 // Getting the UDP is when we consider things ready to rock and roll
                 // from a data transmission standpoint
                 
-                logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Connected to server.")
+                logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(formatDeviceNameForLogging(deviceName: displayName)) Connected to server.")
                 
                 // Take a brief pause before notifying the user so the server can
                 // get fully configured
@@ -234,7 +234,7 @@ public class Device: Hashable, Equatable {
     }
     
     deinit {
-        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Deinitializing Device")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(formatDeviceNameForLogging(deviceName: displayName)) Deinitializing Device")
     }
 }
 
@@ -251,7 +251,7 @@ public class ClientDevice: Device {
     init(service: Service, serviceName: String, displayName: String) {
         super.init(serviceName: serviceName, displayName: displayName)
         self.service = service
-        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) Initializing Client Device")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: self)) \(formatDeviceNameForLogging(deviceName: displayName)) Initializing Client Device")
         udpIdentifierElement = attachElement(Element(identifier: SystemElements.udpIdentifier.rawValue, displayName: "UDP identifier (system)", proto: .tcp, dataType: .UInt8))
         deviceNameElement = attachElement(Element(identifier: SystemElements.deviceName.rawValue, displayName: "Device Name (system)", proto: .tcp, dataType: .String))
         shutdownMessageElement = attachElement(Element(identifier: SystemElements.shutdownMessage.rawValue, displayName: "Shutdown Message (system)", proto: .tcp, dataType: .String))

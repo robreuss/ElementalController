@@ -198,13 +198,13 @@ public class Service: ServiceDelegate {
     }
     
     func deviceConnected(device: ClientDevice) {
-        logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device connected.")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: device)) \(formatDeviceNameForLogging(deviceName: displayName)) Device connected.")
         events.deviceConnected.executeHandler(device: device)
     }
     
     func deviceDisconnected(device: ClientDevice) {
         device.isConnected = false
-        logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Device disconnected.")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: device)) \(formatDeviceNameForLogging(deviceName: displayName)) Device disconnected.")
         devices.removeValue(forKey: device.udpIdentifier)
         events.deviceDisconnected.executeHandler(device: device)
     }
@@ -217,7 +217,7 @@ public class Service: ServiceDelegate {
     
     // Once a device representing the client is created, send the UDP identififer
     func sendUDPIdentififerToDevice(device: ClientDevice) throws {
-        logDebug("\(prefixForLoggingServiceNameUsing(device: device)) Sending UDP identifier: \(device.udpIdentifier)")
+        logDebug("\(prefixForLoggingServiceNameUsing(device: device)) \(formatDeviceNameForLogging(deviceName: displayName)) Sending UDP identifier: \(device.udpIdentifier)")
         device.udpIdentifierElement.value = device.udpIdentifier
         try device.send(element: device.udpIdentifierElement)
     }
